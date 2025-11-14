@@ -1,14 +1,7 @@
+// LocalPlayer.h
 #pragma once
-#include "Player.h"
 #include <string>
-
-/*
-    SDK Wrapper: LocalPlayer
-    - Thin wrapper around Minecraft's LocalPlayer struct.
-    - Requires SlimMem signature resolution at startup.
-    - Calls into Minecraft vtables; no local state.
-    - Must be re-mapped each Minecraft version.
-*/
+#include "Player.h"
 
 class C_GameMode;
 class ClientInstance;

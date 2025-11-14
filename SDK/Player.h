@@ -1,16 +1,11 @@
+// Player.h
 #pragma once
-#include "CEntity.h"
-#include "ItemStack.h"
-#include "Vec3.h"
 #include <string>
+#include "Vec3.h"
+#include "ItemStack.h"
 
-/*
-    SDK Wrapper: Player
-    - Thin wrapper around Minecraft's Player struct.
-    - Requires SlimMem signature resolution at startup.
-    - Calls into Minecraft vtables; no local state.
-    - Must be re-mapped each Minecraft version.
-*/
+// Base player wrapper; calls into game via resolved signatures.
+class C_Entity; // forward declaration to avoid heavy includes
 
 class Player : public C_Entity {
 public:

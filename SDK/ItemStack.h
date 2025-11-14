@@ -1,13 +1,6 @@
+// ItemStack.h
 #pragma once
 #include <string>
-
-/*
-    SDK Wrapper: ItemStack
-    - Thin wrapper around Minecraft's ItemStack struct.
-    - Requires SlimMem signature resolution at startup.
-    - Calls into Minecraft vtables; no local state.
-    - Must be re-mapped each Minecraft version.
-*/
 
 class ItemStack {
 public:
