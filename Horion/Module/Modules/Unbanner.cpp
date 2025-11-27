@@ -44,13 +44,18 @@ void Unbanner::onPostRender(MinecraftUIRenderContext* ctx) {
 }
 
 void Unbanner::renderUnbanButton(MinecraftUIRenderContext* ctx) {
+    // Null safety checks
+    auto clientInstance = Game.getClientInstance();
+    if (clientInstance == nullptr) return;
+    auto guiData = clientInstance->getGuiData();
+    if (guiData == nullptr) return;
+
     // Get window size for positioning
-    Vec2 windowSize = Game.getClientInstance()->getGuiData()->windowSize;
+    Vec2 windowSize = guiData->windowSize;
 
     // Button dimensions
     const float buttonWidth = 150.0f;
     const float buttonHeight = 35.0f;
-    const float padding = 8.0f;
 
     // Center button horizontally, position near bottom
     float buttonX = (windowSize.x - buttonWidth) / 2.0f;
@@ -59,9 +64,11 @@ void Unbanner::renderUnbanButton(MinecraftUIRenderContext* ctx) {
     // Button rectangle
     Vec4 buttonRect(buttonX, buttonY, buttonX + buttonWidth, buttonY + buttonHeight);
 
-    // Get mouse position
-    Vec2 mousePos = *Game.getClientInstance()->getMousePos();
-    Vec2 windowSizeReal = Game.getClientInstance()->getGuiData()->windowSizeReal;
+    // Get mouse position with null check
+    auto mousePtr = clientInstance->getMousePos();
+    if (mousePtr == nullptr) return;
+    Vec2 mousePos = *mousePtr;
+    Vec2 windowSizeReal = guiData->windowSizeReal;
     mousePos = mousePos.div(windowSizeReal);
     mousePos = mousePos.mul(windowSize);
 
