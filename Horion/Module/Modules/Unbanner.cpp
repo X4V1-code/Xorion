@@ -68,8 +68,14 @@ void Unbanner::generateSpoofedUsername() {
     
     // Create a TextHolder for the fake name and set it in GameData
     // This integrates with the existing name spoofing system
+    // Clean up old holder before creating new one
     if (fakeNameHolder != nullptr) {
+        // Clear from GameData if we're the one who set it
+        if (Game.getFakeName() == fakeNameHolder) {
+            Game.setFakeName(nullptr);
+        }
         delete fakeNameHolder;
+        fakeNameHolder = nullptr;
     }
     fakeNameHolder = new TextHolder(spoofedUsername);
     Game.setFakeName(fakeNameHolder);
@@ -147,6 +153,9 @@ void Unbanner::onSendPacket(Packet* packet) {
     // Intercept TextPacket (chat messages) and modify the source name
     if (packet->isInstanceOf<TextPacket>()) {
         TextPacket* textPacket = reinterpret_cast<TextPacket*>(packet);
+        if (textPacket == nullptr) {
+            return;
+        }
         
         // Get the original player name to compare
         TextHolder* originalName = localPlayer->getNameTag();
@@ -154,8 +163,8 @@ void Unbanner::onSendPacket(Packet* packet) {
             std::string origNameStr = originalName->getText();
             std::string sourceNameStr = textPacket->sourceName.getText();
             
-            // If the source name matches the local player's name, replace it
-            if (sourceNameStr == origNameStr || sourceNameStr.find(origNameStr) != std::string::npos) {
+            // If the source name contains the original player name, replace it with spoofed name
+            if (!origNameStr.empty() && sourceNameStr.find(origNameStr) != std::string::npos) {
                 textPacket->sourceName.setText(spoofedUsername);
             }
         }
