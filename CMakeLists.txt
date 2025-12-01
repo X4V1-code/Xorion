@@ -475,7 +475,7 @@ add_library(Horion SHARED
         Utils/Utils.h
         Utils/xorstr.h
 
-        Utils/keys.h
+        Utils/Keys.h
 
         resource.h
 
@@ -518,30 +518,32 @@ add_library(Horion SHARED
         Horion/Module/Modules/Unbanner.h
 )
 
-# --- Shader compile rules ---
-set(SHADER_DIR ${CMAKE_SOURCE_DIR}/Horion/Shaders)
+# --- Shader compile rules (Windows-only) ---
+if(WIN32)
+    set(SHADER_DIR ${CMAKE_SOURCE_DIR}/Horion/Shaders)
 
-# Function to compile a shader
-function(compile_shader SHADER_FILE PROFILE)
-    get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
-    set(OUTPUT ${CMAKE_BINARY_DIR}/${SHADER_NAME}.cso)
+    # Function to compile a shader
+    function(compile_shader SHADER_FILE PROFILE)
+        get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
+        set(OUTPUT ${CMAKE_BINARY_DIR}/${SHADER_NAME}.cso)
 
-    add_custom_command(
-        OUTPUT ${OUTPUT}
-        COMMAND fxc /T ${PROFILE} /E main /Fo ${OUTPUT} ${SHADER_FILE}
-        DEPENDS ${SHADER_FILE}
-        COMMENT "Compiling ${SHADER_FILE} -> ${OUTPUT}"
-    )
+        add_custom_command(
+            OUTPUT ${OUTPUT}
+            COMMAND fxc /T ${PROFILE} /E main /Fo ${OUTPUT} ${SHADER_FILE}
+            DEPENDS ${SHADER_FILE}
+            COMMENT "Compiling ${SHADER_FILE} -> ${OUTPUT}"
+        )
 
-    set(COMPILED_SHADERS ${COMPILED_SHADERS} ${OUTPUT} PARENT_SCOPE)
-endfunction()
+        set(COMPILED_SHADERS ${COMPILED_SHADERS} ${OUTPUT} PARENT_SCOPE)
+    endfunction()
 
-# Compile each shader with the right profile
-compile_shader(${SHADER_DIR}/UnlitTintPS.hlsl ps_5_0)
-compile_shader(${SHADER_DIR}/UnlitTintVS.hlsl vs_5_0)
+    # Compile each shader with the right profile
+    compile_shader(${SHADER_DIR}/UnlitTintPS.hlsl ps_5_0)
+    compile_shader(${SHADER_DIR}/UnlitTintVS.hlsl vs_5_0)
 
-# Group them into a target
-add_custom_target(Shaders ALL DEPENDS ${COMPILED_SHADERS})
+    # Group them into a target
+    add_custom_target(Shaders ALL DEPENDS ${COMPILED_SHADERS})
 
-# Make Horion depend on shaders
-add_dependencies(Horion Shaders)
+    # Make Horion depend on shaders
+    add_dependencies(Horion Shaders)
+endif()
