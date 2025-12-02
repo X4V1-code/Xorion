@@ -140,7 +140,7 @@ void Unbanner::generateSpoofedXuid() {
     std::random_device rd;
     std::mt19937_64 gen(rd());
     
-    // XUID is typically a 16-digit number starting with "2" for Xbox Live accounts
+    // XUID is typically a 16-digit number (range 1-2 quadrillion)
     std::uniform_int_distribution<uint64_t> dist(1000000000000000ULL, 2999999999999999ULL);
     uint64_t xuidValue = dist(gen);
     
