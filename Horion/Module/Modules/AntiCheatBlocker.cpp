@@ -43,7 +43,7 @@ const std::vector<std::string> AntiCheatBlocker::knownAntiCheats = {
     "hackcontrol"
 };
 
-// Known ban command patterns to intercept
+// Known ban command patterns to intercept (exact command prefixes)
 const std::vector<std::string> AntiCheatBlocker::banCommandPatterns = {
     "/ban ",
     "/banip ",
@@ -93,8 +93,10 @@ bool AntiCheatBlocker::detectAntiCheatInMessage(const std::string& message) {
 bool AntiCheatBlocker::detectBanCommand(const std::string& command) {
     std::string lowerCmd = toLower(command);
     
+    // Check if command starts with any of the ban patterns
     for (const auto& banPattern : banCommandPatterns) {
-        if (lowerCmd.find(banPattern) != std::string::npos) {
+        // Use rfind with position 0 to check for prefix match only
+        if (lowerCmd.rfind(banPattern, 0) == 0) {
             return true;
         }
     }
@@ -134,20 +136,19 @@ void AntiCheatBlocker::interceptBanCommand(Packet* packet) {
     // Block the packet from being sent by modifying it
     // For CommandRequestPacket, we can clear the command
     if (packet->isInstanceOf<CommandRequestPacket>()) {
-        CommandRequestPacket* cmdPacket = reinterpret_cast<CommandRequestPacket*>(packet);
-        if (cmdPacket != nullptr) {
-            std::string cmd = cmdPacket->command.getText();
-            if (detectBanCommand(cmd)) {
-                logF("[AntiCheatBlocker] Intercepted potential ban command: %s", cmd.c_str());
-                // Clear the command to prevent it from executing
-                cmdPacket->command.setText("");
-                
-                auto clientInstance = Game.getClientInstance();
-                if (clientInstance != nullptr) {
-                    auto guiData = clientInstance->getGuiData();
-                    if (guiData != nullptr) {
-                        guiData->displayClientMessageF("§a[AntiCheatBlocker] §fBlocked automated ban command!");
-                    }
+        // Use static_cast since isInstanceOf already verified the type
+        CommandRequestPacket* cmdPacket = static_cast<CommandRequestPacket*>(packet);
+        std::string cmd = cmdPacket->command.getText();
+        if (detectBanCommand(cmd)) {
+            logF("[AntiCheatBlocker] Intercepted potential ban command: %s", cmd.c_str());
+            // Clear the command to prevent it from executing
+            cmdPacket->command.setText("");
+            
+            auto clientInstance = Game.getClientInstance();
+            if (clientInstance != nullptr) {
+                auto guiData = clientInstance->getGuiData();
+                if (guiData != nullptr) {
+                    guiData->displayClientMessageF("§a[AntiCheatBlocker] §fBlocked automated ban command!");
                 }
             }
         }
@@ -174,18 +175,17 @@ void AntiCheatBlocker::onTick(GameMode* gm) {
 void AntiCheatBlocker::onSendPacket(Packet* packet) {
     if (packet == nullptr) return;
     
-    // Intercept text packets for anti-cheat detection in chat
+    // Check outgoing chat messages for anti-cheat related content
+    // This can detect if a server is trying to execute anti-cheat related commands through the client
     if (packet->isInstanceOf<TextPacket>()) {
-        TextPacket* textPacket = reinterpret_cast<TextPacket*>(packet);
-        if (textPacket != nullptr) {
-            std::string message = textPacket->message.getText();
-            std::string sourceName = textPacket->sourceName.getText();
-            
-            // Check if incoming message mentions anti-cheat
-            if (detectAntiCheatInMessage(message) || detectAntiCheatInMessage(sourceName)) {
-                // Trigger protection if anti-cheat is detected
-                triggerSafeDisconnect();
-            }
+        // Use static_cast since isInstanceOf already verified the type
+        TextPacket* textPacket = static_cast<TextPacket*>(packet);
+        std::string message = textPacket->message.getText();
+        
+        // Check if outgoing message mentions anti-cheat (could indicate client-side scripting detection)
+        if (detectAntiCheatInMessage(message)) {
+            // Trigger protection if anti-cheat is detected
+            triggerSafeDisconnect();
         }
     }
     
