@@ -66,6 +66,9 @@ public:
     virtual void registerIntSetting(const char* name, int* ptr, int defaultVal, int minVal, int maxVal) {}
     virtual void registerFloatSetting(const char* name, float* ptr, float defaultVal, float minVal, float maxVal) {}
 
+    // Returns true if this module should still receive hooks when disabled
+    virtual bool callWhenDisabled() { return false; }
+
     // Toggle helpers
     bool isEnabled() const { return enabled; }
     void setEnabled(bool e) {

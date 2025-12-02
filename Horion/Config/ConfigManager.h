@@ -31,6 +31,9 @@ public:
 	void loadConfig(std::string name, bool create);
 	void saveConfig();
 	void init();
+	
+	// Public accessor for roaming folder path
+	std::wstring getRoamingFolder() const { return roamingFolder; }
 };
 
 extern ConfigManager* configMgr;
