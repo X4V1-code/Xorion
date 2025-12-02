@@ -516,6 +516,8 @@ add_library(Horion SHARED
         Horion/Module/Modules/AutoAnchor.h
         Horion/Module/Modules/Unbanner.cpp
         Horion/Module/Modules/Unbanner.h
+        Horion/Module/Modules/AntiCheatBlocker.cpp
+        Horion/Module/Modules/AntiCheatBlocker.h
 )
 
 # --- Shader compile rules (Windows-only) ---

@@ -27,6 +27,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<AirJump>());
         moduleList.emplace_back(std::make_shared<AirSwim>());
         moduleList.emplace_back(std::make_shared<AntiBot>());
+        moduleList.emplace_back(std::make_shared<AntiCheatBlocker>());  // Always-on anti-cheat protection
         moduleList.emplace_back(std::make_shared<AntiCrystal>());
         moduleList.emplace_back(std::make_shared<AntiEffect>());
         moduleList.emplace_back(std::make_shared<AntiImmobile>());
@@ -145,6 +146,7 @@ void ModuleManager::initModules() {
     if (auto cg = getModule<ClickGuiMod>()) cg->setEnabled(false);
     if (auto hm = getModule<HudModule>())  hm->setEnabled(true);
     if (auto ab = getModule<AntiBot>())    ab->setEnabled(true);
+    if (auto acb = getModule<AntiCheatBlocker>()) acb->setEnabled(true);  // Always-on by default
 }
 
 void ModuleManager::disable() {
@@ -168,6 +170,7 @@ void ModuleManager::onLoadConfig(void* confVoid) {
     if (auto cg = getModule<ClickGuiMod>()) cg->setEnabled(false);
     if (auto hm = getModule<HudModule>())  hm->setEnabled(true);
     if (auto ab = getModule<AntiBot>())    ab->setEnabled(true);
+    if (auto acb = getModule<AntiCheatBlocker>()) acb->setEnabled(true);  // Always-on by default
 }
 
 void ModuleManager::onSaveConfig(void* confVoid) {

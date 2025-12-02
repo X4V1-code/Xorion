@@ -127,6 +127,7 @@
 #include "Modules/ChestESP.h"
 #include "Modules/AnchorNotifier.h"
 #include "Modules/AutoCrystal.h"
+#include "Modules/AntiCheatBlocker.h"
 
 #ifdef _DEV
 #include "Modules/PacketLogger.h"
