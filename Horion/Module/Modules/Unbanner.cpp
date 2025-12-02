@@ -179,17 +179,26 @@ void Unbanner::generateSpoofedIP() {
     std::uniform_int_distribution<> firstOctetDist(1, 223);
     std::uniform_int_distribution<> octetDist(0, 255);
     
-    int firstOctet;
+    int firstOctet, secondOctet, thirdOctet, fourthOctet;
+    bool isValid;
+    
     do {
         firstOctet = firstOctetDist(gen);
+        secondOctet = octetDist(gen);
+        thirdOctet = octetDist(gen);
+        fourthOctet = octetDist(gen);
+        
+        isValid = true;
+        
         // Skip private and reserved ranges
-    } while (firstOctet == 10 || firstOctet == 127 || 
-             (firstOctet >= 172 && firstOctet <= 191) ||
-             firstOctet == 192);
-    
-    int secondOctet = octetDist(gen);
-    int thirdOctet = octetDist(gen);
-    int fourthOctet = octetDist(gen);
+        if (firstOctet == 10) isValid = false;                           // 10.x.x.x private
+        else if (firstOctet == 127) isValid = false;                     // 127.x.x.x loopback
+        else if (firstOctet == 172 && secondOctet >= 16 && secondOctet <= 31) isValid = false;  // 172.16-31.x.x private
+        else if (firstOctet == 192 && secondOctet == 168) isValid = false;  // 192.168.x.x private
+        else if (firstOctet == 0) isValid = false;                       // 0.x.x.x reserved
+        else if (firstOctet >= 224) isValid = false;                     // 224-255.x.x.x multicast/reserved
+        
+    } while (!isValid);
     
     // Format as IPv4 address string
     std::stringstream ss;
