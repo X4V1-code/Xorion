@@ -27,10 +27,11 @@ const char* Unbanner::wordList[] = {
 const int Unbanner::wordListSize = sizeof(wordList) / sizeof(wordList[0]);
 
 Unbanner::Unbanner()
-    : IModule(0, Category::MISC, "Spoofs your identity to help avoid bans.") {
+    : IModule(0, Category::MISC, "Spoofs your identity to help avoid bans. Includes VPN-like IP spoofing.") {
     registerBoolSetting("SpoofName", &spoofName, spoofName);
     registerBoolSetting("SpoofDeviceId", &spoofDeviceId, spoofDeviceId);
     registerBoolSetting("SpoofXuid", &spoofXuid, spoofXuid);
+    registerBoolSetting("SpoofIP", &spoofIP, spoofIP);
     registerBoolSetting("ShowButton", &showButton, showButton);
 }
 
@@ -60,6 +61,15 @@ Unbanner::~Unbanner() {
         }
         delete fakeXuidHolder;
         fakeXuidHolder = nullptr;
+    }
+    
+    // Clean up IP holder
+    if (fakeIPHolder != nullptr) {
+        if (Game.getFakeIP() == fakeIPHolder) {
+            Game.setFakeIP(nullptr);
+        }
+        delete fakeIPHolder;
+        fakeIPHolder = nullptr;
     }
 }
 
@@ -159,10 +169,52 @@ void Unbanner::generateSpoofedXuid() {
     Game.setFakeXuid(fakeXuidHolder);
 }
 
+void Unbanner::generateSpoofedIP() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    // Generate a realistic-looking public IP address
+    // Avoid private IP ranges (10.x.x.x, 172.16-31.x.x, 192.168.x.x)
+    // and reserved ranges (0.x.x.x, 127.x.x.x, 224-255.x.x.x)
+    std::uniform_int_distribution<> firstOctetDist(1, 223);
+    std::uniform_int_distribution<> octetDist(0, 255);
+    
+    int firstOctet;
+    do {
+        firstOctet = firstOctetDist(gen);
+        // Skip private and reserved ranges
+    } while (firstOctet == 10 || firstOctet == 127 || 
+             (firstOctet >= 172 && firstOctet <= 191) ||
+             firstOctet == 192);
+    
+    int secondOctet = octetDist(gen);
+    int thirdOctet = octetDist(gen);
+    int fourthOctet = octetDist(gen);
+    
+    // Format as IPv4 address string
+    std::stringstream ss;
+    ss << firstOctet << "." << secondOctet << "." << thirdOctet << "." << fourthOctet;
+    
+    spoofedIP = ss.str();
+    ipGenerated = true;
+    
+    // Clean up old holder before creating new one
+    if (fakeIPHolder != nullptr) {
+        if (Game.getFakeIP() == fakeIPHolder) {
+            Game.setFakeIP(nullptr);
+        }
+        delete fakeIPHolder;
+        fakeIPHolder = nullptr;
+    }
+    fakeIPHolder = new TextHolder(spoofedIP);
+    Game.setFakeIP(fakeIPHolder);
+}
+
 void Unbanner::generateAllSpoofedIds() {
     if (spoofName) generateSpoofedUsername();
     if (spoofDeviceId) generateSpoofedDeviceId();
     if (spoofXuid) generateSpoofedXuid();
+    if (spoofIP) generateSpoofedIP();
     
     // Log the generated values
     auto clientInstance = Game.getClientInstance();
@@ -178,6 +230,9 @@ void Unbanner::generateAllSpoofedIds() {
             if (spoofXuid && xuidGenerated) {
                 guiData->displayClientMessageF("[Unbanner] XUID: %s", spoofedXuid.c_str());
             }
+            if (spoofIP && ipGenerated) {
+                guiData->displayClientMessageF("[Unbanner] VPN IP: %s", spoofedIP.c_str());
+            }
         }
     }
 }
@@ -192,6 +247,10 @@ const std::string& Unbanner::getSpoofedDeviceId() const {
 
 const std::string& Unbanner::getSpoofedXuid() const {
     return spoofedXuid;
+}
+
+const std::string& Unbanner::getSpoofedIP() const {
+    return spoofedIP;
 }
 
 void Unbanner::onEnable() {
@@ -212,6 +271,7 @@ void Unbanner::onDisable() {
     Game.setFakeName(nullptr);
     Game.setFakeDeviceId(nullptr);
     Game.setFakeXuid(nullptr);
+    Game.setFakeIP(nullptr);
     
     if (fakeNameHolder != nullptr) {
         delete fakeNameHolder;
@@ -225,13 +285,19 @@ void Unbanner::onDisable() {
         delete fakeXuidHolder;
         fakeXuidHolder = nullptr;
     }
+    if (fakeIPHolder != nullptr) {
+        delete fakeIPHolder;
+        fakeIPHolder = nullptr;
+    }
     
     usernameGenerated = false;
     deviceIdGenerated = false;
     xuidGenerated = false;
+    ipGenerated = false;
     spoofedUsername.clear();
     spoofedDeviceId.clear();
     spoofedXuid.clear();
+    spoofedIP.clear();
     
     auto clientInstance = Game.getClientInstance();
     if (clientInstance != nullptr) {
@@ -253,6 +319,9 @@ void Unbanner::onTick(GameMode* gm) {
     if (spoofXuid && !xuidGenerated) {
         generateSpoofedXuid();
     }
+    if (spoofIP && !ipGenerated) {
+        generateSpoofedIP();
+    }
     
     // Keep the fake values in GameData synchronized
     if (spoofName && usernameGenerated && Game.getFakeName() == nullptr && fakeNameHolder != nullptr) {
@@ -263,6 +332,9 @@ void Unbanner::onTick(GameMode* gm) {
     }
     if (spoofXuid && xuidGenerated && Game.getFakeXuid() == nullptr && fakeXuidHolder != nullptr) {
         Game.setFakeXuid(fakeXuidHolder);
+    }
+    if (spoofIP && ipGenerated && Game.getFakeIP() == nullptr && fakeIPHolder != nullptr) {
+        Game.setFakeIP(fakeIPHolder);
     }
 }
 
@@ -316,10 +388,11 @@ void Unbanner::renderUnbanButton(MinecraftUIRenderContext* ctx) {
     // Button dimensions
     const float buttonWidth = 220.0f;
     const float buttonHeight = 35.0f;
+    const float vpnInfoHeight = 20.0f;
 
     // Center button horizontally, position near bottom
     float buttonX = (windowSize.x - buttonWidth) / 2.0f;
-    float buttonY = windowSize.y - buttonHeight - 60.0f;
+    float buttonY = windowSize.y - buttonHeight - vpnInfoHeight - 60.0f;
 
     // Button rectangle
     Vec4 buttonRect(buttonX, buttonY, buttonX + buttonWidth, buttonY + buttonHeight);
@@ -354,6 +427,17 @@ void Unbanner::renderUnbanButton(MinecraftUIRenderContext* ctx) {
         buttonY + (buttonHeight - textHeight) / 2.0f
     );
     DrawUtils::drawText(textPos, &buttonText, whiteColor, 1.0f, 1.0f);
+
+    // Draw VPN IP info below the button
+    if (ipGenerated && spoofIP) {
+        std::string vpnText = "VPN: " + spoofedIP;
+        float vpnTextWidth = DrawUtils::getTextWidth(&vpnText, 0.8f);
+        Vec2 vpnTextPos(
+            buttonX + (buttonWidth - vpnTextWidth) / 2.0f,
+            buttonY + buttonHeight + 4.0f
+        );
+        DrawUtils::drawText(vpnTextPos, &vpnText, xorionGreen, 0.8f, 1.0f);
+    }
 
     // Handle click - regenerate all spoofed IDs
     if (isHovered && DrawUtils::shouldToggleLeftClick) {
