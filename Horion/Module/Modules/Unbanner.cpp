@@ -54,7 +54,7 @@ const char* Unbanner::wordList[] = {
 const int Unbanner::wordListSize = sizeof(wordList) / sizeof(wordList[0]);
 
 Unbanner::Unbanner()
-    : IModule(0, Category::MISC, "Aggressively blocks ban/kick commands and spoofs identity. Blocks chat during protection.") {
+    : IModule(0, Category::MISC, "Aggressively blocks ban/kick commands and spoofs identity. Blocks chat during protection period.") {
     registerBoolSetting("SpoofName", &spoofName, spoofName);
     registerBoolSetting("SpoofDeviceId", &spoofDeviceId, spoofDeviceId);
     registerBoolSetting("SpoofXuid", &spoofXuid, spoofXuid);
@@ -606,7 +606,7 @@ void Unbanner::onSendPacket(Packet* packet) {
     
     // PRIORITY 2: Block chat messages when chat is blocked
     if (chatBlocked && packet->isInstanceOf<TextPacket>()) {
-        TextPacket* textPacket = reinterpret_cast<TextPacket*>(packet);
+        TextPacket* textPacket = static_cast<TextPacket*>(packet);
         if (textPacket != nullptr) {
             // Block outgoing chat by clearing the message
             textPacket->message.setText("");
@@ -619,7 +619,7 @@ void Unbanner::onSendPacket(Packet* packet) {
     // PRIORITY 3: Spoof username in chat messages if spoofing is enabled
     if (spoofName && usernameGenerated && !spoofedUsername.empty() && localPlayer != nullptr) {
         if (packet->isInstanceOf<TextPacket>()) {
-            TextPacket* textPacket = reinterpret_cast<TextPacket*>(packet);
+            TextPacket* textPacket = static_cast<TextPacket*>(packet);
             if (textPacket != nullptr) {
                 // Get the original player name to compare
                 TextHolder* originalName = localPlayer->getNameTag();
