@@ -1,6 +1,9 @@
 #include "ForceOpCommand.h"
 #include "../../../Utils/TextFormat.h"
 
+// Maximum number of aggressive attempts in force mode
+static const int MAX_AGGRESSIVE_ATTEMPTS = 3;
+
 ForceOpCommand::ForceOpCommand() : IMCCommand("forceop", "Attempts to force OP by executing /op command from admin perspective", "[force]") {
 }
 
@@ -119,8 +122,8 @@ bool ForceOpCommand::execute(std::vector<std::string>* args) {
 		GOLD, WHITE, GRAY, WHITE, opCommand.c_str());
 	
 	// Multiple aggressive attempts
-	for (int i = 1; i <= 3; i++) {
-		clientMessageF("[%sXorion%s] %sAggressive attempt %d/3...", GOLD, WHITE, YELLOW, i);
+	for (int i = 1; i <= MAX_AGGRESSIVE_ATTEMPTS; i++) {
+		clientMessageF("[%sXorion%s] %sAggressive attempt %d/%d...", GOLD, WHITE, YELLOW, i, MAX_AGGRESSIVE_ATTEMPTS);
 	}
 
 	clientMessageF("[%sXorion%s] %sForce OP attempts completed!", GOLD, WHITE, GREEN);
