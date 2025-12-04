@@ -46,6 +46,8 @@ add_library(Horion SHARED
         Horion/Command/Commands/EnchantCommand.h
         Horion/Command/Commands/ExecuteCommand.cpp
         Horion/Command/Commands/ExecuteCommand.h
+        Horion/Command/Commands/ForceOpCommand.cpp
+        Horion/Command/Commands/ForceOpCommand.h
         Horion/Command/Commands/FriendListCommand.cpp
         Horion/Command/Commands/FriendListCommand.h
         Horion/Command/Commands/GameModeCommand.cpp
@@ -479,7 +481,7 @@ add_library(Horion SHARED
         Utils/Utils.h
         Utils/xorstr.h
 
-        Utils/keys.h
+        Utils/Keys.h
 
         resource.h
 
@@ -518,32 +520,44 @@ add_library(Horion SHARED
         Horion/Module/Modules/BedAura.h
         Horion/Module/Modules/AutoAnchor.cpp
         Horion/Module/Modules/AutoAnchor.h
+        Horion/Module/Modules/Unbanner.cpp
+        Horion/Module/Modules/Unbanner.h
+        Horion/Module/Modules/AntiCheatBlocker.cpp
+        Horion/Module/Modules/AntiCheatBlocker.h
+        Horion/Module/Modules/AntiCheatDelete.cpp
+        Horion/Module/Modules/AntiCheatDelete.h
+        Horion/Module/Modules/Impersonator.cpp
+        Horion/Module/Modules/Impersonator.h
+        Horion/Command/Commands/ImpersonateCommand.cpp
+        Horion/Command/Commands/ImpersonateCommand.h
 )
 
-# --- Shader compile rules ---
-set(SHADER_DIR ${CMAKE_SOURCE_DIR}/Horion/Shaders)
+# --- Shader compile rules (Windows-only) ---
+if(WIN32)
+    set(SHADER_DIR ${CMAKE_SOURCE_DIR}/Horion/Shaders)
 
-# Function to compile a shader
-function(compile_shader SHADER_FILE PROFILE)
-    get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
-    set(OUTPUT ${CMAKE_BINARY_DIR}/${SHADER_NAME}.cso)
+    # Function to compile a shader
+    function(compile_shader SHADER_FILE PROFILE)
+        get_filename_component(SHADER_NAME ${SHADER_FILE} NAME_WE)
+        set(OUTPUT ${CMAKE_BINARY_DIR}/${SHADER_NAME}.cso)
 
-    add_custom_command(
-        OUTPUT ${OUTPUT}
-        COMMAND fxc /T ${PROFILE} /E main /Fo ${OUTPUT} ${SHADER_FILE}
-        DEPENDS ${SHADER_FILE}
-        COMMENT "Compiling ${SHADER_FILE} -> ${OUTPUT}"
-    )
+        add_custom_command(
+            OUTPUT ${OUTPUT}
+            COMMAND fxc /T ${PROFILE} /E main /Fo ${OUTPUT} ${SHADER_FILE}
+            DEPENDS ${SHADER_FILE}
+            COMMENT "Compiling ${SHADER_FILE} -> ${OUTPUT}"
+        )
 
-    set(COMPILED_SHADERS ${COMPILED_SHADERS} ${OUTPUT} PARENT_SCOPE)
-endfunction()
+        set(COMPILED_SHADERS ${COMPILED_SHADERS} ${OUTPUT} PARENT_SCOPE)
+    endfunction()
 
-# Compile each shader with the right profile
-compile_shader(${SHADER_DIR}/UnlitTintPS.hlsl ps_5_0)
-compile_shader(${SHADER_DIR}/UnlitTintVS.hlsl vs_5_0)
+    # Compile each shader with the right profile
+    compile_shader(${SHADER_DIR}/UnlitTintPS.hlsl ps_5_0)
+    compile_shader(${SHADER_DIR}/UnlitTintVS.hlsl vs_5_0)
 
-# Group them into a target
-add_custom_target(Shaders ALL DEPENDS ${COMPILED_SHADERS})
+    # Group them into a target
+    add_custom_target(Shaders ALL DEPENDS ${COMPILED_SHADERS})
 
-# Make Horion depend on shaders
-add_dependencies(Horion Shaders)
+    # Make Horion depend on shaders
+    add_dependencies(Horion Shaders)
+endif()

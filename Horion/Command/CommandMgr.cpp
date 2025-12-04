@@ -27,12 +27,14 @@ void CommandMgr::initCommands() {
     commandList.push_back(new DupeCommand());
     commandList.push_back(new EjectCommand());
     commandList.push_back(new EnchantCommand());
-    // commandList.push_back(new ExecuteCommand()); // TODO: ExecuteCommand not available
+    commandList.push_back(new ExecuteCommand());
+    commandList.push_back(new ForceOpCommand());
     commandList.push_back(new FriendListCommand());
     commandList.push_back(new GameModeCommand());
     commandList.push_back(new GiveCommand());
     commandList.push_back(new HelpCommand());
     commandList.push_back(new HideCommand());
+    commandList.push_back(new ImpersonateCommand());
     commandList.push_back(new ModulesCommand());
     commandList.push_back(new NameSpoofCommand());
     commandList.push_back(new NbtCommand());

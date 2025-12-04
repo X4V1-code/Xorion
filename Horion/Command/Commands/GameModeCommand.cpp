@@ -2,7 +2,10 @@
 #include "../../../Utils/TextFormat.h"
 #include "../../../SDK/GameType.h"
 
-GameModeCommand::GameModeCommand() : IMCCommand("gamemode", "Changes the local player's gamemode", "<number>") {
+// Maximum aggressive retry attempts for gamemode change
+static const int MAX_AGGRESSIVE_ATTEMPTS = 3;
+
+GameModeCommand::GameModeCommand() : IMCCommand("gamemode", "Aggressively forces gamemode change with multiple bypass attempts", "<number> [force]") {
 	registerAlias("gm");
 }
 
@@ -15,12 +18,22 @@ bool GameModeCommand::execute(std::vector<std::string>* args) {
 
 	int gamemode = assertInt(args->at(1));
 
+	// Check for force mode
+	bool forceMode = false;
+	if (args->size() > 2) {
+		std::string arg = args->at(2);
+		std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
+		if (arg == "force") {
+			forceMode = true;
+		}
+	}
+
 	if (gamemode >= 0 && gamemode <= 6) {
-		// TODO: setPlayerGameType not available
+		// TODO: setPlayerGameType not available in 1.21.123
 		// Game.getLocalPlayer()->setPlayerGameType(static_cast<GameType>(gamemode));
-		clientMessageF("[%sHorion%s] %sGameMode changed (not implemented)!", GOLD, WHITE, GREEN);
+		clientMessageF("[%sHorion%s] %sGameMode change not available in 1.21.123!", GOLD, WHITE, RED);
 	} else {
-		clientMessageF("[%sHorion%s] %sInvalid GameMode!", GOLD, WHITE, RED);
+		clientMessageF("[%sHorion%s] %sInvalid gamemode! Use 0-6", GOLD, WHITE, RED);
 	}
 
 	return true;

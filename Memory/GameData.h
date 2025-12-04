@@ -223,6 +223,20 @@ public:
     void setFakeName(TextHolder* name) { fakeName = name; }
     TextHolder* getFakeName() { return fakeName; }
 
+    // Spoofed Device ID, XUID, and IP for ban evasion
+    TextHolder* fakeDeviceId = nullptr;
+    TextHolder* fakeXuid = nullptr;
+    TextHolder* fakeIP = nullptr;
+    
+    void setFakeDeviceId(TextHolder* deviceId) { fakeDeviceId = deviceId; }
+    TextHolder* getFakeDeviceId() { return fakeDeviceId; }
+    
+    void setFakeXuid(TextHolder* xuid) { fakeXuid = xuid; }
+    TextHolder* getFakeXuid() { return fakeXuid; }
+    
+    void setFakeIP(TextHolder* ip) { fakeIP = ip; }
+    TextHolder* getFakeIP() { return fakeIP; }
+
     inline std::int64_t getLastUpdateTime() { return lastUpdate; }
 
     void forEachEntity(std::function<void(Entity*, bool)>);
