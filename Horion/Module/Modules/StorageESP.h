@@ -7,7 +7,8 @@ private:
 	std::vector<AABB> bufferedChestList;
 	float opacity = 1.f;
 	std::mutex listLock;
-	SettingEnum mode{this};
+	// TODO: SettingEnum removed in 1.21.123
+	//SettingEnum mode{this};
 	bool fill = false;
 
 public:

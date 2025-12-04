@@ -1,12 +1,13 @@
 #include "NoFall.h"
 
 NoFall::NoFall() : IModule(VK_NUMPAD3, Category::PLAYER, "Prevents you from taking falldamage") {
-	mode.addEntry(EnumEntry("Vanilla", 0))
+	// TODO: Settings system redesigned in 1.21.123
+	/*mode.addEntry(EnumEntry("Vanilla", 0))
 		.addEntry(EnumEntry("Mineplex", 1))
 		.addEntry(EnumEntry("CubeCraft", 2))
 		.addEntry(EnumEntry("Nukkit", 3))
 		.addEntry(EnumEntry("AuthGroundPos", 4));
-	registerEnumSetting("Mode", &mode, 0);
+	registerEnumSetting("Mode", &mode, 0);*/
 }
 
 NoFall::~NoFall() {}

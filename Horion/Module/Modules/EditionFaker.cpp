@@ -1,7 +1,8 @@
 #include "EditionFaker.h"
 
 EditionFaker::EditionFaker() : IModule(0, Category::MISC, "Fakes your device.") {
-	edition.addEntry(EnumEntry("Unknown", 0))
+	// TODO: Settings system redesigned in 1.21.123
+	/*edition.addEntry(EnumEntry("Unknown", 0))
 	.addEntry(EnumEntry("Android", 1))
 	.addEntry(EnumEntry("iOS", 2))
 	.addEntry(EnumEntry("macOS", 3))  // OS_X
@@ -16,14 +17,16 @@ EditionFaker::EditionFaker() : IModule(0, Category::MISC, "Fakes your device.") 
 	.addEntry(EnumEntry("Nintendo Switch", 12))  // NX
 	.addEntry(EnumEntry("Xbox", 13))
 	.addEntry(EnumEntry("Windows Phone", 14));
-	registerEnumSetting("Edition", &edition, 1);
+	registerEnumSetting("Edition", &edition, 1);*/
 }
 
 EditionFaker::~EditionFaker() {
 }
 
 int EditionFaker::getFakedEditon() {
-	return edition.GetSelectedEntry().GetValue();
+	// TODO: Settings system redesigned - returning default value
+	//return edition.GetSelectedEntry().GetValue();
+	return 1; // Default to Android
 }
 
 const char* EditionFaker::getModuleName() {

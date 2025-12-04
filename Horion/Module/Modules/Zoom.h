@@ -16,7 +16,8 @@ public:
 	~Zoom();
 
 	virtual const char* getModuleName() override;
-	bool isFlashMode() override;
+	// TODO: isFlashMode removed from IModule in 1.21.123
+	//bool isFlashMode() override;
 	void onEnable() override;
 	void onDisable() override;
 	void onLevelRender() override;

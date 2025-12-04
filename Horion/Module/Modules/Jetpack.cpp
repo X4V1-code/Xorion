@@ -12,9 +12,12 @@ Jetpack::Jetpack() : IModule('F', Category::MOVEMENT, "Fly around like you had a
 Jetpack::~Jetpack() {
 }
 
+// TODO: isFlashMode removed from IModule in 1.21.123
+/*
 bool Jetpack::isFlashMode() {
 	return true;
 }
+*/
 
 const char* Jetpack::getModuleName() {
 	return ("Jetpack");

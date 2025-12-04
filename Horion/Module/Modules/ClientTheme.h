@@ -3,7 +3,8 @@
 
 class ClientTheme : public IModule {
 public:
-	SettingEnum Theme = SettingEnum(this);
+	// TODO: SettingEnum removed in 1.21.123
+	//SettingEnum Theme = SettingEnum(this);
 	ClientTheme();
 	~ClientTheme();
 

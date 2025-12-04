@@ -6,7 +6,8 @@
 #include "../../../SDK/GameSettingsInput.h"
 
 Fly::Fly() : IModule('F', Category::MOVEMENT, "Fly to the sky") {
-	mode.addEntry(EnumEntry("Creative", 0))
+	// TODO: Settings system redesigned in 1.21.123
+	/*mode.addEntry(EnumEntry("Creative", 0))
 	.addEntry(EnumEntry("CubeGlide", 1))
 	.addEntry(EnumEntry("AirStuck", 2))
 	.addEntry(EnumEntry("Jetpack", 3))
@@ -14,7 +15,7 @@ Fly::Fly() : IModule('F', Category::MOVEMENT, "Fly to the sky") {
 	.addEntry(EnumEntry("Motion", 5))
 	.addEntry(EnumEntry("Moonlight", 6))
 	.addEntry(EnumEntry("Geyser", 7));
-	registerEnumSetting("Mode", &mode, 0);
+	registerEnumSetting("Mode", &mode, 0);*/
 	registerFloatSetting("Horizontal Speed", &this->horizontalSpeed, this->horizontalSpeed, 0.1f, 10.f);
 	registerFloatSetting("Vertical Speed", &this->verticalSpeed, this->verticalSpeed, 0.1f, 10.f);
 }
@@ -27,7 +28,7 @@ const char *Fly::getModuleName() {
 }
 
 void Fly::onEnable() {
-	switch (mode.selected) {
+	switch (mode) {
 	case 5:
 		if (g_Data.getLocalPlayer() != nullptr)
 			g_Data.getLocalPlayer()->setPos(g_Data.getLocalPlayer()->getPos().add(Vec3(0, 1, 0)));
@@ -38,7 +39,7 @@ void Fly::onEnable() {
 void Fly::onTick(GameMode *gm) {
 	gameTick++;
 
-	switch (mode.selected) {
+	switch (mode) {
 	case 0:
 		gm->player->setStatusFlag(CAN_FLY, true);
 		break;
@@ -149,7 +150,7 @@ void Fly::onDisable() {
 	if (g_Data.getLocalPlayer() == nullptr)
 		return;
 
-	switch (mode.selected) {
+	switch (mode) {
 	case 0:
 		if (g_Data.getLocalPlayer()->getActorGameTypeComponent()->gameType != GameType::Creative)
 			g_Data.getLocalPlayer()->setStatusFlag(CAN_FLY, false);
@@ -182,7 +183,7 @@ void Fly::onMove(MoveInputHandler *input) {
 	moveVec2D = {moveVec2D.x * c - moveVec2D.y * s, moveVec2D.x * s + moveVec2D.y * c};
 	Vec3 moveVec;
 
-	switch (mode.selected) {
+	switch (mode) {
 	case 5: {
 		Vec3 localPlayerPos = localPlayer->getPos();
 

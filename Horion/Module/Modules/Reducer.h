@@ -7,7 +7,8 @@ public:
 	Reducer();
 	~Reducer();
 
-	SettingEnum mode = (*new SettingEnum(this));
+	// TODO: SettingEnum removed in 1.21.123
+	//SettingEnum mode = (*new SettingEnum(this));
 
 	int hitCount = 0;
 	int ticks = 0;

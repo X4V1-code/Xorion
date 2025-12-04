@@ -28,8 +28,9 @@ public:
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
 	virtual void onPreRender(MinecraftUIRenderContext* renderCtx) override;
-	virtual void onLoadConfig(void* confVoid) override;
-	virtual void onSaveConfig(void* confVoid) override;
+	// TODO: onLoadConfig/onSaveConfig removed from IModule in 1.21.123
+	//virtual void onLoadConfig(void* confVoid) override;
+	//virtual void onSaveConfig(void* confVoid) override;
 
 	bool add(std::string text, Vec3 pos, int dimension) {
 		for (auto it = waypoints->begin(); it != waypoints->end(); it++) {

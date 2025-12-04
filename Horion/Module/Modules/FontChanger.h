@@ -3,7 +3,8 @@
 
 class FontChanger : public IModule {
 public:
-	SettingEnum Fonts = SettingEnum(this);
+	// TODO: SettingEnum removed in 1.21.123
+	//SettingEnum Fonts = SettingEnum(this);
 	FontChanger();
 	~FontChanger();
 

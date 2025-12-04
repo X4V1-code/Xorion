@@ -9,9 +9,12 @@ Zoom::Zoom() : IModule('C', Category::VISUAL, "Zoom in or out!") {
 Zoom::~Zoom() {
 }
 
+// TODO: isFlashMode removed from IModule in 1.21.123
+/*
 bool Zoom::isFlashMode() {
 	return true;
 }
+*/
 
 const char* Zoom::getModuleName() {
 	return ("Zoom");
