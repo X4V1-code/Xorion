@@ -23,7 +23,7 @@ bool Tower::tryTower(Vec3 blockBelow) {
 
 	DrawUtils::drawBox(blockBelow, Vec3(blockBelow).add(1), 0.4f);
 
-	Block* block = Game.getLocalPlayer()->getRegion()->getBlock(Vec3i(blockBelow));
+	Block* block = g_Data.getLocalPlayer()->getRegion()->getBlock(Vec3i(blockBelow));
 	BlockLegacy* blockLegacy = (block->blockLegacy);
 	if (!blockLegacy->isSolid) {
 		Vec3i blok(blockBelow);
@@ -44,7 +44,7 @@ bool Tower::tryTower(Vec3 blockBelow) {
 		int i = 0;
 		for (auto current : checklist) {
 			Vec3i calc = blok.sub(*current);
-			if (((Game.getLocalPlayer()->getRegion()->getBlock(calc)->blockLegacy))->isSolid) {
+			if (((g_Data.getLocalPlayer()->getRegion()->getBlock(calc)->blockLegacy))->isSolid) {
 				// Found a solid block to click
 				foundCandidate = true;
 				blok = calc;
@@ -54,10 +54,10 @@ bool Tower::tryTower(Vec3 blockBelow) {
 		}
 		if (foundCandidate && GameData::isKeyDown(*input->spaceBarKey)) {
 			Vec3 moveVec;
-			moveVec.x = Game.getLocalPlayer()->entityLocation->velocity.x;
+			moveVec.x = g_Data.getLocalPlayer()->entityLocation->velocity.x;
 			moveVec.y = motion;
-			moveVec.z = Game.getLocalPlayer()->entityLocation->velocity.z;
-			Game.getLocalPlayer()->lerpMotion(moveVec);
+			moveVec.z = g_Data.getLocalPlayer()->entityLocation->velocity.z;
+			g_Data.getLocalPlayer()->lerpMotion(moveVec);
 			bool idk = true;
 			Game.getGameMode()->buildBlock(&blok, i, idk);
 
@@ -68,21 +68,22 @@ bool Tower::tryTower(Vec3 blockBelow) {
 }
 
 void Tower::onPostRender(MinecraftUIRenderContext* renderCtx) {
-	if (Game.getLocalPlayer() == nullptr)
+	if (g_Data.getLocalPlayer() == nullptr)
 		return;
 	if (!Game.canUseMoveKeys())
 		return;
-	auto selectedItem = Game.getLocalPlayer()->getSelectedItem();
-	if (!selectedItem->isValid() || !(*selectedItem->item)->isBlock())  // Block in hand?
+	auto supplies = g_Data.getLocalPlayer()->getSupplies();
+	auto selectedItem = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
+	if (!selectedItem->isValid || !selectedItem->getItem()->isBlock())  // Block in hand?
 		return;
 
-	Vec3 blockBelow = *Game.getLocalPlayer()->getPos();  // Block below the player
-	blockBelow.y -= Game.getLocalPlayer()->getAABBShapeComponent()->size.y;
+	Vec3 blockBelow = g_Data.getLocalPlayer()->getPos();  // Block below the player
+	blockBelow.y -= g_Data.getLocalPlayer()->getAABBShapeComponent()->size.y;
 	blockBelow.y -= 0.5f;
 
 	// Adjustment by velocity
-	float speed = Game.getLocalPlayer()->entityLocation->velocity.magnitudexy();
-	Vec3 vel = Game.getLocalPlayer()->entityLocation->velocity;
+	float speed = g_Data.getLocalPlayer()->entityLocation->velocity.magnitudexy();
+	Vec3 vel = g_Data.getLocalPlayer()->entityLocation->velocity;
 	vel.normalize();  // Only use values from 0 - 1
 
 	if (!tryTower(blockBelow)) {
@@ -90,7 +91,7 @@ void Tower::onPostRender(MinecraftUIRenderContext* renderCtx) {
 			blockBelow.z -= vel.z * 0.4f;
 			if (!tryTower(blockBelow)) {
 				blockBelow.x -= vel.x * 0.4f;
-				if (!tryTower(blockBelow) && Game.getLocalPlayer()->isSprinting()) {
+				if (!tryTower(blockBelow) && g_Data.getLocalPlayer()->isSprinting()) {
 					blockBelow.z += vel.z;
 					blockBelow.x += vel.x;
 					tryTower(blockBelow);

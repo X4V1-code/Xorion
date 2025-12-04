@@ -1,4 +1,6 @@
 #include "ExecuteCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/Utils.h"
 
 ExecuteCommand::ExecuteCommand() : IMCCommand("execute", "Executes javascript code", "<code>") {
 	registerAlias("exec");
@@ -17,7 +19,7 @@ bool ExecuteCommand::execute(std::vector<std::string>* args) {
 	}
 	auto str = os.str();
 
-	auto wstr = Utils::stringToWstring(str);
-	clientMessageF("%sScript returned: %s%S", GOLD, WHITE, scriptMgr.runScript(wstr).c_str());
+	scriptMgr.runScript(str);
+	clientMessageF("%sScript executed", GOLD);
 	return true;
 }

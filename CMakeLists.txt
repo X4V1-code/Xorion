@@ -114,6 +114,8 @@ add_library(Horion SHARED
         Horion/Config/ConfigManager.h
         Horion/FriendList/FriendList.cpp
         Horion/FriendList/FriendList.h
+        Horion/FriendList/FriendsManager.cpp
+        Horion/FriendList/FriendsManager.h
         Horion/Menu/ClickGui.cpp
         Horion/Menu/ClickGui.h
         Horion/Menu/TabGui.cpp
@@ -460,6 +462,8 @@ add_library(Horion SHARED
         SDK/Weather.h
 
         Utils/ChakraHelper.h
+        Utils/ClientColors.cpp
+        Utils/ClientColors.h
         Utils/DllHelper.h
         Utils/HMath.h
         Utils/Json.hpp

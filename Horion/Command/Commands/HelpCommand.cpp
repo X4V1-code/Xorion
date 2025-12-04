@@ -1,4 +1,5 @@
 #include "HelpCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 #include "../CommandMgr.h"
 

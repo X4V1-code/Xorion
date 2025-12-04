@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include "../Memory/SlimMem.h"
+
 // #include "xorstr.h"
 
 static const char* const KeyNames[] = {

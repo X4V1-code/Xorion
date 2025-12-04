@@ -1,6 +1,7 @@
 #include "DamageCommand.h"
 
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 
 DamageCommand::DamageCommand() : IMCCommand("damage", "Damage yourself (relies on falldamage)", "<amount>") {
 	registerAlias("dmg");

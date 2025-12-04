@@ -1,4 +1,7 @@
 #include "ImmediateGui.h"
+#include "../Utils/TextFormat.h"
+#include "../Utils/Utils.h"
+#include "DrawUtils.h"
 
 ImmediateGui HImGui;
 
@@ -73,12 +76,15 @@ void ImmediateGui::startFrame() {
 	this->leftMb.update();
 	this->rightMb.update();
 
+	// TODO: getMouseGrabbed() doesn't exist in new API
+	/*
 	if (g_Data.getClientInstance()->getMouseGrabbed()) {
 		this->leftMb.isClicked = false;
 		this->rightMb.isClicked = false;
 
 		this->mousePos = {-1000, 1000};
 	}
+	*/
 }
 
 void ImmediateGui::endFrame() {

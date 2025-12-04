@@ -1,4 +1,7 @@
 #include "LocalPlayerFunctions.h"
+#include "EntityFunctions.h"
+#include "Vector3Functions.h"
+#include "../../../SDK/GameMode.h"
 
 #ifndef ENTITY_INVALID
 #define ENTITY_INVALID                                                                                        \
@@ -31,7 +34,8 @@ JsValueRef CALLBACK LocalPlayerFunctions::setVelocity(JsValueRef callee, bool is
 		THROW(L"Invalid vector!");
 	}
 
-	ent->velocity = vecOpt.value();
+	// TODO: Entity::velocity removed
+	// ent->velocity = vecOpt.value();
 	return chakra.trueValue();
 }
 
@@ -61,8 +65,9 @@ JsValueRef CALLBACK LocalPlayerFunctions::setViewAngles(JsValueRef callee, bool 
 		THROW(L"Invalid vector!");
 	}
 
-	vec2_t temp = vec2_t(vecOpt.value().x, vecOpt.value().y).sub(ent->viewAngles);
-	reinterpret_cast<C_LocalPlayer*>(ent)->applyTurnDelta(&temp);
+	// TODO: Entity::viewAngles removed
+	// vec2_t temp = vec2_t(vecOpt.value().x, vecOpt.value().y).sub(ent->viewAngles);
+	// reinterpret_cast<LocalPlayer*>(ent)->applyTurnDelta(&temp);
 	return chakra.trueValue();
 }
 
@@ -77,7 +82,8 @@ JsValueRef CALLBACK LocalPlayerFunctions::setIsOnGround(JsValueRef callee, bool 
 		THROW(L"Invalid boolean!");
 	}
 
-	ent->onGround = isOnGroundOptional.value();
+	// TODO: Entity::onGround removed
+	// ent->onGround = isOnGroundOptional.value();
 	return chakra.trueValue();
 }
 
@@ -89,6 +95,8 @@ JsValueRef CALLBACK LocalPlayerFunctions::getInventory(JsValueRef callee, bool i
   
 	return reinterpret_cast<ContextObjects*>(callbackState)->inventoryObject;
 
+	// TODO: Rest of function uses removed C_LocalPlayer and getItemStack APIs
+	/*
 	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
 
 	JsValueRef inventoryArr;
@@ -131,6 +139,7 @@ JsValueRef CALLBACK LocalPlayerFunctions::getInventory(JsValueRef callee, bool i
 	};
 
 	return inventoryArr;
+	*/
 }
 
 JsValueRef CALLBACK LocalPlayerFunctions::breakBlock(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
@@ -139,16 +148,17 @@ JsValueRef CALLBACK LocalPlayerFunctions::breakBlock(JsValueRef callee, bool isC
 		ENTITY_INVALID;
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	auto vecOpt = Vector3Functions::getVec3FromArguments(&arguments[1], argumentCount - 1);
 	if (!vecOpt.has_value()) {
 		THROW(L"Invalid vector!");
 	}
 
-	vec3_ti pos = vecOpt.value();
+	Vec3 pos = vecOpt.value();
+	Vec3i blockPos(pos.x, pos.y, pos.z);
 
-	g_Data.getGameMode()->destroyBlock(&pos, 1);
+	g_Data.getGameMode()->destroyBlock(blockPos, 1);
 	return chakra.trueValue();
 }
 
@@ -158,16 +168,17 @@ JsValueRef CALLBACK LocalPlayerFunctions::placeBlock(JsValueRef callee, bool isC
 		ENTITY_INVALID;
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	auto vecOpt = Vector3Functions::getVec3FromArguments(&arguments[1], argumentCount - 1);
 	if (!vecOpt.has_value()) {
 		THROW(L"Invalid vector!");
 	}
 
-	vec3_ti pos = vecOpt.value();
+	Vec3 pos = vecOpt.value();
+	Vec3i blockPos(pos.x, pos.y, pos.z);
 
-	g_Data.getGameMode()->buildBlock(&pos, 1);
+	g_Data.getGameMode()->buildBlock(&blockPos, 1, true);
 	return chakra.trueValue();
 }
 
@@ -177,16 +188,17 @@ JsValueRef CALLBACK LocalPlayerFunctions::breakBlockRelativeToPlr(JsValueRef cal
 		ENTITY_INVALID;
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	auto vecOpt = Vector3Functions::getVec3FromArguments(&arguments[1], argumentCount - 1);
 	if (!vecOpt.has_value()) {
 		THROW(L"Invalid vector!");
 	}
 
-	vec3_ti pos = vecOpt.value().add(*plr->getPos());
+	Vec3 pos = vecOpt.value().add(plr->getPos());
+	Vec3i blockPos(pos.x, pos.y, pos.z);
 
-	g_Data.getGameMode()->destroyBlock(&pos, 1);
+	g_Data.getGameMode()->destroyBlock(blockPos, 1);
 	return chakra.trueValue();
 }
 
@@ -196,15 +208,16 @@ JsValueRef CALLBACK LocalPlayerFunctions::placeBlockRelativeToPlr(JsValueRef cal
 		ENTITY_INVALID;
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	auto vecOpt = Vector3Functions::getVec3FromArguments(&arguments[1], argumentCount - 1);
 	if (!vecOpt.has_value()) {
 		THROW(L"Invalid vector!");
 	}
 
-	vec3_ti pos = vecOpt.value().add(*plr->getPos());
+	Vec3 pos = vecOpt.value().add(plr->getPos());
+	Vec3i blockPos(pos.x, pos.y, pos.z);
 
-	g_Data.getGameMode()->buildBlock(&pos, 1);
+	g_Data.getGameMode()->buildBlock(&blockPos, 1, true);
 	return chakra.trueValue();
 }

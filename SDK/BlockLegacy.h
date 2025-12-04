@@ -66,6 +66,15 @@ public:
 	void liquidGetFlow(Vec3* flowOut, BlockSource*, const Vec3i* pos);
 	bool getCollisionShape(AABB* collShapeOut, Block* block, BlockSource* blockSource, const Vec3i* pos, Entity* actor);
 	bool hasWater(BlockSource*, const Vec3i& pos);
+	
+	// Additional helper methods
+	TextHolder getName() const { return name; }
+	
+	// Stub for block state access - returns nullptr, actual implementation would query block state
+	struct BlockState {
+		int getValue(BlockLegacy* block) { return 0; }
+	};
+	BlockState* getBlockState(const char* stateName) const { return nullptr; }
 };
 
 class Block {
@@ -74,6 +83,9 @@ public:
 	BUILD_ACCESS(this, BlockLegacy*, blockLegacy, 0x10);
 
 	inline BlockLegacy* toLegacy() { return blockLegacy; }
+	
+	// Get the underlying BlockLegacy
+	BlockLegacy* getBlock() const { return blockLegacy; }
 
 private:
 	virtual void Destructor();
@@ -139,3 +151,6 @@ public:
 	virtual bool canDoBlockDrops(void);
 	virtual bool canDoContainedItemDrops(void);
 };
+
+// Legacy alias
+using C_BlockLegacy = BlockLegacy;

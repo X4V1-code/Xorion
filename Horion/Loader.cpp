@@ -1,4 +1,5 @@
 #include "Loader.h"
+#include "../Memory/SlimMem.h"
 
 SlimUtils::SlimMem mem;
 const SlimUtils::SlimModule* gameModule;
@@ -12,7 +13,7 @@ bool Loader::isRunning = true;
 
 DWORD WINAPI ejectThread(LPVOID lpParam) {
 	while (Loader::isRunning) {
-		if ((GameData::isKeyDown(VK_CONTROL) && GameData::isKeyDown('L')) || GameData::isKeyDown(VK_END) || GameData::shouldTerminate()) {
+		if ((GameData::isKeyDown(VK_CONTROL) && GameData::isKeyDown('L')) || GameData::isKeyDown(VK_END) || g_Data.shouldTerminate()) {
 			Loader::isRunning = false;  // Uninject
 			break;
 		}
@@ -20,7 +21,7 @@ DWORD WINAPI ejectThread(LPVOID lpParam) {
 		Sleep(20);
 	}
 	logF("Stopping Threads...");
-	GameData::terminate();
+	g_Data.terminate();
 	Sleep(50);  // Give the threads a bit of time to exit
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(lpParam), 1);  // Uninject
@@ -43,7 +44,7 @@ DWORD WINAPI start(LPVOID lpParam) {
 	gameModule = mem.GetModule(L"Minecraft.Windows.exe");  // Get Module for Base Address
 
 	MH_Initialize();
-	GameData::initGameData(gameModule, &mem, (HMODULE)lpParam);
+	g_Data.initGameData(gameModule, &mem, (HMODULE)lpParam);
 	Target::init(Game.getPtrLocalPlayer());
 	Hooks::Init();
 
@@ -107,7 +108,7 @@ BOOL __stdcall DllMain(HMODULE hModule,
 		delete configMgr;
 		if (Game.getLocalPlayer() != nullptr) {
 			GuiData* guiData = Game.getClientInstance()->getGuiData();
-			if (guiData != nullptr && !GameData::shouldHide())
+			if (guiData != nullptr && !g_Data.shouldHide())
 				guiData->displayClientMessageF("%sEjected!", RED);
 		}
 		break;

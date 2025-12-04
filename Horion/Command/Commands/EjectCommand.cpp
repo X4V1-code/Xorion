@@ -8,6 +8,6 @@ EjectCommand::~EjectCommand() {
 }
 
 bool EjectCommand::execute(std::vector<std::string>* args) {
-	GameData::terminate();
+	g_Data.setTerminate(true);
 	return true;
 }

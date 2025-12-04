@@ -1,4 +1,5 @@
 #include "Freecam.h"
+#include "../../../Memory/GameData.h"
 #include "../../../Utils/Utils.h"
 
 Freecam::Freecam() : IModule('V', Category::MISC, "Move your camera without moving the player.") {

@@ -1,5 +1,7 @@
 #include "Jetpack.h"
-
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/GameMode.h"
+#include "../../../SDK/Packet.h"
 #include "../../../Utils/Logger.h"
 
 Jetpack::Jetpack() : IModule('F', Category::MOVEMENT, "Fly around like you had a Jetpack!") {
@@ -19,8 +21,8 @@ const char* Jetpack::getModuleName() {
 }
 
 void Jetpack::onTick(C_GameMode* gm) {
-	float calcYaw = (gm->player->yaw + 90) * (PI / 180);
-	float calcPitch = (gm->player->pitch) * -(PI / 180);
+	float calcYaw = (gm->player->getActorHeadRotationComponent()->rot.y + 90) * (PI / 180);
+	float calcPitch = (gm->player->getActorHeadRotationComponent()->rot.x) * -(PI / 180);
 
 	if (!isBypass) {
 		vec3_t moveVec;
@@ -32,21 +34,21 @@ void Jetpack::onTick(C_GameMode* gm) {
 	} else {
 		delay++;
 
-		if (delay >= 5) {
-			vec3_t pos = *g_Data.getLocalPlayer()->getPos();
-			C_MovePlayerPacket a(g_Data.getLocalPlayer(), pos);
-			g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&a);
-			pos.y += 0.35f;
-			a = C_MovePlayerPacket(g_Data.getLocalPlayer(), pos);
-			g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&a);
-
-			gm->player->velocity.y = 0.465f;
+	if (delay >= 5) {
+		vec3_t pos = g_Data.getLocalPlayer()->getPos();
+		MovePlayerPacket packet1(g_Data.getLocalPlayer(), pos);
+		g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet1);
+		pos.y += 0.35f;
+		MovePlayerPacket packet2(g_Data.getLocalPlayer(), pos);
+		g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet2);			// TODO: Entity velocity not directly accessible
+			// gm->player->velocity.y = 0.465f;
 			vec3_t moveVec;
 			moveVec.x = cos(calcYaw) * cos(calcPitch) * speedMod;
 			moveVec.z = sin(calcYaw) * cos(calcPitch) * speedMod;
 
-			gm->player->velocity.x = moveVec.x;
-			gm->player->velocity.z = moveVec.z;
+			// TODO: Entity velocity not directly accessible
+			// gm->player->velocity.x = moveVec.x;
+			// gm->player->velocity.z = moveVec.z;
 
 			float teleportX = cos(calcYaw) * cos(calcPitch) * 0.00000005f;
 			float teleportZ = sin(calcYaw) * cos(calcPitch) * 0.00000005f;
@@ -54,7 +56,8 @@ void Jetpack::onTick(C_GameMode* gm) {
 			pos = *gm->player->getPos();
 			g_Data.getLocalPlayer()->setPos(vec3_t(pos.x + teleportX, pos.y - 0.15f, pos.z + teleportZ));
 
-			gm->player->velocity.y -= 0.15f;
+			// TODO: Entity velocity not directly accessible
+			// gm->player->velocity.y -= 0.15f;
 			delay = 0;
 		}
 	}

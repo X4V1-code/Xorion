@@ -1,4 +1,6 @@
 #include "InventoryMove.h"
+#include "../../../Utils/HMath.h"
+#include "../../../Memory/GameData.h"
 
 InventoryMove::InventoryMove() : IModule(0, Category::MOVEMENT, "Move even when you have your inventory open.") {
 }
@@ -11,7 +13,7 @@ const char* InventoryMove::getModuleName() {
 }
 
 void InventoryMove::onTick(GameMode* gm) {
-	if (Game.getLocalPlayer()->canOpenContainerScreen())
+	if (false) // TODO: g_Data.getLocalPlayer()->canOpenContainerScreen()
 		return;
 	GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
 

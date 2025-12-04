@@ -1,4 +1,5 @@
 #include "WaypointCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 WaypointCommand::WaypointCommand() : IMCCommand("waypoint", "Manage Waypoints", "<add|remove|teleport|removeall> <name> [x y z]") {
 	registerAlias("wp");
@@ -33,7 +34,7 @@ bool WaypointCommand::execute(std::vector<std::string>* args) {
 	}
 
 	if (opt == "add") {
-		Vec3 pos = player->getPos()->floor().add(0.5, 0, 0.5);
+		Vec3 pos = player->getPos().floor().add(0.5, 0, 0.5);
 		if (args->size() == 6) {
 			pos.x = assertFloat(args->at(3));
 			pos.y = assertFloat(args->at(4));

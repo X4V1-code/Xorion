@@ -1,5 +1,7 @@
 #include "AutoGapple.h"
+#include "../../../Memory/GameData.h"
 #include "../../../SDK/Attribute.h"
+#include "../../Command/Commands/ICommand.h"
 
 AutoGapple::AutoGapple() : IModule(0, Category::PLAYER, "Auto eat gapples if you're at low health.") {
 	registerIntSetting("Health", &this->health, 10, 1, 20);
@@ -22,7 +24,7 @@ int AutoGapple::findGapple() {
 	auto inv = supplies->inventory;
 
 	for (int i = 0; i < 9; i++) {
-		ItemStack* stack = inv->getItemStack(i);
+		ItemStack* stack = inv->getByGlobalIndex(i);
 
 		if (stack->item != nullptr) {
 			if (stack->getItem()->itemId == 258) // Golden Apple
@@ -74,7 +76,7 @@ void AutoGapple::onEnable() {
 
 	const char* hasRegen = doesThatFuckerHaveTheEffect(player, 10);
 
-	clientMessageF("HasEffect: %s", hasRegen);
+	g_Data.getGuiData()->displayClientMessageF("HasEffect: %s", hasRegen);
 
 	static HealthAttribute attribute = HealthAttribute();
 	auto currentHealth = player->getAttribute(&attribute)->currentValue;
@@ -85,7 +87,7 @@ void AutoGapple::onEnable() {
 
 	if (slot == -1) return;
 
-	ItemStack* stack = Game.getLocalPlayer()->getSupplies()->inventory->getItemStack(slot);
+	ItemStack* stack = g_Data.getLocalPlayer()->getSupplies()->inventory->getByGlobalIndex(slot);
 
 	this->stackSize = stack->count;
 }
@@ -118,7 +120,7 @@ void AutoGapple::onTick(GameMode* gm) {
 
 		if (this->lastSlot != gapple) this->lastSlot = lastSelected;
 
-		ItemStack* stack = inv->getItemStack(gapple);
+		ItemStack* stack = inv->getByGlobalIndex(gapple);
 
 		if (this->stackSize > stack->count) {
 			this->stackSize = stack->count;
@@ -128,6 +130,6 @@ void AutoGapple::onTick(GameMode* gm) {
 		}
 
 		supplies->selectedHotbarSlot = gapple;
-		Game.getGameMode()->baseUseItem(*stack);
+		Game.getGameMode()->baseUseItem(stack);
 	}
 }

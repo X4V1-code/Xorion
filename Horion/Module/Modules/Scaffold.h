@@ -1,5 +1,7 @@
 #pragma once
 #include "Module.h"
+#include "../../../Memory/GameData.h"
+
 class Scaffold : public IModule {
 private:
 	bool autoSelect = false;
@@ -32,9 +34,9 @@ public:
 		return "Scaffold";
 	};
 	virtual void onEnable() {
-		auto player = Game.getLocalPlayer();
+		auto player = g_Data.getLocalPlayer();
 		if (player == nullptr) return;
-		float yPos = player->getPos()->y;  // Block 1 block below the player
+		float yPos = player->getPos().y;  // Block 1 block below the player
 		yPos -= player->getAABBShapeComponent()->size.y;
 		yPos -= 0.5f;
 		YCoord = yPos;

@@ -4,29 +4,20 @@
 #include "Module.h"
 
 class Zoom : public IModule {
+private:
+	bool zooming = false;
+	float target = 0.f;
+	bool smooth = false;
+	
 public:
 	float strength = 0.5f;
 
-	Zoom() : IModule(0x0, Category::VISUAL, "Zoom in or out!") {
-		registerFloatSetting("Strength", &strength, strength, 0.f, 1.f);
-	};
-	~Zoom(){};
+	Zoom();
+	~Zoom();
 
-	virtual const char* getModuleName() override {
-		return "Zoom";
-	}
-
-	void onLevelRender() override {
-		//if (auto localPlayer = Game.getLocalPlayer())
-		//	localPlayer->setFieldOfViewModifier(1.f - strength);
-	}
-
-	void onDisable() override {
-		//if (auto localPlayer = Game.getLocalPlayer())
-		//	localPlayer->setFieldOfViewModifier(1.0f);
-	}
-
-	bool isFlashMode() override {
-		return true;
-	}
+	virtual const char* getModuleName() override;
+	bool isFlashMode() override;
+	void onEnable() override;
+	void onDisable() override;
+	void onLevelRender() override;
 };

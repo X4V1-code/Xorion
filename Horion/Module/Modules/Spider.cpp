@@ -13,7 +13,7 @@ const char* Spider::getModuleName() {
 }
 
 void Spider::onMove(MoveInputHandler* input) {
-	LocalPlayer* player = Game.getLocalPlayer();
+	LocalPlayer* player = g_Data.getLocalPlayer();
 	if (player == nullptr)
 		return;
 

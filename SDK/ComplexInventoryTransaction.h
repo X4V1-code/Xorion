@@ -2,6 +2,7 @@
 #include "../Utils/HMath.h"
 #include "Inventory.h"
 #include "InventoryTransaction.h"
+#include "ItemStack.h"
 
 class ComplexInventoryTransaction {
 public:

@@ -4,6 +4,20 @@
 #include "../../../SDK/Entity.h"
 #include "../ScriptManager.h"
 
+// Define EntityDataType as macro to avoid redefinition issues
+#ifndef ENTITY_DATA_TYPE
+#define ENTITY_DATA_TYPE 1
+#endif
+
+// EntityInfo structure for script entity tracking
+struct EntityInfo {
+	int dataType = ENTITY_DATA_TYPE;
+	bool isLocalPlayer = false;
+	__int64 runtimeId = 0;
+	
+	EntityInfo(__int64 id) : runtimeId(id) {}
+};
+
 class EntityFunctions {
 public:
 	static Entity* getEntityFromValue(JsValueRef value) {
@@ -22,18 +36,21 @@ public:
 		if (entityInfo->dataType != EntityDataType)
 			return 0;
 
-		if (entityInfo->isLocalPlayer)
-			return g_Data.getLocalPlayer();
+	if (entityInfo->isLocalPlayer)
+		return g_Data.getLocalPlayer();
 
+	// TODO: Entity::entityRuntimeId doesn't exist
+	return nullptr;
+	/*
 	Entity* foundEntity;
 	auto func = [](Entity* ent, bool b, __int64 idCaptured, Entity** foundEntityCaptured) {
 			if (ent->entityRuntimeId == idCaptured) {
 				*foundEntityCaptured = ent;
 			}
 		};
-		g_Data.forEachEntity(std::bind(func, std::placeholders::_1, std::placeholders::_2, entityInfo->runtimeId, &foundEntity));
-
-		return foundEntity;
+	g_Data.forEachEntity(std::bind(func, std::placeholders::_1, std::placeholders::_2, entityInfo->runtimeId, &foundEntity));
+	return foundEntity;
+	*/
 	}
 
 	DECL_FUN(isValid);

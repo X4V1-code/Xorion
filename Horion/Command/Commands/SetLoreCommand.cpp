@@ -1,4 +1,7 @@
 #include "SetLoreCommand.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/InventoryTransaction.h"
 
 SetLoreCommand::SetLoreCommand() : IMCCommand("setlore", "Sets the lore of an item", "<lore>") {
 }
@@ -9,11 +12,11 @@ SetLoreCommand::~SetLoreCommand() {
 bool SetLoreCommand::execute(std::vector<std::string>* args) {
 	assertTrue(args->size() >= 2);
 
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
-	Inventory* inv = supplies->inventory;
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
+	PlayerInventory* inv = supplies->inventory;
 	int selectedSlot = supplies->selectedHotbarSlot;
-	ItemStack* item = inv->getItemStack(selectedSlot);
+	ItemStack* item = inv->getByGlobalIndex(selectedSlot);
 
 	if (item == nullptr || item->item == nullptr) {
 		clientMessageF("Please hold an item!");

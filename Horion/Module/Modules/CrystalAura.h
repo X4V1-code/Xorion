@@ -15,8 +15,8 @@ private:
 	bool Preview = true;
 	bool AutoSelect = true;
 	bool FinishSelect = false;
-	PlayerInventoryProxy* supplies = nullptr;
-	Inventory* inv = nullptr;
+	PlayerSupplies* supplies = nullptr;
+	PlayerInventory* inv = nullptr;
 
 public:
 	CrystalAura();

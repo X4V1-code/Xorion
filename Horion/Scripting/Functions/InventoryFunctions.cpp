@@ -2,6 +2,8 @@
 
 const wchar_t* airName = L"air";
 
+// TODO: createItem uses removed isValid() method - now a field
+/*
 JsValueRef createItem(C_ItemStack *stack) {
 	JsValueRef obj;
 	chakra.JsCreateObject_(&obj);
@@ -28,14 +30,17 @@ JsValueRef createItem(C_ItemStack *stack) {
 
 	return obj;
 }
+*/
 
+// TODO: PlayerInventory::getItemStack doesn't exist in new API
+/*
 JsValueRef CALLBACK InventoryFunctions::getItems(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
 	if (ent == nullptr) {
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	JsValueRef inventoryArr;
 	chakra.JsCreateArray_(36, &inventoryArr);
@@ -47,6 +52,7 @@ JsValueRef CALLBACK InventoryFunctions::getItems(JsValueRef callee, bool isConst
 
 	return inventoryArr;
 }
+*/
 
 JsValueRef CALLBACK InventoryFunctions::getArmor(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
@@ -54,8 +60,10 @@ JsValueRef CALLBACK InventoryFunctions::getArmor(JsValueRef callee, bool isConst
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
+	// TODO: createItem function doesn't exist (commented above due to ItemStack API changes)
+	/*
 	JsValueRef armorArr;
 	chakra.JsCreateArray_(4, &armorArr);
 
@@ -65,15 +73,19 @@ JsValueRef CALLBACK InventoryFunctions::getArmor(JsValueRef callee, bool isConst
 	};
 
 	return armorArr;
+	*/
+	return JS_INVALID_REFERENCE;
 }
 
+// TODO: getHeld uses removed getItemStack API
+/*
 JsValueRef CALLBACK InventoryFunctions::getHeld(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
 	if (ent == nullptr) {
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	int slot;
 
@@ -89,6 +101,7 @@ JsValueRef CALLBACK InventoryFunctions::getHeld(JsValueRef callee, bool isConstr
 	auto stack = plr->getSupplies()->inventory->getItemStack(slot);
 	return createItem(stack);
 }
+*/
 
 JsValueRef CALLBACK InventoryFunctions::setSelected(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
@@ -96,7 +109,7 @@ JsValueRef CALLBACK InventoryFunctions::setSelected(JsValueRef callee, bool isCo
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	int slot;
 
@@ -116,29 +129,35 @@ JsValueRef CALLBACK InventoryFunctions::setSelected(JsValueRef callee, bool isCo
 	return chakra.trueValue();
 }
 
+// TODO: getSlot uses removed getItemStack API
+/*
 JsValueRef CALLBACK InventoryFunctions::getSlot(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
 	if (ent == nullptr) {
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 	const int currSlot = plr->getSupplies()->selectedHotbarSlot;
 
 	auto stack = plr->getSupplies()->inventory->getItemStack(currSlot);
 	return createItem(stack);
 }
+*/
 
+// TODO: isFull uses removed API
+/*
 JsValueRef CALLBACK InventoryFunctions::isFull(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
 	if (ent == nullptr) {
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	return chakra.toBoolean(plr->getSupplies()->inventory->isFull());
 }
+*/
 
 JsValueRef CALLBACK InventoryFunctions::moveItem(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = g_Data.getLocalPlayer();
@@ -146,7 +165,7 @@ JsValueRef CALLBACK InventoryFunctions::moveItem(JsValueRef callee, bool isConst
 		THROW(L"Player not valid");
 	}
 
-	const auto plr = reinterpret_cast<C_LocalPlayer*>(ent);
+	const auto plr = reinterpret_cast<LocalPlayer*>(ent);
 
 	int slot[2];
 
@@ -164,7 +183,8 @@ JsValueRef CALLBACK InventoryFunctions::moveItem(JsValueRef callee, bool isConst
 	if (slot[0] < 0) slot[0] = 0;
 	if (slot[1] < 0) slot[1] = 0;
 
-	plr->getSupplies()->inventory->swapSlots(slot[0], slot[1]);
+	// TODO: swapSlots doesn't exist in new API
+	// plr->getSupplies()->inventory->swapSlots(slot[0], slot[1]);
 
 	return chakra.trueValue();
 }

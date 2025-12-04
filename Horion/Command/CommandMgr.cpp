@@ -1,5 +1,6 @@
 #include "CommandMgr.h"
 #include "../../Utils/Logger.h"
+#include "../../Utils/TextFormat.h"
 
 CommandMgr::CommandMgr(GameData* gm) {
     gameData = gm;
@@ -26,7 +27,7 @@ void CommandMgr::initCommands() {
     commandList.push_back(new DupeCommand());
     commandList.push_back(new EjectCommand());
     commandList.push_back(new EnchantCommand());
-    commandList.push_back(new ExecuteCommand());
+    // commandList.push_back(new ExecuteCommand()); // TODO: ExecuteCommand not available
     commandList.push_back(new FriendListCommand());
     commandList.push_back(new GameModeCommand());
     commandList.push_back(new GiveCommand());
@@ -42,7 +43,7 @@ void CommandMgr::initCommands() {
     commandList.push_back(new RenameCommand());
     commandList.push_back(new RepairCommand());
     commandList.push_back(new SayCommand());
-    commandList.push_back(new ScriptCommand());
+    // commandList.push_back(new ScriptCommand()); // TODO: ScriptCommand not available
     commandList.push_back(new SeedCommand());
     commandList.push_back(new ServerCommand());
     commandList.push_back(new SetLoreCommand());

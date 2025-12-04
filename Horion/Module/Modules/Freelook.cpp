@@ -1,4 +1,6 @@
 #include "Freelook.h"
+#include "../../../Memory/GameData.h"
+#include "../ModuleManager.h"
 
 #include "../../../Utils/Logger.h"
 
@@ -18,7 +20,7 @@ void Freelook::onEnable() {
 
 	this->redirectMouse = true;
 	this->resetViewTick = -1;
-	this->initialViewAngles = g_Data.getLocalPlayer()->viewAngles;
+	// TODO: this->initialViewAngles = g_Data.getLocalPlayer()->viewAngles;
 	this->lastCameraAngle = {0, 0};
 }
 void Freelook::onDisable() {

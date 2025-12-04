@@ -2,8 +2,8 @@
 #pragma once
 #include "Module.h"
 #include "../../DrawUtils.h"
-#include "../../SDK/C_Entity.h"
-#include "../../SDK/GameData.h"
+#include "../../SDK/Entity.h"
+#include "../../../Memory/GameData.h"
 #include "../../Utils/ColorUtil.h"
 
 class TargetHUD : public IModule {
@@ -16,12 +16,12 @@ private:
     float x = 10.0f;
     float y = 10.0f;
 
-    C_Entity* lastTarget = nullptr;
+    Entity* lastTarget = nullptr;
     int holdTicks = 10;
     int fadeTicks = 8;
     int visibleTicks = 0;
 
-    C_Entity* pickTarget();
+    Entity* pickTarget();
 
 public:
     TargetHUD();
@@ -31,3 +31,4 @@ public:
     virtual void onTick(C_GameMode* gm) override;
     virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
 };
+

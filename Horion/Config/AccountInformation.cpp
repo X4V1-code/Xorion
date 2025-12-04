@@ -30,7 +30,9 @@ bool AccountInformation::verify() {
 	const char* edition = "public";
 #endif
 
-	swprintf_s(fullUrl, 250, formatString, authToken.c_str(), serialNum, edition, XorString(__TIME__), g_Data.networkedData.xorKey);
+	// TODO: networkedData not available
+	// swprintf_s(fullUrl, 250, formatString, authToken.c_str(), serialNum, edition, XorString(__TIME__), g_Data.networkedData.xorKey);
+	swprintf_s(fullUrl, 250, formatString, authToken.c_str(), serialNum, edition, XorString(__TIME__), 0);
 	WinHttpClient client(fullUrl);
 	client.SetTimeouts(1500, 3000, 2000, 3000);
 	bool boi = client.SendHttpRequest();
@@ -49,8 +51,9 @@ bool AccountInformation::verify() {
 			logF("Account verified");
 
 			// evade and deceive
-			g_Data.networkedData.localPlayerOffset = data["serverTime"].get<int>(); 
-			g_Data.networkedData.dataSet = true;
+			// TODO: networkedData not available
+			// g_Data.networkedData.localPlayerOffset = data["serverTime"].get<int>(); 
+			// g_Data.networkedData.dataSet = true;
 
 			isValid = true;
 			return true;

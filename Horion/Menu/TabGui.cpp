@@ -158,7 +158,7 @@ void TabGui::renderLevel() {
 void TabGui::render() {
 	if (!moduleMgr->isInitialized())
 		return;
-	if (!GameData::canUseMoveKeys())
+	if (!g_Data.canUseMoveKeys())
 		level = -1;
 	renderedLevel = 0;
 	yOffset = 4;
@@ -198,7 +198,7 @@ void TabGui::init() {
 }
 
 void TabGui::onKeyUpdate(int key, bool isDown) {
-	if (!GameData::canUseMoveKeys()) {
+	if (!g_Data.canUseMoveKeys()) {
 		level = -1;
 		return;
 	}
@@ -243,3 +243,4 @@ void TabGui::onKeyUpdate(int key, bool isDown) {
 	if (level < 3)
 		selected[level + 1].setSelectedItemForce(0);
 }
+

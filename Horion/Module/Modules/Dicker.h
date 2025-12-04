@@ -7,12 +7,12 @@ private:
     int tickCounter = 0;
     int spacing = 4; // distance between each pattern
 
-    void placePatternAt(C_GameMode* gm, const vec3_ti& basePos);
+    void placePatternAt(GameMode* gm, const vec3_ti& basePos);
 
 public:
     Dicker();
     ~Dicker();
 
     virtual const char* getModuleName() override;
-    virtual void onTick(C_GameMode* gm) override;
+    virtual void onTick(GameMode* gm) override;
 };

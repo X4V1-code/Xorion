@@ -1,15 +1,16 @@
 // Memory/SignatureResolver.cpp
 #include "SignatureGlobals.h"
-#include "Render/Signatures.h"
+#include "../Horion/Render/Signatures.h"
 #include "SlimMem.h"   // signature scanning utility
-#include "Logger.h"    // logF or similar
+#include "../Utils/Logger.h"    // logF or similar
+#include "../Utils/Utils.h"     // for FindSignature macro
 
 // Call once after the target module is loaded and its .text section is ready to scan
 bool ResolveAllSignatures() {
     int ok = 0, fail = 0;
 
     auto RESOLVE = [&](const char* name, const char* pattern, void** out) {
-        *out = SlimMem::FindSignature(pattern);
+        *out = (void*)FindSignature(pattern);
         if (*out) { logF("[Sig] %s resolved -> %p", name, *out); ++ok; }
         else      { logF("[Sig] %s FAILED", name); ++fail; }
     };

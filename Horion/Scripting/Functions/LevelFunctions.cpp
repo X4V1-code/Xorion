@@ -1,4 +1,5 @@
 #include "LevelFunctions.h"
+#include "Vector3Functions.h"
 
 JsValueRef createBlock(C_BlockLegacy *block) {
 	JsValueRef ref;
@@ -36,14 +37,19 @@ JsValueRef CALLBACK LevelFunctions::getAllEntities(JsValueRef callee, bool isCon
 	JsValueRef jsList;
 	chakra.JsCreateArray_((unsigned int)entList.size(), &jsList);
 	
+	// TODO: Entity::entityRuntimeId doesn't exist in new API
+	/*
 	for (int i = 0; i < entList.size(); i++) {
 		auto entityRef = scriptMgr.prepareEntity(entList[i]->entityRuntimeId, reinterpret_cast<ContextObjects*>(callbackState));
 		chakra.arraySet(jsList, i, entityRef);
 	}
+	*/
 
 	return jsList;
 }
 
+// TODO: Uses removed moduleMgr, NoFriends, FriendList, Target APIs
+/*
 JsValueRef CALLBACK LevelFunctions::getAllTargetEntities(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	std::vector<Entity*> entList;
 	g_Data.forEachEntity([&](auto ent, bool isNew) {
@@ -67,6 +73,7 @@ JsValueRef CALLBACK LevelFunctions::getAllTargetEntities(JsValueRef callee, bool
 
 	return jsList;
 }
+*/
 
 JsValueRef CALLBACK LevelFunctions::getBlock(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto plr = g_Data.getLocalPlayer();
@@ -80,6 +87,8 @@ JsValueRef CALLBACK LevelFunctions::getBlock(JsValueRef callee, bool isConstruct
 		THROW(L"Invalid vector!");
 	}
 
-	auto block = plr->region->getBlock(vecOpt.value())->toLegacy();
-	return createBlock(block);
+	// TODO: LocalPlayer::region doesn't exist
+	// auto block = plr->region->getBlock(vecOpt.value())->toLegacy();
+	// return createBlock(block);
+	return chakra.trueValue();
 }

@@ -1,4 +1,5 @@
 #include "NoWeb.h"
+#include "../../../SDK/Entity.h"
 
 NoWeb::NoWeb() : IModule(0, Category::MOVEMENT, "Ignore cobwebs slowdown.") {
 }

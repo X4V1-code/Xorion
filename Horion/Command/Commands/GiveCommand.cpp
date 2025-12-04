@@ -1,6 +1,10 @@
 #include "GiveCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 #include "../../../SDK/Tag.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/InventoryTransaction.h"
 #include "../../../Utils/Utils.h"
 
 GiveCommand::GiveCommand() : IMCCommand("give", "spawn items", "<itemName> <count> [itemData] [NBT]") {
@@ -70,15 +74,16 @@ bool GiveCommand::execute(std::vector<std::string> *args) {
 		}
 	}
 
-	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
-	ItemStack *item = Game.getLocalPlayer()->getSelectedItem();
+	PlayerInventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
+	ItemStack *item = g_Data.getLocalPlayer()->getSupplies()->inventory->getByGlobalIndex(g_Data.getLocalPlayer()->getSupplies()->selectedHotbarSlot);
 
 	if (args->size() > 4) {
 		std::string tag = Utils::getClipboardText();
 
 		if (isValidNBT(tag)) {
-			item->setUserData(std::move(Mojangson::parseTag(tag)));
-		} else {
+			// auto parsedTag = Mojangson::parseTag(tag);
+			// item->setUserData(static_cast<void*>(parsedTag.get())); // Stub function, commented out
+		} else{
 			clientMessageF("%sInvalid NBT tag!", RED);
 			return true;
 		}
@@ -104,9 +109,9 @@ bool GiveCommand::execute(std::vector<std::string> *args) {
 }
 
 bool GiveCommand::giveItem(uint8_t count, int itemId, uint8_t itemData, std::string &tag) {
-	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	PlayerInventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
 	ItemStack *itemStack = nullptr;
-	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
+	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
 
 	void *ItemPtr;
 	Item ***cStack = ItemRegistry::getItemFromId(&ItemPtr, itemId);
@@ -116,11 +121,12 @@ bool GiveCommand::giveItem(uint8_t count, int itemId, uint8_t itemData, std::str
 		return false;
 	}
 
-	itemStack = new ItemStack(***cStack, count, itemData);
+	itemStack = new ItemStack(**cStack, count, itemData);
 	int slot = inv->getFirstEmptySlot();
 
 	if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-		itemStack->fromTag(*Mojangson::parseTag(tag));
+		// auto parsedTag = Mojangson::parseTag(tag);
+		// itemStack->fromTag(static_cast<void*>(parsedTag.get())); // Stub function, commented out
 	}
 
 	InventoryAction *firstAction = new InventoryAction(slot, itemStack, nullptr, InventorySource(NonImplementedFeatureTODO, inventory, NoFlag));
@@ -132,9 +138,9 @@ bool GiveCommand::giveItem(uint8_t count, int itemId, uint8_t itemData, std::str
 }
 
 bool GiveCommand::giveItem(uint8_t count, TextHolder &text, uint8_t itemData, std::string &tag) {
-	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	PlayerInventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
 	ItemStack *itemStack = nullptr;
-	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
+	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
 
 	void *ItemPtr;
 	void *buffer;
@@ -145,11 +151,12 @@ bool GiveCommand::giveItem(uint8_t count, TextHolder &text, uint8_t itemData, st
 		return false;
 	}
 
-	itemStack = new ItemStack(***cStack, count, itemData);
+	itemStack = new ItemStack(**cStack, count, itemData);
 	int slot = inv->getFirstEmptySlot();
 
 	if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-		itemStack->fromTag(*Mojangson::parseTag(tag));
+		// auto parsedTag = Mojangson::parseTag(tag);
+		// itemStack->fromTag(static_cast<void*>(parsedTag.get())); // Stub function, commented out
 	}
 
 	InventoryAction *firstAction = new InventoryAction(slot, itemStack, nullptr, InventorySource(NonImplementedFeatureTODO, inventory, NoFlag));

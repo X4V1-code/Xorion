@@ -44,7 +44,7 @@ void recalculateScale() {
 }
 
 void renderEntity(Entity* currentEntity, bool isRegularEntity) {
-	LocalPlayer* player = Game.getLocalPlayer();
+	LocalPlayer* player = g_Data.getLocalPlayer();
 	if (currentEntity == nullptr)
 		return;
 
@@ -78,7 +78,7 @@ void renderEntity(Entity* currentEntity, bool isRegularEntity) {
 }
 
 void Radar::onPreRender(MinecraftUIRenderContext* renderCtx) {
-	LocalPlayer* player = Game.getLocalPlayer();
+	LocalPlayer* player = g_Data.getLocalPlayer();
 
 	if (player == nullptr) return;
 

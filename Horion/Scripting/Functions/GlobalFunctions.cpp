@@ -1,4 +1,5 @@
 #include "GlobalFunctions.h"
+#include "../../Utils/Logger.h"
 
 #include <sstream>
 
@@ -27,9 +28,9 @@ JsValueRef CALLBACK GlobalFunctions::log(JsValueRef callee, bool isConstructCall
 	
 	auto obj = reinterpret_cast<ContextObjects*>(callbackState);
 	if (obj->scriptInstance == nullptr) {
-		GameData::log("[inline]: %S", strstream.str().c_str());
+		logF("[inline]: %S", strstream.str().c_str());
 	} else {
-		GameData::log("[script]: %S", strstream.str().c_str());
+		logF("[script]: %S", strstream.str().c_str());
 	}
 	
 

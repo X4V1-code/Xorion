@@ -1,6 +1,7 @@
 #include "SpammerCommand.h"
 
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 
 SpammerCommand::SpammerCommand() : IMCCommand("spammer", "Edit spammer delay/text", "<message/delay/bypass/length/manual> <string/int/bool>") {
 	registerAlias("spam");
@@ -66,7 +67,8 @@ bool SpammerCommand::execute(std::vector<std::string>* args) {
 			TextPacket textPacket;
 			textPacket.message.setText(text + (spamMod->getBypass() ? (" | " + Utils::randomString(spamMod->getLength())) : ""));
 			textPacket.sourceName = *Game.getLocalPlayer()->getNameTag();
-			textPacket.xboxUserId = TextHolder(std::to_string(Game.getLocalPlayer()->getUserId()));
+			// TODO: getUserId not available
+			textPacket.xboxUserId = TextHolder("0"); // std::to_string(Game.getLocalPlayer()->getUserId())
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&textPacket);
 		}
 		return true;

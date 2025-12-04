@@ -1,7 +1,7 @@
 #include "LigmaNuts.h"
-#include "../../SDK/GameData.h"
-#include "../../SDK/C_LocalPlayer.h"
-#include "../../SDK/C_Entity.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/LocalPlayer.h"
+#include "../../SDK/Entity.h"
 #include "../../Utils/Target.h"
 
 LigmaNuts::LigmaNuts() 
@@ -26,29 +26,33 @@ void LigmaNuts::pickNextDelay() {
     nextDelayMs = minMs + (rand() % (maxMs - minMs + 1));
 }
 
+// TODO: sendJoke method not implemented
+/*
 void LigmaNuts::sendJoke() {
-    C_LocalPlayer* lp = g_Data.getLocalPlayer();
+    LocalPlayer* lp = g_Data.getLocalPlayer();
     if (!lp) return;
 
-    C_Entity* nearest = nullptr;
+    Entity* nearest = nullptr;
     float bestDist = 12.0f; // only nearby players
-    g_Data.forEachEntity([&](C_Entity* ent, bool) {
+    g_Data.forEachEntity([&](Entity* ent, bool) {
         if (!ent || ent == lp) return;
         if (!ent->isPlayer()) return;
-        float d = (*ent->getPos()).dist(*lp->getPos());
+        float d = ent->getPos()->dist(lp->getPos());
         if (d < bestDist) { bestDist = d; nearest = ent; }
     });
 
     if (!nearest) return;
 
     // Pick a joke
-    std::string msg = jokes[rand() % jokes.size()];
+    // std::string msg = jokes[rand() % jokes.size()];
+    std::string msg = "ligma";
 
     // Construct whisper command (Bedrock uses /tell or /msg)
     std::string command = std::string("/tell ") + nearest->getNameTag()->getText() + " " + msg;
     g_Data.getGuiData()->displayClientMessageF(("[LigmaNuts] " + command).c_str()); // local feedback
-    g_Data.getClientInstance()->minecraft->sendChatMessage(command);
+    // g_Data.getClientInstance()->minecraft->sendChatMessage(command); // TODO: sendChatMessage not available
 }
+*/
 
 void LigmaNuts::onTick(C_GameMode* gm) {
     if (!g_Data.isInGame()) return;
@@ -62,3 +66,4 @@ void LigmaNuts::onTick(C_GameMode* gm) {
         pickNextDelay();
     }
 }
+

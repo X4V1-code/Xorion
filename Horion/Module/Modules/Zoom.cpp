@@ -1,4 +1,5 @@
 #include "Zoom.h"
+#include "../../../Memory/GameData.h"
 
 Zoom::Zoom() : IModule('C', Category::VISUAL, "Zoom in or out!") {
 	registerFloatSetting("Strength", &this->strength, this->strength, -100.f, 100.f);
@@ -22,4 +23,8 @@ void Zoom::onEnable() {
 
 void Zoom::onDisable() {
 	target = g_Data.fov;
+}
+
+void Zoom::onLevelRender() {
+	// TODO: Implement zoom rendering
 }

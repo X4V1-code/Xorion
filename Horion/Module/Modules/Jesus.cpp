@@ -1,4 +1,5 @@
 #include "Jesus.h"
+#include "../../../SDK/Entity.h"
 
 Jesus::Jesus() : IModule(0, Category::MOVEMENT, "Walk over water, like Jesus.") {
 }

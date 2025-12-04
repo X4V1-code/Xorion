@@ -1,5 +1,5 @@
 #include "HudEditor.h"
-#include "../../SDK/GameData.h"
+#include "../../../Memory/GameData.h"
 
 HudEditor::HudEditor() : IModule(0x0, Category::CLIENT, "Drag and drop HUD elements") {
     registerBoolSetting("Snap to grid", &snapToGrid, snapToGrid);
@@ -21,7 +21,7 @@ void HudEditor::registerElement(const std::string& name, const vec2_t& pos, cons
     elements.push_back({name, pos, size, true, true});
 }
 
-void HudEditor::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
+void HudEditor::onPostRender(MinecraftUIRenderContext* renderCtx) {
     if (!g_Data.isInGame()) return;
 
     for (auto& e : elements) {
@@ -29,12 +29,16 @@ void HudEditor::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
 
         if (showOutlines) {
             MC_Color col = MC_Color(255, 255, 255, 80);
-            DrawUtils::drawRectangle(e.pos, e.pos.add(e.size), col, 1.0f);
-            DrawUtils::drawText(e.pos.add(vec2_t(2, 2)), e.name.c_str(), MC_Color(200, 200, 200), 0.8f);
+            Vec4 rect(e.pos.x, e.pos.y, e.pos.x + e.size.x, e.pos.y + e.size.y);
+            DrawUtils::drawRectangle(rect, col, 1.0f, 0.5f);
+            std::string name = e.name;
+            DrawUtils::drawText(e.pos.add(vec2_t(2, 2)), &name, MC_Color(200, 200, 200), 0.8f);
         }
     }
 }
 
+// onMouseClickUpdate removed - not in base class
+/*
 void HudEditor::onMouseClickUpdate(int mouseX, int mouseY, int button, bool isDown) {
     vec2_t mouse((float)mouseX, (float)mouseY);
 
@@ -60,3 +64,4 @@ void HudEditor::onMouseClickUpdate(int mouseX, int mouseY, int button, bool isDo
         }
     }
 }
+*/

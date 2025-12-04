@@ -1,9 +1,9 @@
 // Horion/Module/Modules/TargetHUD.cpp
 #include "TargetHUD.h"
 #include "../../DrawUtils.h"
-#include "../../SDK/C_LocalPlayer.h"
+#include "../../../SDK/LocalPlayer.h"
 #include "../../Utils/Target.h"
-#include "../../Horion/Friends/FriendList.h"
+#include "../../FriendList/FriendList.h"
 
 TargetHUD::TargetHUD() : IModule(0x0, Category::COMBAT, "Display info about your current target") {
     registerBoolSetting("players only", &onlyPlayers, onlyPlayers);
@@ -21,20 +21,20 @@ TargetHUD::~TargetHUD() {}
 
 const char* TargetHUD::getModuleName() { return "TargetHUD"; }
 
-C_Entity* TargetHUD::pickTarget() {
-    C_LocalPlayer* lp = g_Data.getLocalPlayer();
+Entity* TargetHUD::pickTarget() {
+    LocalPlayer* lp = g_Data.getLocalPlayer();
     if (!lp) return nullptr;
 
-    C_Entity* best = nullptr;
+    Entity* best = nullptr;
     float bestDist = 1000.0f;
 
-    g_Data.forEachEntity([&](C_Entity* ent, bool) {
+    g_Data.forEachEntity([&](Entity* ent, bool) {
         if (!ent || ent == lp) return;
         if (FriendList::findPlayer(ent->getNameTag()->getText())) return;
         if (!Target::isValidTarget(ent)) return;
         if (onlyPlayers && !ent->isPlayer()) return;
 
-        float dist = (*ent->getPos()).dist(*lp->getPos());
+        float dist = ent->getPos()->dist(lp->getPos());
         if (dist < bestDist) { bestDist = dist; best = ent; }
     });
 
@@ -43,7 +43,7 @@ C_Entity* TargetHUD::pickTarget() {
 
 void TargetHUD::onTick(C_GameMode* gm) {
     if (!g_Data.isInGame()) { lastTarget = nullptr; visibleTicks = 0; return; }
-    C_Entity* t = pickTarget();
+    Entity* t = pickTarget();
     if (t) { lastTarget = t; visibleTicks = holdTicks + fadeTicks; }
     else if (visibleTicks > 0) visibleTicks--;
 }
@@ -51,10 +51,12 @@ void TargetHUD::onTick(C_GameMode* gm) {
 void TargetHUD::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
     if (!g_Data.isInGame() || !lastTarget || visibleTicks <= 0) return;
 
+    // TODO: getHealth(), getMaxHealth() removed from Entity, fillRectangleA removed from DrawUtils
+    /*
     auto name = lastTarget->getNameTag();
     float healthVal = lastTarget->getHealth();
     float maxHealthVal = lastTarget->getMaxHealth();
-    float dist = (*lastTarget->getPos()).dist(*g_Data.getLocalPlayer()->getPos());
+    float dist = lastTarget->getPos().dist(g_Data.getLocalPlayer()->getPos());
 
     float alpha = 1.0f;
     if (visibleTicks < fadeTicks) alpha = visibleTicks / (float)fadeTicks;
@@ -91,4 +93,6 @@ void TargetHUD::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
     }
 
     DrawUtils::drawRectangle(base, base.add(size), accent, 1.0f);
+    */
 }
+

@@ -1,6 +1,7 @@
 #include "PlayerSignatures.h"
-#include "../Utils/Utils.h"
-#include "../SDK/FindSignatures.h"
+#include "../../Utils/Utils.h"
+#include "../../Utils/FindSignatures.h"
+#include "../../Utils/Logger.h"
 #include <vector>
 #include <cstdio>
 #include <cstring>
@@ -98,9 +99,9 @@ static void logResolution(const char* name, const char* pattern, void* addr) {
 #if defined(_MSC_VER)
     // Windows: use OutputDebugString if desired via Utils or fallback to printf
     if (addr) {
-        Utils::Log("[Signatures] Resolved %s -> %p (pattern: %s)\n", name, addr, pattern);
+        logF("[Signatures] Resolved %s -> %p (pattern: %s)\n", name, addr, pattern);
     } else {
-        Utils::Warn("[Signatures] Failed to resolve %s (last tried pattern: %s)\n", name, pattern);
+        logF("[Signatures] Failed to resolve %s (last tried pattern: %s)\n", name, pattern);
     }
 #else
     if (addr) {
@@ -117,7 +118,7 @@ void* ResolveFirst(const char** patterns, const char* name) {
     const char* last = nullptr;
     for (size_t i = 0; patterns[i] != nullptr; ++i) {
         last = patterns[i];
-        void* r = FindSignature(patterns[i]);
+        void* r = (void*)FindSignature(patterns[i]);
         if (r) {
             logResolution(name, patterns[i], r);
             return r;

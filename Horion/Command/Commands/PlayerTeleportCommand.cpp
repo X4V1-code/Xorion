@@ -1,4 +1,6 @@
 #include "PlayerTeleportCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/HMath.h"
 #include "../../../Utils/Utils.h"
 
 PlayerTeleportCommand::PlayerTeleportCommand() : IMCCommand("playertp", "Teleports to players coordinates", "<NameOfThePlayer>") {

@@ -1,4 +1,6 @@
 #include "Nbt.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Memory/GameData.h"
 #include "../../../SDK/Tag.h"
 #include "../../../Utils/Utils.h"
 
@@ -13,16 +15,16 @@ const char* Nbt::getModuleName() {
 }
 
 void Nbt::onTick(GameMode* gm) {
-	if (!GameData::canUseMoveKeys()) {
+	if (!g_Data.canUseMoveKeys()) {
 		return;
 	}
-	Level* level = Game.getLocalPlayer()->level;
+	Level* level = g_Data.getLocalPlayer()->level;
 	
-	if (GameData::isRightClickDown()) {  // && Utils::getClipboardText() != lastCopy) {
+	if (g_Data.isRightClickDown()) {  // && Utils::getClipboardText() != lastCopy) {
 		if (level->getEntity() != nullptr) {
-
-			if (Game.getRakNetConnector()->isonaServer())
-				return;
+			// TODO: getRakNetConnector() returns undefined RakNetConnector type
+			// if (Game.getRakNetConnector()->isonaServer())
+			// 	return;
 			std::unique_ptr<CompoundTag> tag = std::make_unique<CompoundTag>();
 			level->getEntity()->save(tag.get());
 			std::stringstream build;
@@ -37,3 +39,4 @@ void Nbt::onTick(GameMode* gm) {
 		}
 	}
 }
+

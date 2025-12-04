@@ -13,6 +13,9 @@ public:
 	BUILD_ACCESS(this, int, levelTicks, 0x8A0);
 	BUILD_ACCESS(this, HitResult, hitResult, 0xBD8);
 	BUILD_ACCESS(this, HitResult, liquidHitResult, 0xC48);
+	
+	// Additional members
+	void* dimension = nullptr;
 
 public:
 	bool hasEntity();

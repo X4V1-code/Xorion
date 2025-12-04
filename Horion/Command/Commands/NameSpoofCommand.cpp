@@ -1,4 +1,5 @@
 #include "NameSpoofCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 NameSpoofCommand::NameSpoofCommand() : IMCCommand("namespoof", "Spoof your name on realms/bds", "<name/reset> <name>") {
 	registerAlias("ns");

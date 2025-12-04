@@ -71,7 +71,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<Glide>());
         moduleList.emplace_back(std::make_shared<HighJump>());
         moduleList.emplace_back(std::make_shared<Hitbox>());
-        moduleList.emplace_back(std::make_shared<HudEditor>());
+        //moduleList.emplace_back(std::make_shared<HudEditor>());  // TEMP: Disabled
         moduleList.emplace_back(std::make_shared<HudModule>());
         moduleList.emplace_back(std::make_shared<InfiniteTreasureAura>());
         moduleList.emplace_back(std::make_shared<InstaBreak>());
@@ -109,7 +109,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<Spider>());
         moduleList.emplace_back(std::make_shared<StackableItem>());
         moduleList.emplace_back(std::make_shared<Step>());
-        moduleList.emplace_back(std::make_shared<StorageESP>());
+        moduleList.emplace_back(std::make_shared<Step>());
         moduleList.emplace_back(std::make_shared<TargetHUD>());
         moduleList.emplace_back(std::make_shared<Teams>());
         moduleList.emplace_back(std::make_shared<Teleport>());
@@ -186,7 +186,9 @@ void ModuleManager::onWorldTick(GameMode* gameMode) {
     auto lock = lockModuleList();
     for (auto& mod : moduleList) {
         if (mod->isEnabled() || mod->callWhenDisabled())
-            mod->onWorldTick(gameMode);
+            // TODO: onWorldTick removed from IModule
+            // mod->onWorldTick(gameMode);
+            ;
     }
 }
 
@@ -206,7 +208,9 @@ void ModuleManager::onAttack(Entity* attackEnt) {
     auto lock = lockModuleList();
     for (auto& mod : moduleList) {
         if (mod->isEnabled() || mod->callWhenDisabled())
-            mod->onAttack(attackEnt);
+            // TODO: onAttack removed from IModule
+            // mod->onAttack(attackEnt);
+            ;
     }
 }
 
@@ -225,7 +229,9 @@ void ModuleManager::onKey(int key, bool isDown, bool& shouldCancel) {
     auto lock = lockModuleList();
     for (auto& mod : moduleList) {
         if (mod->isEnabled() || mod->callWhenDisabled())
-            mod->onKey(key, isDown, shouldCancel);
+            // TODO: onKey removed from IModule
+            // mod->onKey(key, isDown, shouldCancel);
+            ;
     }
 }
 
@@ -255,7 +261,9 @@ void ModuleManager::onSendClientPacket(Packet* packet) {
     auto lock = lockModuleList();
     for (auto& mod : moduleList) {
         if (mod->isEnabled() || mod->callWhenDisabled())
-            mod->onSendClientPacket(packet);
+            // TODO: onSendClientPacket removed from IModule
+            // mod->onSendClientPacket(packet);
+            ;
     }
 }
 
@@ -274,7 +282,8 @@ void ModuleManager::onBaseTick(Entity* ent) {
         return;
     auto lock = lockModuleList();
     for (auto& mod : moduleList) {
-        mod->onBaseTick(ent);
+        // TODO: onBaseTick removed from IModule
+        // mod->onBaseTick(ent);
     }
 }
 

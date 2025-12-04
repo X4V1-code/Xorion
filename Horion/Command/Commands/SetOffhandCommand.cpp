@@ -1,6 +1,9 @@
 #include "SetOffhandCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 #include "../../../SDK/Tag.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/ItemStack.h"
 #include "../../../Utils/Utils.h"
 
 SetOffhandCommand::SetOffhandCommand() : IMCCommand("setoffhand", "Spawn items in ur offhand", "<itemName> <count> <itemData>") {
@@ -24,9 +27,9 @@ bool SetOffhandCommand::execute(std::vector<std::string>* args) {
 	} catch (const std::invalid_argument&) {
 	}
 
-	Inventory* inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	PlayerInventory* inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
 	ItemStack* yot = nullptr;
-	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
+	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
 
 		if (itemId == 0) {
 		TextHolder tempText(args->at(1));
@@ -37,7 +40,7 @@ bool SetOffhandCommand::execute(std::vector<std::string>* args) {
 			clientMessageF("%sInvalid item name!", RED);
 			return true;
 		}
-		yot = new ItemStack(***cStack, count, itemData);
+		yot = new ItemStack(**cStack, count, itemData);
 	} else {
 		std::unique_ptr<void*> ItemPtr = std::make_unique<void*>();
 		Item*** cStack = ItemRegistry::getItemFromId(ItemPtr.get(), itemId);
@@ -45,7 +48,7 @@ bool SetOffhandCommand::execute(std::vector<std::string>* args) {
 			clientMessageF("%sInvalid item ID!", RED);
 			return true;
 		}
-		yot = new ItemStack(***cStack, count, itemData);
+		yot = new ItemStack(**cStack, count, itemData);
 	}
 
 	if (yot != nullptr)
@@ -54,11 +57,14 @@ bool SetOffhandCommand::execute(std::vector<std::string>* args) {
 	if (args->size() > 4) {
 		std::string tag = Utils::getClipboardText();
 		if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-			yot->setUserData(std::move(Mojangson::parseTag(tag)));
+			// TODO: setUserData signature mismatch - SDK expects void*, not unique_ptr<Tag>
+			// yot->setUserData(std::move(Mojangson::parseTag(tag)));
+			auto parsedTag = Mojangson::parseTag(tag);
+			yot->setUserData(parsedTag.get());
 		}
 	}
 
-	ItemDescriptor* desc = new ItemDescriptor((*yot->item)->itemId, itemData);
+	ItemDescriptor* desc = new ItemDescriptor(yot->item->itemId, itemData);
 
 	InventoryAction* firstAction = new InventoryAction(0, yot, nullptr);
 

@@ -7,5 +7,7 @@ public:
     ~MaceHit();
 
     virtual const char* getModuleName() override;
-    virtual void onAttack(C_Entity* attackedEntity) override;
+    // onAttack not in IModule base class - commenting out
+    // virtual void onAttack(Entity* attackedEntity) override;
 };
+

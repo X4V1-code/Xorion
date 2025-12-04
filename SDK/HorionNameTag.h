@@ -1,6 +1,6 @@
 #pragma once
-#include "DrawUtils.h"
-#include "GameData.h"
+#include "../Horion/DrawUtils.h"
+#include "../Memory/GameData.h"
 
 class HorionNameTag {
 public:

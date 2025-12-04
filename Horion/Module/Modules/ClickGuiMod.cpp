@@ -25,7 +25,7 @@ void ClickGuiMod::onDisable() {
 }
 
 void ClickGuiMod::onPostRender(MinecraftUIRenderContext* renderCtx) {
-	if (GameData::canUseMoveKeys())
+	if (g_Data.canUseMoveKeys())
 		Game.getClientInstance()->releaseMouse();
 }
 void ClickGuiMod::onLoadConfig(void* conf) {
@@ -36,3 +36,4 @@ void ClickGuiMod::onSaveConfig(void* conf) {
 	IModule::onSaveConfig(conf);
 	ClickGui::onSaveConfig(conf);
 }
+

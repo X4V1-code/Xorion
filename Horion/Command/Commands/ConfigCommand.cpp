@@ -1,4 +1,5 @@
 #include "ConfigCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 ConfigCommand::ConfigCommand() : IMCCommand("config", "Load/save configs", "<load/new/save> <name>") {
 	registerAlias("cfg");

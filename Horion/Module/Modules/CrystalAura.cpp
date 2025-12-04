@@ -36,7 +36,7 @@ bool CfindEntity(Entity* curEnt, bool isRegularEntity) {
 	if (curEnt->getEntityTypeId() == 69) return false;  // xp orb
 	if (!Target::isValidTarget(curEnt)) return false;
 
-	float dist = (*curEnt->getPos()).dist(*Game.getLocalPlayer()->getPos());
+	float dist = curEnt->getPos()->dist(Game.getLocalPlayer()->getPos());
 	if (dist <= moduleMgr->getModule<CrystalAura>()->pRange) {
 		targetList.push_back(curEnt);
 		return true;
@@ -102,7 +102,7 @@ void CrystalAura::CPlace(GameMode* gm, Vec3* pos) {
 }
 
 void CrystalAura::DestroyC(Entity* ent, int range) {
-	if (Game.getLocalPlayer()->getPos()->dist(*ent->getPos()) < range && !dEnhanced) {
+	if (Game.getLocalPlayer()->getPos().dist(*ent->getPos()) < range && !dEnhanced) {
 		Game.getGameMode()->attack(ent);
 		Game.getLocalPlayer()->swingArm();
 	} else if (dEnhanced) {
@@ -136,7 +136,7 @@ void CrystalAura::onTick(GameMode* gm) {
 		prevSlot = supplies->selectedHotbarSlot;
 		FinishSelect = true;
 		for (int n = 0; n < 9; n++) {
-			ItemStack* stack = inv->getItemStack(n);
+			ItemStack* stack = inv->getByGlobalIndex(n);
 			if (stack->item != nullptr) {
 				if (stack->getItem()->itemId == 637) {
 					if (prevSlot != n)

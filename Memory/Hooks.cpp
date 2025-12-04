@@ -11,6 +11,7 @@
 #include "../Horion/Loader.h"
 #include "../Horion/Menu/TabGui.h"
 #include "../SDK/Tag.h"
+#include "../SDK/Font.h"
 #include "../Utils/ClientColors.h"
 #include "../Utils/ColorUtil.h"
 
@@ -293,7 +294,7 @@ void* Hooks::Player_tickWorld(Player* _this, __int64 unk) {
 	if (_this != nullptr && Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer()) {
 		GameMode* gm = Game.getLocalPlayer()->getGameMode();
 		if (_this && gm) {
-			GameData::updateGameData(gm);
+			g_Data.updateGameData(gm);
 			moduleMgr->onWorldTick(gm);
 		}
 	}
@@ -359,7 +360,7 @@ void Hooks::KeyMapHookCallback(unsigned char key, bool isDown) {
 	GameData::keys[key] = isDown;
 
 	moduleMgr->onKey((int)key, isDown, shouldCancel);
-	moduleMgr->onKeyUpdate((int)key, (isDown && GameData::canUseMoveKeys()));
+	moduleMgr->onKeyUpdate((int)key, isDown);
 	TabGui::onKeyUpdate((int)key, isDown);
 	ClickGui::onKeyUpdate((int)key, isDown);
 
@@ -399,7 +400,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 
 	DrawUtils::setCtx(renderCtx, dat);
 	{
-		if (GameData::shouldHide() || !moduleMgr->isInitialized() || !g_Hooks.shouldRender)
+		if (g_Data.shouldHide() || !moduleMgr->isInitialized() || !g_Hooks.shouldRender)
 			return oText(a1, renderCtx);
 
 		static auto hudModule = moduleMgr->getModule<HudModule>();
@@ -600,7 +601,7 @@ void Hooks::ChestBlockActor_tick(ChestBlockActor* _this, BlockSource* source) {
 	oTick(_this, source);
 	static auto* storageEspMod = moduleMgr->getModule<StorageESP>();
 	if (_this != nullptr && storageEspMod->isEnabled())
-		GameData::addChestToList(_this);
+		g_Data.addChestToList(_this);
 }
 
 void Hooks::Actor_lerpMotion(Entity* _this, Vec3 motVec) {
@@ -812,7 +813,7 @@ void Hooks::MultiLevelPlayer_tick(EntityList* _this) {
 	GameMode* gm = Game.getGameMode();
 	if (gm != nullptr) moduleMgr->onTick(gm);
 	oTick(_this);
-	GameData::EntityList_tick(_this);
+	g_Data.EntityList_tick(_this);
 }
 
 void Hooks::GameMode_startDestroyBlock(GameMode* _this, Vec3i* pos, uint8_t face, void* a4, void* a5) {
@@ -831,33 +832,31 @@ void Hooks::GameMode_startDestroyBlock(GameMode* _this, Vec3i* pos, uint8_t face
 		auto selectedBlockId = ((region->getBlock(*pos)->blockLegacy))->blockId;
 		uint8_t selectedBlockData = region->getBlock(*pos)->data;
 
-		if (!isAutoMode) {
-			for (int x = -range; x < range; x++) {
-				for (int y = -range; y < range; y++) {
-					for (int z = -range; z < range; z++) {
-						tempPos.x = pos->x + x;
-						tempPos.y = pos->y + y;
-						tempPos.z = pos->z + z;
-						if (tempPos.y > 0) {
-							Block* blok = region->getBlock(tempPos);
-							uint8_t data = blok->data;
-							auto id = blok->blockLegacy->blockId;
-							if (blok->blockLegacy->isSolid == true && (!isVeinMiner || (id == selectedBlockId && data == selectedBlockData)))
-								_this->destroyBlock(&tempPos, face);
-						}
+	if (!isAutoMode) {
+		for (int x = -range; x < range; x++) {
+			for (int y = -range; y < range; y++) {
+				for (int z = -range; z < range; z++) {
+					tempPos.x = pos->x + x;
+					tempPos.y = pos->y + y;
+					tempPos.z = pos->z + z;
+					if (tempPos.y > 0) {
+						Block* blok = region->getBlock(tempPos);
+						uint8_t data = blok->data;
+						auto id = blok->blockLegacy->blockId;
+						if (blok->blockLegacy->isSolid == true && (!isVeinMiner || (id == selectedBlockId && data == selectedBlockData)))
+							_this->destroyBlock(*&tempPos, face);  // Dereference to match const Vec3i& signature
 					}
 				}
 			}
 		}
-		return;
 	}
-
-	oFunc(_this, pos, face, a4, a5);
+	return;
+}	oFunc(_this, pos, face, a4, a5);
 }
 
 void Hooks::HIDController_keyMouse(HIDController* _this, void* a2, void* a3) {
 	static auto oFunc = g_Hooks.HIDController_keyMouseHook->GetFastcall<void, HIDController*, void*, void*>();
-	GameData::setHIDController(_this);
+	g_Data.setHIDController(_this);
 	isTicked = true;
 	oFunc(_this, a2, a3);
 	return;

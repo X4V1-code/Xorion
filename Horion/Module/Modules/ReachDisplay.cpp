@@ -22,16 +22,16 @@ void ReachDisplay::onEnable() {
 }
 
 void ReachDisplay::onTick(GameMode* gm) {
-	if (Game.getLocalPlayer() == nullptr) return;
+	if (g_Data.getLocalPlayer() == nullptr) return;
 
 	this->ticks++;
 
-	if (GameData::isLeftClickDown() && Game.getLocalPlayer()->level->hasEntity() != 0) {
-		Entity* entity = Game.getLocalPlayer()->level->getEntity();
+	if (g_Data.isLeftClickDown() && g_Data.getLocalPlayer()->level->hasEntity() != 0) {
+		Entity* entity = g_Data.getLocalPlayer()->level->getEntity();
 
 		if (entity->damageTime > 0) {
 			this->ticks = 0;
-			this->currReach = (*entity->getPos()).dist(*Game.getLocalPlayer()->getPos());
+			this->currReach = entity->getPos()->dist(g_Data.getLocalPlayer()->getPos());
 
 			sprintf(this->reachStr, "%.2f", this->currReach);
 		}
@@ -39,7 +39,7 @@ void ReachDisplay::onTick(GameMode* gm) {
 }
 
 void ReachDisplay::onPostRender(MinecraftUIRenderContext* renderCtx) {
-	if (Game.getLocalPlayer() == nullptr) return;
+	if (g_Data.getLocalPlayer() == nullptr) return;
 
 	Vec2 windowSize = Game.getClientInstance()->getGuiData()->windowSize;
 
@@ -64,3 +64,4 @@ void ReachDisplay::onPostRender(MinecraftUIRenderContext* renderCtx) {
 void ReachDisplay::onDisable() {
 	free(this->reachStr);
 }
+

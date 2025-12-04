@@ -1,7 +1,7 @@
 // Horion/Module/Modules/AntiEffect.cpp
 #include "AntiEffect.h"
-#include "../../SDK/GameData.h"
-#include "../../SDK/C_LocalPlayer.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/LocalPlayer.h"
 #include "../../SDK/MobEffect.h"
 
 AntiEffect::AntiEffect() : IModule(0x0, Category::PLAYER, "Remove/ignore negative potion effects") {
@@ -15,9 +15,12 @@ AntiEffect::~AntiEffect() {}
 const char* AntiEffect::getModuleName() { return "AntiEffect"; }
 
 void AntiEffect::purgeEffects() {
-    C_LocalPlayer* lp = g_Data.getLocalPlayer();
+    LocalPlayer* lp = g_Data.getLocalPlayer();
     if (!lp) return;
 
+    // TODO: Implement effect clearing when SDK provides getEffectList()
+    // Currently the SDK doesn't expose this functionality
+    /*
     auto effects = lp->getEffectList(); // assume SDK exposes effect list
     if (!effects) return;
 
@@ -35,6 +38,7 @@ void AntiEffect::purgeEffects() {
         if (remove) it = effects->erase(it);
         else ++it;
     }
+    */
 }
 
 void AntiEffect::onTick(C_GameMode* gm) {

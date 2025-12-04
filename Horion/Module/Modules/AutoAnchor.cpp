@@ -1,7 +1,8 @@
 #include "AutoAnchor.h"
-#include "Utils/Utils.h"
-#include "DrawUtils.h"
-#include "SDK/GameMode.h"
+#include "../../../SDK/ClientInstance.h"
+#include "../../../Utils/Utils.h"
+#include "../../DrawUtils.h"
+#include "../../../SDK/GameMode.h"
 #include "SDK/MinecraftUIRenderContext.h"
 
 AutoAnchor::AutoAnchor()
@@ -33,23 +34,24 @@ void AutoAnchor::onEnable() {
 void AutoAnchor::onTick(GameMode* gm) {
     auto player = Game.getLocalPlayer();
     if (!player || !gm) return;
-    if (!player->region || !player->level) return;
+    if (!player->getRegion() || !player->level) return;
 
     delay++;
     anchorList.clear();
 
+    Vec3 playerPos = player->getPos();
     vec3_ti basePos(
-        (int)floor(player->getPos()->x),
-        (int)floor(player->getPos()->y),
-        (int)floor(player->getPos()->z)
+        (int)floor(playerPos.x),
+        (int)floor(playerPos.y),
+        (int)floor(playerPos.z)
     );
 
     for (int x = -range; x <= range; x++) {
         for (int y = -2; y <= 2; y++) {
             for (int z = -range; z <= range; z++) {
                 vec3_ti pos = basePos.add(x, y, z);
-                Block* block = player->region->getBlock(pos);
-                if (!block) continue;
+                Block* block = player->getRegion()->getBlock(Vec3i(pos.x, pos.y, pos.z));
+                if (!block || !block->toLegacy()) continue;
 
                 int id = block->toLegacy()->blockId;
                 if (isAnchorBlock(id)) {
@@ -76,7 +78,7 @@ void AutoAnchor::onTick(GameMode* gm) {
 
                         // Scan hotbar for glowstone
                         for (int slot = 0; slot < 9; slot++) {
-                            ItemStack* stack = inv->getItemStack(slot);
+                            ItemStack* stack = inv->getByGlobalIndex(slot);
                             if (stack && stack->item) {
                                 int itemId = stack->getItem()->itemId;
                                 if (isGlowstone(itemId)) {

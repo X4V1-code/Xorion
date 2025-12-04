@@ -18,7 +18,7 @@ const char* Compass::getModuleName() {
 void Compass::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	LocalPlayer* player = Game.getLocalPlayer();
 
-	if (player == nullptr || !GameData::canUseMoveKeys()) return;
+	if (player == nullptr || !g_Data.canUseMoveKeys()) return;
 
 	static auto wpMod = moduleMgr->getModule<Waypoints>();
 
@@ -135,3 +135,4 @@ void Compass::drawCenteredText(Vec2 pos, std::string text, float size, float tex
 	pos.x -= DrawUtils::getTextWidth(&text, size) / 2;
 	DrawUtils::drawText(pos, &text, MC_Color(255, 255, 255), size, textOpacity);
 }
+

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 
 ModulesCommand::ModulesCommand() : IMCCommand("modules", "Lists all modules", "") {
 	registerAlias("mods");

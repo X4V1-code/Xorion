@@ -4,6 +4,7 @@
 #include "../../path/goals/JoeGoalY.h"
 #include "../../path/goals/JoeGoalXZ.h"
 #include "../../path/goals/JoeGoalXYZ.h"
+#include "../../../Utils/TextFormat.h"
 
 PathCommand::PathCommand() : IMCCommand("path", "Joe path", "<y|xz|xyz> [args]"){
 	registerAlias("joe");

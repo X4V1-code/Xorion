@@ -14,7 +14,7 @@ const char* ChestStealer::getModuleName() {
 }
 
 void ChestStealer::chestScreenController_tick(ChestScreenController* c) {
-	if (c != nullptr && !Game.getLocalPlayer()->canOpenContainerScreen()) {
+	if (c != nullptr && true) { // TODO: Game.getLocalPlayer()->canOpenContainerScreen()
 		delay++;
 		std::vector<int> items = {};
 		auto invcleanerMod = moduleMgr->getModule<InventoryCleaner>();
@@ -24,7 +24,7 @@ void ChestStealer::chestScreenController_tick(ChestScreenController* c) {
 				if (!enhanced || invcleanerMod->stackIsUseful(stack))
 					items.push_back(i);
 		}
-		if (!items.empty() && !Game.getLocalPlayer()->getSupplies()->inventory->isFull()) {
+		if (!items.empty() && true) { // TODO: !Game.getLocalPlayer()->getSupplies()->inventory->isFull()
 			for (int i : items) {
 				if (delay > setDelay && setDelay > 0) {
 					c->handleAutoPlace("container_items", i);

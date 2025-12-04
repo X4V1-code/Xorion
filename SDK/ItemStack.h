@@ -132,6 +132,10 @@ public:
         for (const auto &e : enchantments) if (e.id == enchId) return e.level;
         return std::nullopt;
     }
+    
+    bool isEnchanted() const {
+        return !enchantments.empty();
+    }
 
     // Custom name helpers
     void setCustomName(const std::string& name) {
@@ -200,6 +204,33 @@ public:
         return s;
     }
 
+    // Stub: Calculate armor value including enchantments
+    int getArmorValueWithEnchants() const {
+        // TODO: Implement proper armor + enchantment calculation
+        return 0;
+    }
+
+    // Stub: Load ItemStack from NBT tag
+    void fromTag(void* tag) {
+        // TODO: Parse NBT tag and populate fields
+    }
+
+    // Stub: Set user data
+    void setUserData(void* data) {
+        // TODO: Store user data pointer
+    }
+
+    // Stub: Set item lore
+    void setLore(const std::string& lore) {
+        // TODO: Set item lore text
+    }
+
+    // Stub: Get attacking damage with enchantments
+    int getAttackingDamageWithEnchants() const {
+        // TODO: Calculate damage based on item and enchantments
+        return 0;
+    }
+
 private:
     void parseEnchantmentsFromTag() {
         // Placeholder: inspect rawTag and populate enchantments if present.
@@ -216,3 +247,6 @@ private:
         }
     }
 };
+
+// Legacy alias
+using C_ItemStack = ItemStack;

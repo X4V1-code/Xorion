@@ -10,11 +10,11 @@ const char* OffhandAllow::getModuleName() {
 }
 
 void OffhandAllow::onEnable() {
-	LocalPlayer* player = Game.getLocalPlayer();
+	LocalPlayer* player = g_Data.getLocalPlayer();
 	if (player != nullptr) {
-		Inventory* inv = player->getSupplies()->inventory;
+		PlayerInventory* inv = player->getSupplies()->inventory;
 		for (int i = 0; i <= 36; i++) {
-			ItemStack* itemStack = inv->getItemStack(i);
+			ItemStack* itemStack = inv->getByGlobalIndex(i);
 			if (itemStack == nullptr || itemStack->item == nullptr)
 				return;
 			else {

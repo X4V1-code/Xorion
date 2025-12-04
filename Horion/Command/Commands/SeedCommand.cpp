@@ -1,4 +1,6 @@
 #include "SeedCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/Utils.h"
 
 SeedCommand::SeedCommand() : IMCCommand("seed", "Shows you the seed of the world", "") {
 }

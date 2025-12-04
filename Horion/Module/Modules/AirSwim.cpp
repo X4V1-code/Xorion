@@ -1,4 +1,5 @@
 #include "AirSwim.h"
+#include "../../../Memory/GameData.h"
 
 AirSwim::AirSwim() : IModule(0, Category::MOVEMENT, "Swim in Air.") {
 }

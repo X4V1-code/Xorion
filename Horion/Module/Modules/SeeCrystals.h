@@ -1,7 +1,11 @@
 #pragma once
 #include "Module.h"
 
-class SeeCrystals : public Module {
+// Forward declare D3D11 types to avoid heavy header
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+
+class SeeCrystals : public IModule {
 public:
     SeeCrystals();
 

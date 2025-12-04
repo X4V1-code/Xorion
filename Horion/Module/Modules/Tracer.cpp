@@ -18,9 +18,9 @@ const char* Tracer::getModuleName() {
 
 void Tracer::onLevelRender() {
 	if (old) {
-		if (!Game.getLocalPlayer()) return;
-		float calcYaw = (Game.getLocalPlayer()->getActorRotationComponent()->rot.y + 90) * (PI / 180);
-		float calcPitch = (Game.getLocalPlayer()->getActorRotationComponent()->rot.x) * -(PI / 180);
+		if (!g_Data.getLocalPlayer()) return;
+		float calcYaw = (g_Data.getLocalPlayer()->getActorRotationComponent()->rot.y + 90) * (PI / 180);
+		float calcPitch = (g_Data.getLocalPlayer()->getActorRotationComponent()->rot.x) * -(PI / 180);
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * cos(calcPitch) * 0.5f;
 		moveVec.y = sin(calcPitch) * 0.5f;
@@ -42,7 +42,7 @@ void Tracer::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 	if (!old) {
 		Game.forEachEntity([&](Entity* ent, bool valid) {
-			if (ent != Game.getLocalPlayer() && Target::isValidTarget(ent) && Game.canUseMoveKeys()) {
+			if (ent != g_Data.getLocalPlayer() && Target::isValidTarget(ent) && Game.canUseMoveKeys()) {
 				static auto tracerMod = moduleMgr->getModule<Tracer>();
 				Vec2 target;
 				Vec2 screenSize;

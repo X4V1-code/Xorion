@@ -539,6 +539,7 @@ struct glmatrixf {
 	}
 };
 
+#ifndef SDK_AABB_DEFINED  // Don't redefine AABB if SDK version exists
 struct AABB {
 	Vec3 lower;
 	Vec3 upper;
@@ -588,6 +589,7 @@ struct AABB {
 			   aabb.upper.z > lower.z && upper.z > aabb.lower.z;
 	}
 };
+#endif  // SDK_AABB_DEFINED
 
 inline int random(int start, int end) {
 	return rand() % (end - start + 1) + start;

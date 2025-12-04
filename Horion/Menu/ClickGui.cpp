@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include "../../Utils/Json.hpp"
 #include "../../Utils/ClientColors.h"
-#include "DrawUtils.h"
+#include "../DrawUtils.h"
 #include "resource.h"
 
 bool resetStartPos = true;
@@ -53,6 +53,8 @@ float currentXOffset = 0;
 
 int timesRendered = 0;
 
+// TODO: renderBanner/loadImageFromResource/drawImage not available - commenting out
+/*
 // Anchored banner render (center-top, screen-size aware)
 void ClickGui::renderBanner() {
     static auto banner = DrawUtils::loadImageFromResource(IDR_XORION_BANNER);
@@ -69,6 +71,7 @@ void ClickGui::renderBanner() {
         DrawUtils::drawImage(banner, pos, bannerSize);
     }
 }
+*/
 
 void ClickGui::getModuleListByCategory(Category category, std::vector<std::shared_ptr<IModule>>* modList) {
     auto lock = moduleMgr->lockModuleList();
@@ -278,6 +281,9 @@ void ClickGui::renderCategory(Category category) {
             if (allowRender)
                 DrawUtils::drawText(textPos, &textStr, mod->isEnabled() ? whiteColor : MC_Color(200, 200, 200), textSize);
 
+            // TODO: Settings system redesigned - SettingEntry no longer exists
+            // Commenting out entire settings rendering section (280+ lines)
+            #ifdef HORION_ENABLE_SETTINGS_RENDERING_THAT_IS_BROKEN_BY_API_CHANGES
             // Settings
             {
                 std::vector<SettingEntry*>* settings = mod->getSettings();
@@ -645,6 +651,9 @@ void ClickGui::renderCategory(Category category) {
                 } else
                     currentYOffset += textHeight + (textPaddingY * 2);
             }
+            #endif
+            // Simplified: just add height for module
+            currentYOffset += textHeight + (textPaddingY * 2);
         }
 
         Vec4 winRectPos = Vec4(
@@ -762,7 +771,7 @@ void ClickGui::render() {
         MC_Color(12, 12, 12), 0.2f);
 
     // Render anchored banner at top (centered)
-    renderBanner();
+    //renderBanner();  // TODO: renderBanner not available - function commented out
 
     // Render all categories
     renderCategory(Category::COMBAT);
@@ -884,3 +893,4 @@ void ClickGui::onSaveConfig(void* confVoid) {
 
     conf->emplace("ClickGuiMenu", obj);
 }
+

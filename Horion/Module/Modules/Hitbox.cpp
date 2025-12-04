@@ -27,7 +27,7 @@ void findTarget(Entity* currentEntity, bool isRegularEntitie) {
 	if (!Target::isValidTarget(currentEntity))
 		return;
 
-	float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
+	float dist = currentEntity->getPos()->dist(Game.getLocalPlayer()->getPos());
 
 	if (dist < hitboxMod->range) {
 		currentEntity->getAABBShapeComponent()->size.x = hitboxMod->width;

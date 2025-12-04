@@ -8,6 +8,7 @@
 #include "Utils.h"
 #include "Logger.h"
 #include "Json.hpp"
+#include "../Memory/GameData.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -31,11 +32,17 @@ void SkinUtil::importGeo(std::wstring filePath) {
 	if (contents.size() == 0)
 		return;
 
+	// TODO: IDR_TEXT1 resource not defined - commenting out for now
+	/*
 	auto hResourceGeometry = FindResourceA((HMODULE)g_Data.getDllModule(), MAKEINTRESOURCEA(IDR_TEXT1), "TEXT");
 	auto hMemoryGeometry = LoadResource((HMODULE)g_Data.getDllModule(), hResourceGeometry);
 
 	auto sizeGeometry = SizeofResource((HMODULE)g_Data.getDllModule(), hResourceGeometry);
-	auto ptrGeometry = LockResource(hMemoryGeometry);
+	*/
+	auto hResourceGeometry = NULL;
+	auto hMemoryGeometry = NULL;
+	auto sizeGeometry = 0;
+	auto ptrGeometry = NULL; // LockResource(hMemoryGeometry);
 	logF("Starting geometry import");
 	auto mesh = SkinUtil::objToMesh(contents.c_str());
 	logF("Mesh created (verts: %i, uvs: %i, normals: %i, faces: %i)", mesh.vertices.size(), mesh.uvs.size(), mesh.normals.size(), mesh.faces.size());
@@ -43,8 +50,9 @@ void SkinUtil::importGeo(std::wstring filePath) {
 	g_Data.setCustomGeometryOverride(true, std::make_shared<std::string>(moddedGeo));
 	logF("Geometry import done");
 
-	if (hMemoryGeometry)
-		FreeResource(hMemoryGeometry);
+	// Resources freed automatically - no need to call FreeResource
+	// if (hMemoryGeometry)
+	//	FreeResource(hMemoryGeometry);
 }
 std::string SkinUtil::modGeometry(const char* oldGeoStr, MeshStructs::meshData mesh) {
 	auto oldGeo = std::string(oldGeoStr);

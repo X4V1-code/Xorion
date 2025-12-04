@@ -1,7 +1,12 @@
 #include "NbtCommand.h"
+#include "../../../Utils/TextFormat.h"
 #include "../../../Utils/Utils.h"
 #include "../../../Utils/Logger.h"
 #include "../../../SDK/Tag.h"
+#include "../../../SDK/Level.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/InventoryTransaction.h"
 
 NbtCommand::NbtCommand() : IMCCommand("nbt", "read and write NBT tags to/from your clipboard (You have to point at an entity/block entity)", "<read/write>") {
 	registerAlias("nbtraw");
@@ -18,35 +23,45 @@ bool NbtCommand::execute(std::vector<std::string>* args) {
 		assertTrue(args->size() > 2);
 	}
 
-	Level* level = Game.getLocalPlayer()->level;
-	BlockActor* blockActor = Game.getLocalPlayer()->getRegion()->getBlockEntity(level->hitResult.blockPos);
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	Inventory* inv = supplies->inventory;
-	InventoryTransactionManager* manager = Game.getLocalPlayer()->getTransactionManager();
-	ItemStack* item = Game.getLocalPlayer()->getSelectedItem();
+	Level* level = g_Data.getLocalPlayer()->level;
+	BlockActor* blockActor = g_Data.getLocalPlayer()->getRegion()->getBlockEntity(level->hitResult.blockPos);
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	PlayerInventory* inv = supplies->inventory;
+	InventoryTransactionManager* manager = g_Data.getLocalPlayer()->getTransactionManager();
+	ItemStack* item = inv->getByGlobalIndex(supplies->selectedHotbarSlot);
 
 	if (args->at(1) == "read" || args->at(1) == "save") {
 		std::unique_ptr<CompoundTag> tag = std::make_unique<CompoundTag>();
 		std::stringstream build;
 
 		if (args->at(1) == "save" && item != nullptr) {
+			// TODO: ItemStack::save() not implemented in SDK
+			clientMessageF("%sItemStack NBT save not yet implemented!", RED);
+			return true;
+			/*
 			auto* boy = new CompoundTag();
 			item->save(&boy);
 			boy->write(build);
 			delete boy;
+			*/
 		} else {
 			if (level->getEntity() != nullptr) {
+				// TODO: getRakNetConnector not available
+				/*
 				if (Game.getRakNetConnector()->isonaServer()) {
 					clientMessageF("%sNBT tags for mobs only works in local world!", RED);
 					return true;
 				}
+				*/
 				level->getEntity()->save(tag.get());
 				tag->write(build);
 			} else if (blockActor != nullptr) {
 				blockActor->save(tag.get());
 				tag->write(build);
-			} else if (item != nullptr && item->tag != nullptr) {
-				item->tag->write(build);
+			} else if (item != nullptr) {
+				// TODO: ItemStack::tag member doesn't exist in SDK
+				clientMessageF("%sItemStack NBT access not yet implemented!", RED);
+				return true;
 			} else {
 				clientMessageF("%sCouldn't find NBT tags!", RED);
 				return true;
@@ -78,10 +93,14 @@ bool NbtCommand::execute(std::vector<std::string>* args) {
 		}
 
 		if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-			if (args->at(1) == "write")
-				item->setUserData(std::move(Mojangson::parseTag(tag)));
-			else if (args->at(1) == "load") {
-				item->fromTag(*Mojangson::parseTag(tag));
+			if (args->at(1) == "write") {
+				// TODO: setUserData signature mismatch
+				auto parsedTag = Mojangson::parseTag(tag);
+				item->setUserData(parsedTag.get());
+			} else if (args->at(1) == "load") {
+				// TODO: fromTag signature mismatch
+				auto parsedTag = Mojangson::parseTag(tag);
+				item->fromTag(parsedTag.get());
 				item->count = 64;
 			}
 		} else {

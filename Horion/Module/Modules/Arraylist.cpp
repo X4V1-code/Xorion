@@ -64,8 +64,8 @@ void Arraylist::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	mousePos = mousePos.div(windowSizeReal).mul(windowSize);
 
 	// Mouse click detector
-	static bool wasLeftMouseDown = GameData::isLeftClickDown();
-	bool leftMouseDown = GameData::isLeftClickDown();
+	static bool wasLeftMouseDown = g_Data.isLeftClickDown();
+	bool leftMouseDown = g_Data.isLeftClickDown();
 	bool executeClick = leftMouseDown && leftMouseDown != wasLeftMouseDown;
 	wasLeftMouseDown = leftMouseDown;
 
@@ -113,7 +113,7 @@ void Arraylist::onPostRender(MinecraftUIRenderContext* renderCtx) {
 			DrawUtils::fillRectangle(rectPos, ClientColors::arraylistBackgroundColor, alpha);
 			DrawUtils::fillRectangle(sideRect, arrayColor, 1.f);
 		}
-		if (!GameData::canUseMoveKeys() && rectPos.contains(&mousePos) && clickToggle) {
+		if (!g_Data.canUseMoveKeys() && rectPos.contains(&mousePos) && clickToggle) {
 			auto selectedRect = rectPos;
 			selectedRect.x = sideRect.z;
 			if (leftMouseDown) {
@@ -131,3 +131,4 @@ void Arraylist::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	}
 	modContainerList.clear();
 }
+

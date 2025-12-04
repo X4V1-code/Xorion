@@ -1,6 +1,7 @@
 #include "PanicCommand.h"
 
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 
 PanicCommand::PanicCommand() : IMCCommand("panic", "Disables all Modules", "") {
 }

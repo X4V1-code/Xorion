@@ -42,14 +42,15 @@ void DrawUtils::drawBox3D(const AABB& box, const MC_Color& color, float lineWidt
     (void)lineWidth; (void)alpha;
 
     // Draw 12 edges of the box. Replace with your engine draw calls.
-    Vec3 v000 = box.min;
-    Vec3 v111 = box.max;
-    Vec3 v001{box.min.x, box.min.y, box.max.z};
-    Vec3 v010{box.min.x, box.max.y, box.min.z};
-    Vec3 v011{box.min.x, box.max.y, box.max.z};
-    Vec3 v100{box.max.x, box.min.y, box.min.z};
-    Vec3 v101{box.max.x, box.min.y, box.max.z};
-    Vec3 v110{box.max.x, box.max.y, box.min.z};
+    // HMath AABB uses 'lower' and 'upper' instead of 'min' and 'max'
+    Vec3 v000 = box.lower;
+    Vec3 v111 = box.upper;
+    Vec3 v001{box.lower.x, box.lower.y, box.upper.z};
+    Vec3 v010{box.lower.x, box.upper.y, box.lower.z};
+    Vec3 v011{box.lower.x, box.upper.y, box.upper.z};
+    Vec3 v100{box.upper.x, box.lower.y, box.lower.z};
+    Vec3 v101{box.upper.x, box.lower.y, box.upper.z};
+    Vec3 v110{box.upper.x, box.upper.y, box.lower.z};
 
     // Placeholder: invoke drawLine3D for each edge.
     drawLine3D(v000, v100, color, lineWidth);

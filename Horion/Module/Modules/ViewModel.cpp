@@ -23,7 +23,7 @@ const char* ViewModel::getModuleName() {
 }
 
 void ViewModel::onTick(GameMode* gm) {
-	if (Game.getLocalPlayer() == nullptr)
+	if (g_Data.getLocalPlayer() == nullptr)
 		return;
 
 	if (Reset) {

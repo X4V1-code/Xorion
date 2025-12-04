@@ -1,21 +1,22 @@
 #include "SeeCrystals.h"
-#include "../Memory/GameData.h"
-#include "../SDK/Entity.h"
-#include "../SDK/ClientInstance.h"
-#include "../SDK/Level.h"
-#include "../Render/RenderUtils.h"
-#include "../Utils/Logger.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/Entity.h"
+#include "../../../SDK/ClientInstance.h"
+#include "../../../SDK/Level.h"
+// #include "../../../Horion/Render/RenderUtils.h" // TODO: RenderUtils.h not found in expected location
+#include "../../../Utils/Logger.h"
 
 namespace {
     inline bool isEndCrystal(Entity* e) {
         if (!e) return false;
         // Replace with verified End Crystal type ID for 1.21.123
-        return e->getEntityTypeId() == 71 || e->isEndCrystal();
+        // TODO: isEndCrystal() method not available
+        return e->getEntityTypeId() == 71;
     }
 }
 
 SeeCrystals::SeeCrystals()
-    : Module("SeeCrystals", "Visual", "Render all End Crystals as purple and visible through walls") {}
+    : IModule(0x0, Category::VISUAL, "Render all End Crystals as purple and visible through walls") {}
 
 void SeeCrystals::onEnable() {
     m_crystals.clear();
@@ -30,7 +31,7 @@ void SeeCrystals::onDisable() {
 
 void SeeCrystals::rebuildCrystalCache() {
     m_crystals.clear();
-    auto lp = Game.getLocalPlayer();
+    auto lp = g_Data.getLocalPlayer();
     if (!lp || !lp->level) return;
 
     Game.forEachEntity([&](Entity* ent, bool /*isLocal*/) {
@@ -40,6 +41,8 @@ void SeeCrystals::rebuildCrystalCache() {
     });
 }
 
+// TODO: onLevelRender uses getD3DDevice and RenderUtils methods not available
+/*
 void SeeCrystals::onLevelRender() {
     if (!this->isEnabled()) return;
 
@@ -91,3 +94,4 @@ void SeeCrystals::renderCrystalOverlay(Entity* ent, ID3D11Device* dev, ID3D11Dev
 
     RenderUtils::endState(guard, ctx);
 }
+*/

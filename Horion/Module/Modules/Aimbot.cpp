@@ -22,8 +22,8 @@ const char* Aimbot::getModuleName() {
 
 struct CompareTargetEnArray {
 	bool operator()(Entity* lhs, Entity* rhs) {
-		LocalPlayer* localPlayer = Game.getLocalPlayer();
-		return (*lhs->getPos()).dist(*localPlayer->getPos()) < (*rhs->getPos()).dist(*localPlayer->getPos());
+		LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+		return lhs->getPos()->dist(localPlayer->getPos()) < rhs->getPos()->dist(localPlayer->getPos());
 	}
 };
 
@@ -72,7 +72,7 @@ void findEntity713(Entity* currentEntity, bool isRegularEntity) {
 			return;
 	}
 
-	float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
+	float dist = currentEntity->getPos()->dist(g_Data.getLocalPlayer()->getPos());
 
 	if (dist <= aimbotMod->range)
 		targetList137.push_back(currentEntity);
@@ -94,9 +94,9 @@ void Aimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 		Vec2 angle = origin.CalcAngle(*targetList137[0]->getPos());
 		Vec2 appl = angle.sub(localPlayer->getActorHeadRotationComponent()->rot).normAngles();
 		appl.x = -appl.x;
-		if ((appl.x < verticalrange && appl.x > -verticalrange) && (appl.y < horizontalrange && appl.y > -horizontalrange) && GameData::canUseMoveKeys()) {
-			PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-			ItemStack* item = supplies->inventory->getItemStack(supplies->selectedHotbarSlot);
+		if ((appl.x < verticalrange && appl.x > -verticalrange) && (appl.y < horizontalrange && appl.y > -horizontalrange) && g_Data.canUseMoveKeys()) {
+			PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+			ItemStack* item = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
 			if (sword && !(item->getItem()->isWeapon()))
 				return;
 
@@ -115,3 +115,4 @@ void Aimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 		}
 	}
 }
+

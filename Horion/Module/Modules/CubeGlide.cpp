@@ -1,4 +1,8 @@
 #include "CubeGlide.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/Vec2.h"
+#include "../../../SDK/GameMode.h"
+#include "../../../SDK/Packet.h"
 
 CubeGlide::CubeGlide() : IModule(0, Category::MOVEMENT, "Glide on Cubecraft") {
 	registerFloatSetting("Speed", &this->speed, this->speed, 1.f, 3.f);
@@ -16,21 +20,21 @@ bool CubeGlide::isFlashMode() {
 }
 
 void CubeGlide::onEnable() {
-	g_Data.getLocalPlayer()->setPos((*g_Data.getLocalPlayer()->getPos()).add(vec3_t(0, 1, 0)));
+	g_Data.getLocalPlayer()->setPos(g_Data.getLocalPlayer()->getPos().add(vec3_t(0, 1, 0)));
 }
 
 void CubeGlide::onTick(C_GameMode* gm) {
-	float calcYaw = (gm->player->yaw + 90) * (PI / 180);
+	float calcYaw = (gm->player->getActorHeadRotationComponent()->rot.y + 90) * (PI / 180);
 
 	gameTick++;
 
-	vec3_t pos = *g_Data.getLocalPlayer()->getPos();
+	vec3_t pos = g_Data.getLocalPlayer()->getPos();
 	pos.y += 1.3f;
-	C_MovePlayerPacket a(g_Data.getLocalPlayer(), pos);
-	g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&a);
+	MovePlayerPacket packet1(g_Data.getLocalPlayer(), pos);
+	g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet1);
 	pos.y -= 1.3f;
-	C_MovePlayerPacket a2(g_Data.getLocalPlayer(), pos);
-	g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&a2);
+	MovePlayerPacket packet2(g_Data.getLocalPlayer(), pos);
+	g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet2);
 
 	vec3_t moveVec;
 	moveVec.x = cos(calcYaw) * speed;
@@ -40,7 +44,7 @@ void CubeGlide::onTick(C_GameMode* gm) {
 
 	if (gameTick >= 5) {
 		gameTick = 0;
-		float yaw = gm->player->yaw * (PI / 180);
+		float yaw = gm->player->getActorHeadRotationComponent()->rot.y * (PI / 180);
 		float length = 4.f;
 
 		float x = -sin(yaw) * length;
@@ -51,5 +55,6 @@ void CubeGlide::onTick(C_GameMode* gm) {
 }
 
 void CubeGlide::onDisable() {
-	g_Data.getLocalPlayer()->velocity = vec3_t(0, 0, 0);
+	// TODO: Entity velocity not directly accessible
+	// g_Data.getLocalPlayer()->velocity = vec3_t(0, 0, 0);
 }

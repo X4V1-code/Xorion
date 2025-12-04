@@ -1,4 +1,6 @@
 #include "TeleportCommand.h"
+#include "../../../Utils/HMath.h"
+#include "../../../Utils/TextFormat.h"
 
 TeleportCommand::TeleportCommand() : IMCCommand("tp", "Teleports to coordinates", "<X> <Y> <Z>") {
 	registerAlias("teleport");

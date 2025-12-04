@@ -1,4 +1,6 @@
 #include "DrawFunctions.h"
+#include "Vector3Functions.h"
+#include "Vector2Functions.h"
 #include "../../DrawUtils.h"
 
 JsValueRef CALLBACK DrawFunctions::drawLine3d(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {

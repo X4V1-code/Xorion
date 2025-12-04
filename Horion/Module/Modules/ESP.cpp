@@ -63,7 +63,7 @@ void doRenderStuff(Entity* ent, bool isRegularEntity) {
 void ESP::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	LocalPlayer* localPlayer = Game.getLocalPlayer();
 
-	if (localPlayer != nullptr && GameData::canUseMoveKeys()) {
+	if (localPlayer != nullptr && g_Data.canUseMoveKeys()) {
 		// Rainbow colors
 		if (rcolors[3] < 1) {
 			rcolors[0] = 0.2f;
@@ -77,3 +77,4 @@ void ESP::onPreRender(MinecraftUIRenderContext* renderCtx) {
 		Game.forEachEntity(doRenderStuff);
 	}
 }
+

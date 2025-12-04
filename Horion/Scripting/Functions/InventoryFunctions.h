@@ -1,6 +1,9 @@
 #pragma once
 
 #include "../ScriptManager.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../Memory/GameData.h"
 
 class InventoryFunctions {
 public:

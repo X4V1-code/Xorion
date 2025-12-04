@@ -46,8 +46,8 @@ bool TestModule::isFlashMode() {
 }
 
 void TestModule::onEnable() {
-	LocalPlayer* player = Game.getLocalPlayer();
-	Inventory* inv = player->getSupplies()->inventory;
+	LocalPlayer* player = g_Data.getLocalPlayer();
+	PlayerInventory* inv = player->getSupplies()->inventory;
 	if (player != nullptr) {
 	}
 	//PlayerHotbarPacket packet;
@@ -69,7 +69,7 @@ void TestModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	pos.y / 2.55;
 	if (player != nullptr) {
 		for (int i = 0; i <= 35; i++) {
-			ItemStack* item = inv->getItemStack(i);
+			ItemStack* item = inv->getByGlobalIndex(i);
 			//if (item->item != nullptr) {
 				//std::string itemName = TextHolder(item->getItem()->name).getText();
 				DrawUtils::drawItem(item, pos, 10.f, 1.f, false);
@@ -93,6 +93,8 @@ void TestModule::onSendPacket(Packet* p) {
 	}
 }
 
+// TODO: onSendClientPacket removed from IModule
+/*
 void TestModule::onSendClientPacket(Packet* p) {
 	if (p->isInstanceOf<PlayerHotbarPacket>()) {
 		PlayerHotbarPacket* packet = reinterpret_cast<PlayerHotbarPacket*>(p);
@@ -100,6 +102,7 @@ void TestModule::onSendClientPacket(Packet* p) {
 		//logF("%s", packet->name);
 	}
 }
+*/
 
 void TestModule::onDisable() {
 }
@@ -107,7 +110,10 @@ void TestModule::onDisable() {
 void TestModule::onLevelRender() {
 }
 
+// TODO: onKey removed from IModule
+/*
 void TestModule::onKey(int key, bool isDown, bool& cancel) {
 	//Cancel W key for testing to make sure this works
 	//if (key == 'W' && isDown) cancel = true;
 }
+*/

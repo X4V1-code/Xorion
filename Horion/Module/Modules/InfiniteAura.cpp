@@ -1,10 +1,19 @@
-﻿#include "InfiniteAura.h"
+#include "InfiniteAura.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/GameMode.h"
+#include "../../../SDK/LocalPlayer.h"
+#include "../../../SDK/Packet.h"
+#include "../ModuleManager.h"
+#include "../../FriendList/FriendList.h"
 
 InfiniteAura::InfiniteAura() : IModule(0, Category::COMBAT, "Killaura but with infinite reach.") {
+	// TODO: SettingEnum redesigned, old constructor removed
+	/*
 	mode = SettingEnum(this)
 		.addEntry(EnumEntry("Single", 0))
 		.addEntry(EnumEntry("Multi", 1));
 	registerEnumSetting("Mode", &mode, 0);
+	*/
 	registerFloatSetting("TPDistance", &tpDistance, tpDistance, 1.f, 20.f);
 	registerFloatSetting("Range", &range, range, 15.f, 128.f);
 	registerIntSetting("Delay", &delay, delay, 0, 20);
@@ -18,15 +27,15 @@ const char* InfiniteAura::getModuleName() {
 	return ("InfiniteAura");
 }
 
-//static std::vector<C_Entity*> targetList0;
+//static std::vector<Entity*> targetList0;
 
-void findEntities(C_Entity* currentEntity, bool isRegularEntitie) {
+void findEntities(Entity* currentEntity, bool isRegularEntitie) {
 	static auto infiniteAuraMod = moduleMgr->getModule<InfiniteAura>();
 
 	if (!Target::isValidTarget(currentEntity))
 		return;
 
-	float dist = (*currentEntity->getPos()).dist(*g_Data.getLocalPlayer()->getPos());
+	float dist = currentEntity->getPos()->dist(g_Data.getLocalPlayer()->getPos());
 
 	if (dist < infiniteAuraMod->range) {
 		infiniteAuraMod->targetList.push_back(currentEntity);
@@ -37,30 +46,30 @@ void InfiniteAura::onTick(C_GameMode* gm) {
 	//Loop through all our players and retrieve their information
 	targetList.clear();
 
-	g_Data.forEachValidEntity(findEntities);
+	g_Data.forEachEntity(findEntities);
 	
 	ticks++;
 
 	if (!targetList.empty() && ticks >= delay) {
-		C_LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+		LocalPlayer* localPlayer = g_Data.getLocalPlayer();
 
 		posList.clear();
 
-		std::sort(targetList.begin(), targetList.end(), [](const C_Entity* lhs, const C_Entity* rhs) {
-			vec3_t localPlayerPos = *g_Data.getLocalPlayer()->getPos();
-			C_Entity* current = const_cast<C_Entity*>(lhs);
-			C_Entity* other = const_cast<C_Entity*>(rhs);
-			return (*current->getPos()).dist(localPlayerPos) < (*other->getPos()).dist(localPlayerPos);
+		std::sort(targetList.begin(), targetList.end(), [](const Entity* lhs, const Entity* rhs) {
+			vec3_t localPlayerPos = g_Data.getLocalPlayer()->getPos();
+			Entity* current = const_cast<Entity*>(lhs);
+			Entity* other = const_cast<Entity*>(rhs);
+			return current->getPos()->dist(localPlayerPos) < other->getPos()->dist(localPlayerPos);
 			}); 
 		//Sortest distance
 
-		float calcYaw = (localPlayer->yaw + 90) * (PI / 180);
-		float calcPitch = (localPlayer->pitch) * -(PI / 180);
+		float calcYaw = (localPlayer->getActorHeadRotationComponent()->rot.y + 90) * (PI / 180);
+		float calcPitch = (localPlayer->getActorHeadRotationComponent()->rot.x) * -(PI / 180);
 
 		float teleportX = cos(calcYaw) * cos(calcPitch) * 3.f;
 		float teleportZ = sin(calcYaw) * cos(calcPitch) * 3.f;
 
-		vec3_t localPlayerPos = *localPlayer->getPos();
+		vec3_t localPlayerPos = localPlayer->getPos();
 
 		for (auto target : targetList) {
 			vec3_t targetPos = *target->getPos();
@@ -71,7 +80,8 @@ void InfiniteAura::onTick(C_GameMode* gm) {
 
 			for (int n = 1; n <= times; n++) {
 				vec3_t pos = localPlayerPos.add(tpPos.sub(localPlayerPos).div(times).mul(n));
-				g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&C_MovePlayerPacket(localPlayer, pos));
+				MovePlayerPacket packet(localPlayer, pos);
+				g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet);
 
 				posList.push_back(pos);
 			}
@@ -80,22 +90,27 @@ void InfiniteAura::onTick(C_GameMode* gm) {
 			g_Data.getGameMode()->attack(target);
 
 			//Back
-			localPlayerPos = *localPlayer->getPos();
+			localPlayerPos = localPlayer->getPos();
 			for (int n = 1; n <= times; n++) {
 				vec3_t pos = tpPos.add(localPlayerPos.sub(tpPos).div(times).mul(n));
-				g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&C_MovePlayerPacket(localPlayer, pos));
+				MovePlayerPacket packet2(localPlayer, pos);
+				g_Data.getClientInstance()->loopbackPacketSender->sendToServer(&packet2);
 			}
 
+			// TODO: mode enum removed
+			/*
 			if (mode.selected == 0) {
 				break;
 			} //Single
+			*/
+			break; // Default to single mode
 		}
 		ticks = 0;
 	}
 }
 
 void InfiniteAura::onPreRender(C_MinecraftUIRenderContext* renderCtx) {
-	if (!GameData::canUseMoveKeys())
+	if (!g_Data.canUseMoveKeys())
 		return;
 
 	if (!posList.empty() && renderPos) {
@@ -114,3 +129,4 @@ void InfiniteAura::onEnable() {
 	posList.clear();
 	ticks = 0;
 }
+

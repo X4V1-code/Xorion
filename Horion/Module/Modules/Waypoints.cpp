@@ -16,8 +16,8 @@ const char* Waypoints::getModuleName() {
 }
 
 void Waypoints::onPreRender(MinecraftUIRenderContext* renderCtx) {
-	LocalPlayer* localPlayer = Game.getLocalPlayer();
-	if (localPlayer == nullptr || !GameData::canUseMoveKeys())
+	LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+	if (localPlayer == nullptr || !g_Data.canUseMoveKeys())
 		return;
 	int currentDimension = localPlayer->dimension->dimensionId;
 
@@ -36,7 +36,7 @@ void Waypoints::onPreRender(MinecraftUIRenderContext* renderCtx) {
 			pos.z *= 8;
 		} else if (currentDimension != wpDimension)
 			continue;
-		float dist = pos.dist(*Game.getLocalPlayer()->getPos());
+		float dist = pos.dist(g_Data.getLocalPlayer()->getPos());
 
 		constexpr bool useFloatingPoint = false;
 		constexpr bool fadeOutAtDistance = true;
@@ -62,7 +62,7 @@ void Waypoints::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 		if (fadeOutAtDistance && dist > 15) {
 				
-			Vec2 angle = localPlayer->getPos()->CalcAngle(pos);
+			Vec2 angle = localPlayer->getPos().CalcAngle(pos);
 			float diff = angle.sub(localPlayer->getActorHeadRotationComponent()->rot).normAngles().magnitude();
 			if (dist > 30) {
 				float neededDiff = lerp(40, 15, std::min((dist - 30) / 300, 1.f));
@@ -206,3 +206,4 @@ void Waypoints::onSaveConfig(void* confVoid) {
 
 	conf->emplace(modName.c_str(), obj);
 }
+

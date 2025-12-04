@@ -39,6 +39,7 @@ JsValueRef CALLBACK EntityFunctions::getInterpolatedPosition(JsValueRef callee, 
 	return scriptMgr.prepareVector3(lerped, reinterpret_cast<ContextObjects*>(callbackState));
 }
 
+/*
 JsValueRef CALLBACK EntityFunctions::getVelocity(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -47,7 +48,9 @@ JsValueRef CALLBACK EntityFunctions::getVelocity(JsValueRef callee, bool isConst
 
 	return scriptMgr.prepareVector3(ent->velocity, reinterpret_cast<ContextObjects*>(callbackState));
 }
+*/
 
+/*
 JsValueRef CALLBACK EntityFunctions::isOnGround(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -56,6 +59,7 @@ JsValueRef CALLBACK EntityFunctions::isOnGround(JsValueRef callee, bool isConstr
 
 	return chakra.toBoolean(ent->onGround);
 }
+*/
 
 JsValueRef CALLBACK EntityFunctions::isInvisible(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
@@ -75,6 +79,7 @@ JsValueRef CALLBACK EntityFunctions::isInWater(JsValueRef callee, bool isConstru
 	return chakra.toBoolean(ent->isInWater());
 }
 
+/*
 JsValueRef CALLBACK EntityFunctions::isInLava(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -83,6 +88,7 @@ JsValueRef CALLBACK EntityFunctions::isInLava(JsValueRef callee, bool isConstruc
 
 	return chakra.toBoolean(ent->isInLava());
 }
+*/
 
 JsValueRef CALLBACK EntityFunctions::isSneaking(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
@@ -93,6 +99,7 @@ JsValueRef CALLBACK EntityFunctions::isSneaking(JsValueRef callee, bool isConstr
 	return chakra.toBoolean(ent->isSneaking());
 }
 
+/*
 JsValueRef CALLBACK EntityFunctions::getSize(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -101,6 +108,7 @@ JsValueRef CALLBACK EntityFunctions::getSize(JsValueRef callee, bool isConstruct
 
 	return scriptMgr.prepareVector3(vec3_t(ent->width, ent->height, ent->width), reinterpret_cast<ContextObjects*>(callbackState));
 }
+*/
 
 JsValueRef CALLBACK EntityFunctions::toString(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
@@ -117,6 +125,7 @@ JsValueRef CALLBACK EntityFunctions::toString(JsValueRef callee, bool isConstruc
 	return ref;
 }
 
+/*
 JsValueRef CALLBACK EntityFunctions::getViewAngles(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -125,7 +134,9 @@ JsValueRef CALLBACK EntityFunctions::getViewAngles(JsValueRef callee, bool isCon
 
 	return scriptMgr.prepareVector3(vec3_t(ent->viewAngles, 0), reinterpret_cast<ContextObjects*>(callbackState));
 }
+*/
 
+/*
 JsValueRef CALLBACK EntityFunctions::getPitch(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -134,7 +145,9 @@ JsValueRef CALLBACK EntityFunctions::getPitch(JsValueRef callee, bool isConstruc
 
 	return chakra.toNumber(ent->pitch);
 }
+*/
 
+/*
 JsValueRef CALLBACK EntityFunctions::getYaw(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
 	auto ent = EntityFunctions::getEntityFromValue(arguments[0]);
 	if (ent == nullptr) {
@@ -143,3 +156,4 @@ JsValueRef CALLBACK EntityFunctions::getYaw(JsValueRef callee, bool isConstructC
 
 	return chakra.toNumber(ent->yaw);
 }
+*/

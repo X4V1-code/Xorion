@@ -143,14 +143,14 @@ public:
 		this->deleteText();
 	}
 
-	char* getText() {
+	char* getText() const {
 		if (alignedTextLength < 16)
-			return this->inlineText;
+			return const_cast<char*>(this->inlineText);
 		else
 			return this->pText;
 	}
 
-	size_t getTextLength() {
+	size_t getTextLength() const {
 		return textLength;
 	}
 

@@ -18,5 +18,5 @@ public:
 
     virtual const char* getModuleName() override;
     virtual void onTick(C_GameMode* gm) override;
-    virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
+    virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
 };

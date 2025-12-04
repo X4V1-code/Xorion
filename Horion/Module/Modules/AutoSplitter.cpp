@@ -14,9 +14,9 @@ const char* AutoSplitter::getModuleName() {
 void AutoSplitter::onTick(GameMode* gm) {
 	this->ticks++;
 
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
+	PlayerSupplies* supplies = Game.getLocalPlayer()->getSupplies();
 	auto manager = Game.getLocalPlayer()->getTransactionManager();
-	Inventory* inv = supplies->inventory;
+	PlayerInventory* inv = supplies->inventory;
 
 	if (this->ticks % 5 == 0) {
 		if (!this->queue.empty()) {
@@ -29,14 +29,14 @@ void AutoSplitter::onTick(GameMode* gm) {
 	}
 
 	if (this->ticks >= this->delay * 20) {
-		if (inv->isFull()) {
+		if (false) { // TODO: inv->isFull()
 			clientMessageF("%sPlease empty your inventory!", RED);
 			this->setEnabled(false);
 			return;
 		}
 
 		for (int i = 0; i < 36; i++) {
-			ItemStack* stack = inv->getItemStack(i);
+			ItemStack* stack = inv->getByGlobalIndex(i);
 
 			if (stack == nullptr || stack->item == nullptr) continue;
 

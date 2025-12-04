@@ -1,4 +1,5 @@
 ﻿#include "XpCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 const std::string LEVEL_INDICATOR = "l";
 
@@ -23,12 +24,15 @@ bool XpCommand::execute(std::vector<std::string>* args) {
 
 	if (std::all_of(experienceAmount.begin(), experienceAmount.end(), ::isdigit)) {
 		int experience = std::stoi(experienceAmount);
+		// TODO: addLevels/addExperience not available
+		/*
 		if (isAddingLevels) {
 			player->addLevels(experience);
 		} else {
 			player->addExperience(experience);
 		}
-		clientMessageF("%sAdded %i experience %s", GREEN, experience, isAddingLevels ? "levels" : "points");
+		*/
+		clientMessageF("%sAdded %i experience %s (not implemented)", GREEN, experience, isAddingLevels ? "levels" : "points");
 	} else {
 		clientMessageF("%sInvalid amount of experience!", RED);
 	}

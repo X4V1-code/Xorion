@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "../../../Memory/GameData.h"
 
 Timer::Timer() : IModule(0, Category::MISC, "Increase the ticks per second.") {
 	registerIntSetting("TPS", &timer, timer, 0, 500);

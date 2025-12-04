@@ -1,4 +1,5 @@
 #include "ScriptCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 ScriptCommand::ScriptCommand() : IMCCommand("script", "Manage scripts", "<load|unloadall>") {
 }
@@ -10,6 +11,11 @@ bool ScriptCommand::execute(std::vector<std::string>* args) {
 	assertTrue(args->size() >= 2);
 	std::string action = args->at(1);
 	if (action == "load") {
+		// HorionDataPacket not implemented in this build
+		// TODO: Implement script loading functionality
+		clientMessageF("%sScript loading not yet implemented", RED);
+		return true;
+		/*
 		HorionDataPacket packet;
 		packet.cmd = CMD_FOLDERCHOOSER;
 		auto temp = std::shared_ptr<unsigned char[]>(new unsigned char[300]);
@@ -45,8 +51,10 @@ bool ScriptCommand::execute(std::vector<std::string>* args) {
 
 		g_Data.sendPacketToInjector(packet);
 		return true;
+		*/
 	} else if (action == "unloadall") {
-		scriptMgr.unloadAllScripts();
+		// scriptMgr.unloadAllScripts();
+		clientMessageF("%sScript unloading not yet implemented", RED);
 		return true;
 	}
 	

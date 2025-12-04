@@ -1,4 +1,5 @@
 #include "SetPrefixCommand.h"
+#include "../../../Utils/TextFormat.h"
 
 SetPrefixCommand::SetPrefixCommand() : IMCCommand("setprefix", "Set the prefix for horion commands", "<prefix>") {
 	registerAlias("prefix");

@@ -13,7 +13,7 @@ public:
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onPostRender() override;
+	virtual void onPostRender(MinecraftUIRenderContext* ctx) override;
 	virtual void onTick(C_GameMode* gm) override;
 };
 

@@ -1,13 +1,28 @@
 #include "ScriptManager.h"
 
 #include <filesystem>
+#include "../../Memory/GameData.h"
+#include "../../Utils/Logger.h"
+#include "../Module/Modules/JavascriptModule.h"
+#include "Functions/Vector3Functions.h"
+#include "Functions/Vector2Functions.h"
+#include "Functions/EntityFunctions.h"
+#include "Functions/GlobalFunctions.h"
+#include "Functions/LocalPlayerFunctions.h"
+#include "Functions/InventoryFunctions.h"
+#include "Functions/GameFunctions.h"
+#include "Functions/HorionFunctions.h"
+#include "Functions/CommandManagerFunctions.h"
+#include "Functions/ModuleManagerFunctions.h"
+#include "Functions/LevelFunctions.h"
+#include "Functions/DrawFunctions.h"
 
 ChakraApi chakra;
 ScriptManager scriptMgr;
 
 JsValueRef ScriptManager::prepareEntity(long long runtimeId, ContextObjects* objs) {
 	JsValueRef obj = JS_INVALID_REFERENCE;
-	if(g_Data.isInGame() && g_Data.getLocalPlayer()->entityRuntimeId == runtimeId)
+	if(g_Data.isInGame() && g_Data.getLocalPlayer()->getUniqueId() && *g_Data.getLocalPlayer()->getUniqueId() == runtimeId)
 		runtimeId = -1;
 	EntityInfo* data = new EntityInfo(runtimeId);
 	auto err = chakra.JsCreateExternalObject_(
@@ -311,7 +326,8 @@ JsValueRef ScriptManager::prepareModule(std::shared_ptr<IModule> mod, ContextObj
 
 JsValueRef ScriptManager::prepareJsModule(std::shared_ptr<JavascriptModule> mod, ContextObjects* objs) {
 	JsValueRef obj = 0;
-	JModule* data = new JModule(mod);
+	// Cast JavascriptModule to IModule base class
+	JModule* data = new JModule(std::static_pointer_cast<IModule>(mod));
 	auto err = chakra.JsCreateExternalObject_(
 		data, [](void* buf) {
 			delete buf;
@@ -351,6 +367,8 @@ JsValueRef ScriptManager::getLocalPlayer(ContextObjects* obs) {
 	return this->prepareEntity(-1, obs);
 }
 
+// TODO: runScript implementation conflicts with header stub
+/*
 std::wstring ScriptManager::runScript(std::wstring script) {
 	JsRuntimeHandle runtime;
 	JsContextRef context;
@@ -369,9 +387,9 @@ std::wstring ScriptManager::runScript(std::wstring script) {
 	std::wstring returnString = L"No result";
 	bool hasException;
 	chakra.JsHasException_(&hasException);
+	#define errLog(x, ...) logF(x, __VA_ARGS__)
 
 	if (err != JsNoError || hasException) {
-#define errLog(x, ...) (Logger::isActive() ? logF(x, __VA_ARGS__) : GameData::log(x, __VA_ARGS__))
 
 		switch (err) {
 		case JsErrorScriptCompile:
@@ -400,7 +418,10 @@ std::wstring ScriptManager::runScript(std::wstring script) {
 
 	return returnString;
 }
+*/
 
+// TODO: importScriptFolder implementation conflicts with header stub
+/*
 bool ScriptManager::importScriptFolder(std::string path) {
 	for (const auto& entry : std::filesystem::directory_iterator(path)) {
 		if (entry.is_regular_file()) {
@@ -430,10 +451,14 @@ bool ScriptManager::importScriptFolder(std::string path) {
 	logF("Could not find start script! Create a file called start.js in your folder.");
 	return false;
 }
+*/
 
+// TODO: unloadAllScripts implementation conflicts with header stub
+/*
 void ScriptManager::unloadAllScripts() {
 	this->scriptInstances.clear();
 }
 size_t ScriptManager::getNumEnabledScripts() {
 	return this->scriptInstances.size();
 }
+*/

@@ -1,11 +1,11 @@
 #include "LocalPlayer.h"
 #include "../Utils/Utils.h"
-#include "../SDK/FindSignatures.h"
+#include "../Utils/FindSignatures.h"
 #include <vector>
 
 static void* findAnySignatureLocal(const std::vector<const char*>& patterns) {
     for (auto p : patterns) {
-        void* r = FindSignature(p);
+        void* r = (void*)FindSignature(p);
         if (r) return r;
     }
     return nullptr;

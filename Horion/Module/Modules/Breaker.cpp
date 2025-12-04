@@ -34,7 +34,7 @@ void Breaker::onTick(GameMode* gm) {
 				if (id == 458 && barrels) destroy = true;  // Barrels
 
 				if (destroy) {
-					gm->destroyBlock(&blockPos, 0);
+					gm->destroyBlock(blockPos, 0);
 					Game.getLocalPlayer()->swingArm();
 					return;
 				}
@@ -53,7 +53,7 @@ void Breaker::onTick(GameMode* gm) {
 		Game.forEachEntity([](Entity* ent, bool b) {
 			std::string name = ent->getNameTag()->getText();
 			int id = ent->getEntityTypeId();
-			if (name.find("Treasure") != std::string::npos && Game.getLocalPlayer()->getPos()->dist(*ent->getPos()) <= 5) {
+			if (name.find("Treasure") != std::string::npos && Game.getLocalPlayer()->getPos().dist(*ent->getPos()) <= 5) {
 				Game.getLocalPlayer()->swingArm();
 				Game.getGameMode()->attack(ent);
 			}

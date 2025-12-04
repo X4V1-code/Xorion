@@ -5,7 +5,8 @@
 
 class InfiniteAura : public IModule {
 private:
-	SettingEnum mode;
+	// TODO: SettingEnum redesigned
+	// SettingEnum mode;
 	int delay = 15;
 	int ticks = 0;
 	float tpDistance = 5.f;
@@ -13,7 +14,7 @@ private:
 	bool renderPos = true;
 	
 public:
-	std::vector<C_Entity*> targetList = {};
+	std::vector<Entity*> targetList = {};
 	float range = 100.f;
 
 	InfiniteAura();

@@ -1,4 +1,7 @@
 #include "JavascriptModule.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/GameMode.h"
+#include "../../../SDK/MinecraftUIRenderContext.h"
 
 JavascriptModule::JavascriptModule() : IModule(0, Category::CUSTOM, "") {
 }
@@ -71,7 +74,7 @@ void JavascriptModule::onLevelRender() {
 
 	p->getScriptInstance()->callCallbackImmediate(callback);
 }
-void JavascriptModule::onPreRender(C_MinecraftUIRenderContext* renderCtx) {
+void JavascriptModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	auto p = this->backingScriptModule.lock();
 	if (!p)
 		return;

@@ -1,5 +1,3 @@
-**1.20.0**
-
 <div align="center">
   <br />
     <p>

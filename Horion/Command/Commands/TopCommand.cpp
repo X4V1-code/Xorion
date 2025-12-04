@@ -1,4 +1,5 @@
 #include "TopCommand.h"
+#include "../../../Utils/HMath.h"
 
 TopCommand::TopCommand() : IMCCommand("top", "Teleports to the nearest pocket of air above you - highly recommend against using this inside the Nether.", "") {
 }
@@ -7,10 +8,10 @@ TopCommand::~TopCommand() {
 }
 
 bool TopCommand::execute(std::vector<std::string>* args) {
-	assertTrue(Game.getLocalPlayer() != nullptr);
+	assertTrue(g_Data.getLocalPlayer() != nullptr);
 
-	LocalPlayer* player = Game.getLocalPlayer();
-	Vec3 playerPos = *player->getPos();
+	LocalPlayer* player = g_Data.getLocalPlayer();
+	Vec3 playerPos = player->getPos();
 	bool groundAbove = false;  // Checking if ground is above us
 	Vec3i blockPos;
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include <vector>
+#include "../../../SDK/Vec2.h"
 #include "../../DrawUtils.h"
 
 struct HudElement {
@@ -25,8 +26,7 @@ public:
     ~HudEditor();
 
     virtual const char* getModuleName() override;
-    virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
-    virtual void onMouseClickUpdate(int mouseX, int mouseY, int button, bool isDown) override;
+    virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
 
     void registerElement(const std::string& name, const vec2_t& pos, const vec2_t& size);
     const std::vector<HudElement>& getElements() const { return elements; }

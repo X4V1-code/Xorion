@@ -1,6 +1,7 @@
 #include "BindCommand.h"
 
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 BindCommand::BindCommand() : IMCCommand("bind", "Binds modules to specific keys", "<module> <key>") {
 	registerAlias("b");
 }

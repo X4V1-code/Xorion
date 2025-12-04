@@ -1,4 +1,5 @@
 #include "JoeMovementController.h"
+#include "../../SDK/LocalPlayer.h"
 
 #include "../../Utils/Logger.h"
 #include <utility>
@@ -16,7 +17,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 		currentPath->initPathSegments();
 	}
 
-	auto pPos = *player->getPos();
+	auto pPos = player->getPos();
 	pPos.y -= 1.62f;
 	Vec3i playerNode((int)floorf(pPos.x), (int)roundf(pPos.y), (int)floorf(pPos.z));
 

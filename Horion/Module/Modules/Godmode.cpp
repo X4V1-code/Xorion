@@ -1,4 +1,5 @@
 #include "Godmode.h"
+#include "../../../SDK/Packet.h"
 
 Godmode::Godmode() : IModule(0, Category::MISC, "Regen health so fast you won't die.") {
 	registerIntSetting("Regen Delay", &regendelay, regendelay, 1, 20);

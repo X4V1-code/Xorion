@@ -1,4 +1,6 @@
 #include "Derp.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/Packet.h"
 
 Derp::Derp() : IModule(0, Category::MISC, "lol you stupid.") {
 	registerBoolSetting("ihaveastroke", &epicStroke, epicStroke);
@@ -14,15 +16,15 @@ const char* Derp::getModuleName() {
 
 void Derp::onTick(GameMode* gm) {
 	if (packetMode) {
-		MovePlayerPacket p(Game.getLocalPlayer(), *Game.getLocalPlayer()->getPos());
+		MovePlayerPacket packet(Game.getLocalPlayer(), Game.getLocalPlayer()->getPos());
 		if (epicStroke) {
-			p.pitch = (float)(rand() % 360);
-			p.yaw = (float)(rand() % 360);
+			packet.pitch = (float)(rand() % 360);
+			packet.yaw = (float)(rand() % 360);
 		} else {
-			p.pitch = (float)(counter % 360);
-			p.yaw = (float)(counter % 360);
+			packet.pitch = (float)(counter % 360);
+			packet.yaw = (float)(counter % 360);
 		}
-		Game.getClientInstance()->loopbackPacketSender->sendToServer(&p);
+		Game.getClientInstance()->loopbackPacketSender->sendToServer(&packet);
 	} else {
 		if (epicStroke) {
 			gm->player->getActorHeadRotationComponent()->rot.x = (float)(rand() % 360);

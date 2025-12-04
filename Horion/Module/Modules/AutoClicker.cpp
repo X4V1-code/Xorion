@@ -15,33 +15,33 @@ const char* AutoClicker::getModuleName() {
 }
 
 void AutoClicker::onTick(GameMode* gm) {
-	if ((GameData::isLeftClickDown() || !hold) && GameData::canUseMoveKeys()) {
+	if ((g_Data.isLeftClickDown() || !hold) && g_Data.canUseMoveKeys()) {
 		LocalPlayer* player = Game.getLocalPlayer();
 		Level* level = player->level;
 		Odelay++;
 
 		if (Odelay >= delay) {
-			auto selectedItem = player->getSelectedItem();
-			if (weapons && selectedItem->getAttackingDamageWithEnchants() < 1)
+			auto supplies = player->getSupplies();
+			auto selectedItem = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
+			if (weapons && selectedItem && selectedItem->getAttackingDamageWithEnchants() < 1)
 				return;
 
 			player->swingArm();
 
-			if (level->hasEntity() != 0)
-				gm->attack(level->getEntity());
-			else if (breakBlocks) {
-				bool isDestroyed = false;
-				gm->startDestroyBlock(level->hitResult.blockPos, (uint8_t)level->hitResult.facing, isDestroyed);
-				gm->stopDestroyBlock(level->hitResult.blockPos);
-				if (isDestroyed && player->getRegion()->getBlock(level->hitResult.blockPos)->blockLegacy->blockId != 0)
-					gm->destroyBlock(&level->hitResult.blockPos, 0);
+		if (level->hasEntity() != 0)
+			gm->attack(level->getEntity());
+		else if (breakBlocks) {
+			gm->startDestroyBlock(level->hitResult.blockPos, (uint8_t)level->hitResult.facing);
+			gm->stopDestroyBlock();
+			if (player->getRegion()->getBlock(level->hitResult.blockPos)->blockLegacy->blockId != 0)
+				gm->destroyBlock(level->hitResult.blockPos, 0);
 			}
 			Odelay = 0;
 		}
 	}
 
 	if (rightclick) {
-		if ((GameData::isRightClickDown() || !hold) && GameData::canUseMoveKeys()) {
+		if ((g_Data.isRightClickDown() || !hold) && g_Data.canUseMoveKeys()) {
 			Level* level = Game.getLocalPlayer()->level;
 			Odelay++;
 			if (Odelay >= delay) {

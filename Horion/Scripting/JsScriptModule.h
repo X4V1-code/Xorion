@@ -2,6 +2,8 @@
 
 #include "../Module/Modules/JavascriptModule.h"
 #include <string>
+#include <map>
+#include <mutex>
 
 class JavascriptModule;
 class ScriptInstance;

@@ -1,6 +1,10 @@
 #pragma once
 
 #include "../ScriptManager.h"
+#include <vector>
+#include "../../../SDK/Entity.h"
+#include "../../../SDK/BlockLegacy.h"
+#include "../../../Memory/GameData.h"
 
 class LevelFunctions {
 public:

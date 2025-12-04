@@ -1,6 +1,7 @@
 #include "UnbindCommand.h"
 
 #include "../../Module/ModuleManager.h"
+#include "../../../Utils/TextFormat.h"
 
 UnbindCommand::UnbindCommand() : IMCCommand("unbind", "unbind modules", "<module | all>") {
 }

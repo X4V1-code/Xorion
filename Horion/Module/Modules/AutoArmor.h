@@ -2,6 +2,8 @@
 
 #include "Module.h"
 
+class CraftingScreenController;
+
 class AutoArmor : public IModule {
 public:
 	CraftingScreenController* inventoryScreen = nullptr;

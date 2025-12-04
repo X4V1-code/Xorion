@@ -1,4 +1,7 @@
 #include "Teleport.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/HMath.h"
+#include "../../../Memory/GameData.h"
 
 Teleport::Teleport() : IModule(0, Category::MISC, "Click a block to teleport to it.") {
 	registerBoolSetting("Only Hand", &onlyHand, onlyHand);
@@ -13,12 +16,12 @@ const char* Teleport::getModuleName() {
 }
 
 void Teleport::onTick(GameMode* gm) {
-	if (!GameData::canUseMoveKeys()) return;
-	if (onlyHand && Game.getLocalPlayer()->getSupplies()->inventory->getItemStack(Game.getLocalPlayer()->getSupplies()->selectedHotbarSlot)->item != nullptr) return;
+	if (!g_Data.canUseMoveKeys()) return;
+	if (onlyHand && g_Data.getLocalPlayer()->getSupplies()->inventory->getByGlobalIndex(g_Data.getLocalPlayer()->getSupplies()->selectedHotbarSlot)->item != nullptr) return;
 
-	if (GameData::isRightClickDown() && !hasClicked) {
+	if (g_Data.isRightClickDown() && !hasClicked) {
 		hasClicked = true;
-		const Vec3i& block = Game.getLocalPlayer()->getLevel()->hitResult.blockPos;
+		const Vec3i& block = g_Data.getLocalPlayer()->getLevel()->hitResult.blockPos;
 		if (block == Vec3i(0, 0, 0)) return;
 		Vec3 pos = block.toFloatVector();
 		pos.x += 0.5f;
@@ -29,12 +32,12 @@ void Teleport::onTick(GameMode* gm) {
 
 		Game.getGuiData()->displayClientMessageF("%sTeleport position set to %sX: %.1f Y: %.1f Z: %.1f%s. Sneak to teleport!", GREEN, GRAY, pos.x, pos.y, pos.z, GREEN);
 	}
-	if (!GameData::isRightClickDown()) hasClicked = false;
+	if (!g_Data.isRightClickDown()) hasClicked = false;
 
 	if (shouldTP && GameData::isKeyDown(*Game.getClientInstance()->getGameSettingsInput()->sneakKey)) {
-		tpPos.y += (gm->player->getPos()->y - gm->player->getAABBShapeComponent()->aabb.lower.y) + 1;  // eye height + 1
-		if (lerp) {
-			Game.getLocalPlayer()->lerpTo(tpPos, Vec2(1, 1), (int)std::fmax((int)(gm->player->getPos()->dist(tpPos) * lerpSpeed), 1));
+	tpPos.y += (gm->player->getPos()->y - gm->player->getAABBShapeComponent()->aabb.lower.y) + 1;  // eye height + 1
+	if (lerp) {
+		g_Data.getLocalPlayer()->lerpTo(tpPos, Vec2(1, 1), (int)std::fmax((int)(gm->player->getPos()->dist(tpPos) * lerpSpeed), 1));
 		} else {
 			gm->player->setPos(tpPos);
 		}

@@ -2,6 +2,8 @@
 
 #include "Module.h"
 
+class ChestScreenController;  // Forward declaration
+
 class ChestStealer : public IModule {
 private:
 	int delay = 0;

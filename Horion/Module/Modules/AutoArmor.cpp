@@ -1,4 +1,9 @@
 #include "AutoArmor.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/Item.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/InventoryTransaction.h"
 #include "../../../Utils/Utils.h"
 #include "../../../Utils/Logger.h"
 
@@ -35,9 +40,9 @@ const char* AutoArmor::getModuleName() {
 }
 
 void AutoArmor::onTick(GameMode* gm) {
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	Inventory* inv = supplies->inventory;
-	InventoryTransactionManager* manager = Game.getLocalPlayer()->getTransactionManager();
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	PlayerInventory* inv = supplies->inventory;
+	InventoryTransactionManager* manager = g_Data.getLocalPlayer()->getTransactionManager();
 
 	InventoryAction* first = nullptr;
 	InventoryAction* second = nullptr;
@@ -59,27 +64,27 @@ void AutoArmor::onTick(GameMode* gm) {
 
 	for (int i = 0; i < 4; i++) {
 		for (int n = 0; n < 36; n++) {
-			ItemStack* stack = inv->getItemStack(n);
-			if (stack->item != NULL && (*stack->item)->isArmor() && reinterpret_cast<ArmorItem*>(*stack->item)->ArmorSlot == i) {
-				armorList.push_back(ArmorStruct(stack, reinterpret_cast<ArmorItem*>(*stack->item), n));
+			ItemStack* stack = inv->getByGlobalIndex(n);
+			if (stack->item != NULL && stack->item->isArmor() && reinterpret_cast<ArmorItem*>(stack->item)->ArmorSlot == i) {
+				armorList.push_back(ArmorStruct(stack, reinterpret_cast<ArmorItem*>(stack->item), n));
 			}
 		}
 
 		if (gm->player->getArmor(i)->item != nullptr)
-			armorList.push_back(ArmorStruct(gm->player->getArmor(i), reinterpret_cast<ArmorItem*>(*gm->player->getArmor(i)->item), i));
+			armorList.push_back(ArmorStruct(gm->player->getArmor(i), reinterpret_cast<ArmorItem*>(gm->player->getArmor(i)->item), i));
 
 		if (armorList.size() > 0) {
 			std::sort(armorList.begin(), armorList.end(), CompareArmorStruct());
 			ItemStack* armorItem = gm->player->getArmor(i);
 
-			if (armorItem->item != nullptr && (ArmorStruct(armorItem, reinterpret_cast<ArmorItem*>(*armorItem->item), 0).isEqual(armorList[0])) == false) {
+			if (armorItem->item != nullptr && (ArmorStruct(armorItem, reinterpret_cast<ArmorItem*>(armorItem->item), 0).isEqual(armorList[0])) == false) {
 				int slot = inv->getFirstEmptySlot();
 
 				first = new InventoryAction(i, armorItem, nullptr, InventorySource(ContainerInventory, Armor, NoFlag));
 				second = new InventoryAction(slot, nullptr, armorItem);
 
 				*Game.getLocalPlayer()->getArmor(i) = *emptyItemStack;
-				*inv->getItemStack(slot) = *armorItem;
+				*inv->getByGlobalIndex(slot) = *armorItem;
 
 				manager->addInventoryAction(*first);
 				manager->addInventoryAction(*second);
@@ -90,23 +95,22 @@ void AutoArmor::onTick(GameMode* gm) {
 				first = new InventoryAction(armorList[0].m_slot, armorList[0].m_item, nullptr);
 				second = new InventoryAction(i, nullptr, armorList[0].m_item, InventorySource(ContainerInventory, Armor, NoFlag));
 
-				*Game.getLocalPlayer()->getArmor(i) = *inv->getItemStack(armorList[0].m_slot);
-				*inv->getItemStack(armorList[0].m_slot) = *emptyItemStack;
+				*g_Data.getLocalPlayer()->getArmor(i) = *inv->getByGlobalIndex(armorList[0].m_slot);
+				*inv->getByGlobalIndex(armorList[0].m_slot) = *emptyItemStack;
 
 				manager->addInventoryAction(*first);
 				manager->addInventoryAction(*second);
 
 				delete first;
 				delete second;
-			}
-			if (armorItem->item == nullptr) {
-				*Game.getLocalPlayer()->getArmor(i) = *inv->getItemStack(armorList[0].m_slot);
+		}
+		if (armorItem->item == nullptr) {
+			*g_Data.getLocalPlayer()->getArmor(i) = *inv->getByGlobalIndex(armorList[0].m_slot);
 
-				first = new InventoryAction(armorList[0].m_slot, armorList[0].m_item, nullptr);
-				second = new InventoryAction(i, nullptr, armorList[0].m_item, InventorySource(ContainerInventory, Armor, NoFlag));
+			first = new InventoryAction(armorList[0].m_slot, armorList[0].m_item, nullptr);
+			second = new InventoryAction(i, nullptr, armorList[0].m_item, InventorySource(ContainerInventory, Armor, NoFlag));
 
-				*inv->getItemStack(armorList[0].m_slot) = *emptyItemStack;
-
+			*inv->getByGlobalIndex(armorList[0].m_slot) = *emptyItemStack;
 				manager->addInventoryAction(*first);
 				manager->addInventoryAction(*second);
 

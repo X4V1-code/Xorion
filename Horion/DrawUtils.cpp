@@ -24,6 +24,9 @@ Vec2 fov;
 Vec2 screenSize;
 Vec3 origin;
 float lerpT;
+// TODO: TexturePtr not available in 1.21.123
+class TexturePtr;
+class FilePath;
 TexturePtr* texturePtr = nullptr;
 
 static MaterialPtr* uiMaterial = nullptr;
@@ -157,7 +160,9 @@ float DrawUtils::getTextWidth(std::string* textStr, float textSize, Fonts font) 
 
 	Font* fontPtr = getFont(font);
 
-	float ret = renderCtx->getLineLength(fontPtr, &text, textSize, false);
+	// TODO: getLineLength removed from MinecraftUIRenderContext in 1.21.123
+	//float ret = renderCtx->getLineLength(fontPtr, &text, textSize, false);
+	float ret = textStr->length() * textSize * 6.0f; // Approximate fallback
 
 	return ret;
 }
@@ -165,13 +170,16 @@ float DrawUtils::getTextWidth(std::string* textStr, float textSize, Fonts font) 
 float DrawUtils::getFontHeight(float textSize, Fonts font) {
 	Font* fontPtr = getFont(font);
 
-	float ret = fontPtr->getLineHeight() * textSize;
+	// TODO: Font->getLineHeight() not available in 1.21.123
+	//float ret = fontPtr->getLineHeight() * textSize;
+	float ret = 10.0f * textSize; // Approximate fallback
 
 	return ret;
 }
 
 void DrawUtils::flush() {
-	renderCtx->flushText(0);
+	// TODO: flushText removed from MinecraftUIRenderContext in 1.21.123
+	//renderCtx->flushText(0);
 }
 
 void DrawUtils::drawTriangle(const Vec2& p1, const Vec2& p2, const Vec2& p3) {
@@ -231,11 +239,12 @@ void DrawUtils::drawText(const Vec2& pos, std::string* textStr, const MC_Color& 
 	posF[2] = pos.y - 1;
 	posF[3] = pos.y + 1000;
 
-	TextMeasureData textMeasure{};
-	memset(&textMeasure, 0, sizeof(TextMeasureData));
-	textMeasure.textSize = textSize;
+	// TODO: TextMeasureData removed in 1.21.123
+	//TextMeasureData textMeasure{};
+	//memset(&textMeasure, 0, sizeof(TextMeasureData));
+	//textMeasure.textSize = textSize;
 
-	renderCtx->drawText(fontPtr, posF, &text, color.arr, alpha, 0, &textMeasure, &caretMeasureData);
+	//renderCtx->drawText(fontPtr, posF, &text, color.arr, alpha, 0, &textMeasure, &caretMeasureData);
 }
 
 void DrawUtils::drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool fill, int mode) {
@@ -441,11 +450,12 @@ void DrawUtils::draw2DBox(const Vec3& lower, const Vec3& upper, float lineWidth,
 }
 
 void DrawUtils::drawImage(std::string filePath, Vec2& imagePos, Vec2& ImageDimension, Vec2& idk) {
-	if (texturePtr == nullptr) {
+	// TODO: TexturePtr/FilePath not available in 1.21.123
+	/*if (texturePtr == nullptr) {
 		texturePtr = new TexturePtr();
 		FilePath file(filePath);
 		//renderCtx->getTexture(texturePtr, file);
-	}
+	}*/
 
 	__int64 yot = 0;
 	static unsigned __int64 hashedString = 0xA99285D21E94FC80;
@@ -465,7 +475,9 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 	text = Utils::sanitize(text);
 
 	float textWidth = getTextWidth(&text, textSize);
-	float textHeight = DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() * textSize;
+	// TODO: Font->getLineHeight() not available in 1.21.123
+	//float textHeight = DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() * textSize;
+	float textHeight = 10.0f * textSize; // Approximate fallback
 
 	if (refdef->OWorldToScreen(origin, ent->getRenderPositionComponent()->renderPos.add(0, 0.5f, 0), textPos, fov, screenSize)) {
 		textPos.y -= textHeight;
@@ -501,10 +513,11 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 			}
 			// item
 			{
-				ItemStack* stack = player->getSelectedItem();
+				// TODO: getSelectedItem removed from Player in 1.21.123
+				/*ItemStack* stack = player->getSelectedItem();
 				if (stack->item != nullptr) {
 					DrawUtils::drawItem(stack, Vec2(rectPos.z - 1.f - 15.f * scale, y), 1.f, scale, stack->isEnchanted());
-				}
+				}*/
 			}
 		}
 	}
@@ -562,7 +575,7 @@ void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 		if (point.x > resultRect.z) resultRect.z = point.x;
 		if (point.y > resultRect.w) resultRect.w = point.y;
 	}
-	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->getPos()->dist(end)));
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->getPos().dist(end)));
 	DrawUtils::drawRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w), lineWidth == 0 ? LineWidth : lineWidth);
 }
 

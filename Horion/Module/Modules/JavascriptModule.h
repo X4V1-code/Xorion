@@ -22,5 +22,5 @@ public:
 	void onEnable() override;
 	void onDisable() override;
 	void onLevelRender() override;
-	void onPreRender(C_MinecraftUIRenderContext* renderCtx) override;
+	void onPreRender(MinecraftUIRenderContext* renderCtx) override;
 };

@@ -16,8 +16,8 @@ BowAimbot::~BowAimbot() {
 
 struct CompareTargetEnArray {
 	bool operator()(Entity* lhs, Entity* rhs) {
-		LocalPlayer* localPlayer = Game.getLocalPlayer();
-		return (*lhs->getPos()).dist(*localPlayer->getPos()) < (*rhs->getPos()).dist(*localPlayer->getPos());
+		LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+		return lhs->getPos()->dist(localPlayer->getPos()) < rhs->getPos()->dist(localPlayer->getPos());
 	}
 };
 
@@ -29,7 +29,7 @@ void findTargets(Entity* currentEntity, bool isRegularEntitie) {
 	if (!Target::isValidTarget(currentEntity))
 		return;
 
-	float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
+	float dist = currentEntity->getPos()->dist(g_Data.getLocalPlayer()->getPos());
 
 	if (dist < 130) {
 		targetList.push_back(currentEntity);
@@ -46,7 +46,7 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	if (localPlayer->getSelectedItemId() != 300)  // Bow in hand?
 		return;
 
-	if (!(GameData::isRightClickDown() && GameData::canUseMoveKeys())) // is aiming?
+	if (!(g_Data.isRightClickDown() && g_Data.canUseMoveKeys())) // is aiming?
 		return;
 
 	Game.forEachEntity(findTargets);
@@ -75,7 +75,7 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 
 		if (silent) {
 			angle = Vec2(pitch, yaw);
-			MovePlayerPacket p(Game.getLocalPlayer(), *Game.getLocalPlayer()->getPos());
+			MovePlayerPacket p(g_Data.getLocalPlayer(), g_Data.getLocalPlayer()->getPos());
 			p.pitch = angle.x;
 			p.yaw = angle.y;
 			p.headYaw = angle.y;

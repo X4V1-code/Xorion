@@ -1,11 +1,12 @@
 #include "Blink.h"
+#include "../../../SDK/Packet.h"
 
 Blink::Blink() : IModule(0, Category::MISC, "Stops you from sending packets and then sends them in a bunch.") {
 }
 
 Blink::~Blink() {
-	getMovePlayerPacketHolder()->clear();
-	getPlayerAuthInputPacketHolder()->clear();
+	this->getMovePlayerPacketHolder()->clear();
+	this->getPlayerAuthInputPacketHolder()->clear();
 }
 
 const char* Blink::getModuleName() {

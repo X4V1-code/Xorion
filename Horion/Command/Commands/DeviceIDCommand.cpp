@@ -1,4 +1,7 @@
 #include "DeviceIDCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/Utils.h"
+#include "../../../SDK/Player.h"
 
 DeviceIDCommand::DeviceIDCommand() : IMCCommand("deviceid", "Displays the device id from you or another player", "[playername]") {
 }
@@ -14,7 +17,7 @@ void findEntity84(Entity* currentEntity, bool isRegularEntity) {
 	if (currentEntity == Game.getLocalPlayer())  // Skip Local player
 		return;
 
-	if (!Game.getLocalPlayer()->isAlive())
+	if (!((Entity*)Game.getLocalPlayer())->isAlive())
 		return;
 
 	if (!currentEntity->isAlive())
@@ -30,7 +33,8 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 	if (args->size() < 2) {
 		auto player = Game.getLocalPlayer();
 
-		clientMessageF("%sYour device: %s%s", GREEN, GRAY, player->getDeviceNameLocal());
+		// TODO: getDeviceNameLocal() not available
+		clientMessageF("%sYour device: %s%s", GREEN, GRAY, "Unknown"); // player->getDeviceNameLocal()
 	}
 	else {
 		targetList724.clear();
@@ -82,7 +86,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 			return true;
 		}
 
-		clientMessageF("%sDevice from %s%s%s: %s%s", GREEN, GRAY, tar->getNameTag()->getText(), GREEN, GRAY, tar->getDeviceName());
+		clientMessageF("%sDevice from %s%s%s: %s%s", GREEN, GRAY, ((Player*)tar)->getNameTag()->getText(), GREEN, GRAY, ((Player*)tar)->getDeviceName());
 	}
 
 	return true;

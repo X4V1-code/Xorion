@@ -1,4 +1,6 @@
 #include "RelativeTeleportCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../Utils/HMath.h"
 
 RelativeTeleportCommand::RelativeTeleportCommand() : IMCCommand("relativeteleport", "Teleports to coordinates relative to the Player", "<X> <Y> <Z>") {
 	registerAlias("reltp");
@@ -10,10 +12,10 @@ RelativeTeleportCommand::~RelativeTeleportCommand() {
 }
 
 bool RelativeTeleportCommand::execute(std::vector<std::string>* args) {
-	assertTrue(Game.getLocalPlayer() != nullptr);
+	assertTrue(g_Data.getLocalPlayer() != nullptr);
 	assertTrue(args->size() >= 4);
 
-	Vec3 pPos = *Game.getLocalPlayer()->getPos();
+	Vec3 pPos = g_Data.getLocalPlayer()->getPos();
 
 	Vec3 pos;
 	pos.x = assertFloat(args->at(1)) + pPos.x;

@@ -2,7 +2,7 @@
 #pragma once
 #include "Module.h"
 #include <vector>
-#include "../../SDK/C_Entity.h"
+#include "../../SDK/Entity.h"
 
 class InventoryViewer : public IModule {
 private:
@@ -10,10 +10,10 @@ private:
     float scale = 1.0f;
     float x = 10.0f;
     float y = 80.0f;
-    C_Entity* target = nullptr;
+    Entity* target = nullptr;
 
     void findTarget();
-    void drawInventory(C_Entity* ent);
+    void drawInventory(Entity* ent);
 
 public:
     InventoryViewer();
@@ -21,5 +21,6 @@ public:
 
     virtual const char* getModuleName() override;
     virtual void onTick(C_GameMode* gm) override;
-    virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
+    virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
 };
+

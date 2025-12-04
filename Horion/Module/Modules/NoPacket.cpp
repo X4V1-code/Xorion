@@ -1,4 +1,5 @@
 #include "NoPacket.h"
+#include "../../../Memory/GameData.h"
 
 NoPacket::NoPacket() : IModule(VK_NUMPAD7, Category::MISC, "Prevents you from sending InventoryTransaction packets.") {
 }

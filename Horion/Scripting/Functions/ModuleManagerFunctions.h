@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ScriptManager.h"
+#include "../../Module/ModuleManager.h"
 
 class ModuleManagerFunctions {
 private:

@@ -1,4 +1,5 @@
 #include "Packet.h"
+#include "LocalPlayer.h"
 
 #include "../Utils/Utils.h"
 

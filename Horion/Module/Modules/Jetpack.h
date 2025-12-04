@@ -2,6 +2,9 @@
 
 #include "Module.h"
 
+// Forward declaration
+struct MovePlayerPacket;
+
 class Jetpack : public IModule {
 private:
 	int delay = 0;
@@ -9,7 +12,7 @@ private:
 	float speedMod = 1;
 
 public:
-	C_MovePlayerPacket* jetpack = nullptr;
+	MovePlayerPacket* jetpack = nullptr;
 	Jetpack();
 	~Jetpack();
 

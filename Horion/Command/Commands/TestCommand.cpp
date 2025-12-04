@@ -3,6 +3,7 @@
 #include "../../../Utils/Utils.h"
 #include <sstream>
 #include "../../../SDK/Tag.h"
+#include "../../../SDK/Level.h"
 
 TestCommand::TestCommand() : IMCCommand("test", "Test for Debugging purposes", "") {
 }
@@ -24,11 +25,11 @@ void listEnts() {
 }
 
 void itemId() {
-	LocalPlayer* player = Game.getLocalPlayer();
-	PlayerInventoryProxy* supplies = player->getSupplies();
-	Inventory* inv = supplies->inventory;
+	LocalPlayer* player = g_Data.getLocalPlayer();
+	PlayerSupplies* supplies = player->getSupplies();
+	PlayerInventory* inv = supplies->inventory;
 	int n = supplies->selectedHotbarSlot;
-	ItemStack* stack = inv->getItemStack(n);
+	ItemStack* stack = inv->getByGlobalIndex(n);
 	if (stack != nullptr && stack->item != nullptr) {
 		int64_t id = stack->getItem()->itemId;
 		const char* name = stack->getItem()->name.getText();

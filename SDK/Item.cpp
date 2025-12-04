@@ -25,6 +25,8 @@ void ItemRenderer::renderGuiItemInChunk(BaseActorRenderContext *BaseActorRenderC
 	renderGuiItem(this, BaseActorRenderCtx, 2, item, x, y, 1, 1, scale, 0);
 }
 
+// TODO: ItemStack constructors and methods have static context issues - struct needs method declarations
+/*
 ItemStack::ItemStack(const ItemStack &src) {
 	memset(this, 0x0, sizeof(ItemStack));
 	using ItemStackCopyConstructor_t = void(__fastcall *)(ItemStack &, ItemStack const &);
@@ -37,9 +39,6 @@ ItemStack::ItemStack(const Tag &tag) {
 	memset(this, 0x0, sizeof(ItemStack));
 	this->setVtable();
 	fromTag(tag);
-	/*using ItemStackBase__loadItemF = void(__fastcall*)(ItemStack*,Tag const&);
-	static ItemStackBase__loadItemF ItemStackBase__loadItem = reinterpret_cast<ItemStackBase__loadItemF>(FindSignature("48 8B C4 55 57 41 56 48 8D 68 A1 48 81 EC ? ? ? ? 48 C7 45 ? ? ? ? ? 48 89 58 ? 48 89 70 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 48 8B DA 48 8B F9 48 89 4D ? 33 D2 41 B8 ? ? ? ? 48 8D 4D A7 E8 ? ? ? ? 48 8D 05 ? ? ? ?"));
-	ItemStackBase__loadItem(this, tag);*/
 }
 
 void ItemStack::fromTag(const Tag &tag) {
@@ -58,6 +57,9 @@ void ItemStack::setUserData(std::unique_ptr<Tag> tag) {
 	setUserData_t setUserData = reinterpret_cast<setUserData_t>(FindSignature("48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B FA 48 8B F1 48 89 94 24"));
 	setUserData(this, std::move(tag));
 }
+
+// TODO: ItemStack methods below have static context issues - needs refactoring
+/*
 void ItemStack::reinit(BlockLegacy &legacy, int count) {
 	this->setVtable();
 	Utils::CallVFunc<2, void>(this, &legacy, count);
@@ -91,8 +93,9 @@ void ItemStack::setName(std::string customName) {
 void ItemStack::setVtable(void) {
 	static uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 05 ? ? ? ? C7 ? ? ? ? ? ? ? ? ? C6 05 ? ? ? ? ? 48 8D 0D ? ? ? ? 48 83 C4");
 	int offset = *reinterpret_cast<int *>(sigOffset + 3);
-	this->vTable = reinterpret_cast<uintptr_t **>(sigOffset + offset + /*length of instruction*/ 7);
+	this->vTable = reinterpret_cast<uintptr_t **>(sigOffset + offset + 7);
 }
+*/
 
 Item ***ItemRegistry::getItemFromId(void *ptr, int itemId) {
 	using getItemFromId_t = Item ***(__fastcall *)(void *, int);

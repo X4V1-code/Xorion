@@ -1,4 +1,8 @@
 #include "DupeCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/InventoryTransaction.h"
 
 DupeCommand::DupeCommand() : IMCCommand("dupe", "Duplicates the item in hand", "<count> <mode: give / offhand : 1/0>") {
 	registerAlias("d");
@@ -8,11 +12,11 @@ DupeCommand::~DupeCommand() {
 }
 
 bool DupeCommand::execute(std::vector<std::string>* args) {
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
-	Inventory* inv = supplies->inventory;
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
+	PlayerInventory* inv = supplies->inventory;
 	int selectedSlot = supplies->selectedHotbarSlot;
-	ItemStack* item = inv->getItemStack(selectedSlot);
+	ItemStack* item = inv->getByGlobalIndex(selectedSlot);
 	int count = item->count;
 	bool isGive = true;
 

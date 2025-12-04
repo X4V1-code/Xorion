@@ -1,4 +1,5 @@
 #include "Crasher.h"
+#include "../../../Memory/GameData.h"
 
 Crasher::Crasher() : IModule(0, Category::MISC, "Crash Realms Servers.") {
 }

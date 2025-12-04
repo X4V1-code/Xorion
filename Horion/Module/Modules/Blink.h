@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Module.h"
+#include "../../../SDK/Packet.h"
 
 class Blink : public IModule {
 private:

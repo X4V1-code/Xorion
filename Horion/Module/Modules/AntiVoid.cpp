@@ -12,8 +12,8 @@ const char* AntiVoid::getModuleName() {
 }
 
 void AntiVoid::onTick(GameMode* gm) {
-	LocalPlayer* player = Game.getLocalPlayer();
-	Vec3 blockBelow = *player->getPos();
+	LocalPlayer* player = g_Data.getLocalPlayer();
+	Vec3 blockBelow = player->getPos();
 	blockBelow.y -= player->getAABBShapeComponent()->size.y;
 	blockBelow.y -= 0.5f;
 

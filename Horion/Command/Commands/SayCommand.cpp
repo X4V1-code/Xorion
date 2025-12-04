@@ -1,4 +1,6 @@
 #include "SayCommand.h"
+#include "../../../Utils/TextFormat.h"
+#include "../../../SDK/Packet.h"
 
 SayCommand::SayCommand() : IMCCommand("say", "Sends a chat message", "<message>") {
 }
@@ -43,7 +45,9 @@ bool SayCommand::execute(std::vector<std::string>* args) {
 	TextPacket textPacket;
 	textPacket.message.setText(parse(os.str()));
 	textPacket.sourceName.setText(Game.getLocalPlayer()->getNameTag()->getText());
-	textPacket.xboxUserId = std::to_string(Game.getLocalPlayer()->getUserId());
+	// TODO: getUserId not available
+	std::string userId = "0";
+	textPacket.xboxUserId = userId; // std::to_string(Game.getLocalPlayer()->getUserId());
 	Game.getClientInstance()->loopbackPacketSender->sendToServer(&textPacket);
 
 	clientMessageF("[%sHorion%s] %sSent Message", GOLD, WHITE, GREEN);

@@ -1,4 +1,5 @@
 #include "Glide.h"
+#include "../../../Memory/GameData.h"
 
 Glide::Glide() : IModule(0, Category::MOVEMENT, "Float down like a chicken.") {
 	registerFloatSetting("Value", &glideMod, glideMod, -2, 1);

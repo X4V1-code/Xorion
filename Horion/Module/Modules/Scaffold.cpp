@@ -1,4 +1,6 @@
 #include "Scaffold.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/GameMode.h"
 
 #include "../../../Utils/Logger.h"
 #include "../../DrawUtils.h"
@@ -15,7 +17,7 @@ Scaffold::Scaffold() : IModule(VK_NUMPAD1, Category::WORLD, "Automatically build
 }
 
 bool Scaffold::tryScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->entityLocation->velocity;
+	Vec3 vel = g_Data.getLocalPlayer()->entityLocation->velocity;
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -24,7 +26,7 @@ bool Scaffold::tryScaffold(Vec3 blockBelow) {
 	if (highlight)
 		DrawUtils::drawBox(blockBelow, Vec3(blockBelow).add(1), 0.4f);  // Draw a box around the block about to be placed
 
-	BlockSource* region = Game.getLocalPlayer()->getRegion();
+	BlockSource* region = g_Data.getLocalPlayer()->getRegion();
 	Block* block = region->getBlock(Vec3i(blockBelow));
 	BlockLegacy* blockLegacy = (block->blockLegacy);
 
@@ -73,7 +75,7 @@ bool Scaffold::tryScaffold(Vec3 blockBelow) {
 }
 
 bool Scaffold::tryClutchScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->entityLocation->velocity;
+	Vec3 vel = g_Data.getLocalPlayer()->entityLocation->velocity;
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -102,7 +104,7 @@ bool Scaffold::tryClutchScaffold(Vec3 blockBelow) {
 		Vec3i currentBlock = Vec3i(blockBelow).add(blockOffset);
 
 		// Normal tryScaffold after it sorts
-		BlockSource* region = Game.getLocalPlayer()->getRegion();
+		BlockSource* region = g_Data.getLocalPlayer()->getRegion();
 		Block* block = region->getBlock(Vec3i(currentBlock));
 		BlockLegacy* blockLegacy = (block->blockLegacy);
 
@@ -152,12 +154,12 @@ bool Scaffold::tryClutchScaffold(Vec3 blockBelow) {
 }
 
 bool Scaffold::findBlock() {
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	Inventory* inv = supplies->inventory;
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	PlayerInventory* inv = supplies->inventory;
 	auto prevSlot = supplies->selectedHotbarSlot;
 
 	for (int i = 0; i < 9; i++) {
-		ItemStack* stack = inv->getItemStack(i);
+		ItemStack* stack = inv->getByGlobalIndex(i);
 
 		if (stack->item != nullptr) {
 			if (stack->getItem()->isBlock()) {
@@ -172,12 +174,13 @@ bool Scaffold::findBlock() {
 }
 
 void Scaffold::onPostRender(MinecraftUIRenderContext* ctx) {
-	auto player = Game.getLocalPlayer();
+	auto player = g_Data.getLocalPlayer();
 
 	if (player == nullptr || !Game.canUseMoveKeys())
 		return;
 
-	auto selectedItem = player->getSelectedItem();
+	auto supplies = player->getSupplies();
+	auto selectedItem = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
 
 	if ((selectedItem == nullptr || selectedItem->count == 0 || selectedItem->item == nullptr || !selectedItem->getItem()->isBlock()) && !autoSelect)
 		return;
@@ -296,7 +299,7 @@ Vec3 Scaffold::getNextBlock(Player* player, const Vec3& velocity, const Vec3& bl
 
 
 void Scaffold::onSendPacket(Packet* packet) {
-	auto player = Game.getLocalPlayer();
+	auto player = g_Data.getLocalPlayer();
 	if (player == nullptr) return;
 	if (hive || rotations) {
 		float speed = player->entityLocation->velocity.magnitudexz();
@@ -307,7 +310,7 @@ void Scaffold::onSendPacket(Packet* packet) {
 		if (packet->isInstanceOf<MovePlayerPacket>()) {
 			if (speed > 0.05f) {
 				auto* movePacket = reinterpret_cast<MovePlayerPacket*>(packet);
-				Vec2 angle = Game.getLocalPlayer()->getPos()->CalcAngle(blockBelow);
+				Vec2 angle = g_Data.getLocalPlayer()->getPos().CalcAngle(blockBelow);
 				movePacket->pitch = 83;
 				movePacket->headYaw = angle.y;
 				movePacket->yaw = angle.y;
@@ -325,7 +328,7 @@ void Scaffold::onPlayerTick(Player* player) {
 		blockBelow.y -= 0.5f;
 
 		if (speed > 0.05f) {
-			Vec2 angle = Game.getLocalPlayer()->getPos()->CalcAngle(blockBelow);
+			Vec2 angle = g_Data.getLocalPlayer()->getPos().CalcAngle(blockBelow);
 			player->getActorHeadRotationComponent()->rot.x = angle.x;
 			player->getActorRotationComponent()->rot.y = angle.y;
 			player->getMobBodyRotationComponent()->bodyRot = angle.y;

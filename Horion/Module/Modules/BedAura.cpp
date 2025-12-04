@@ -1,4 +1,5 @@
 #include "BedAura.h"
+#include "../../../SDK/ClientInstance.h"
 
 #include "../../Memory/GameData.h"
 #include "../../SDK/GameMode.h"
@@ -8,19 +9,19 @@
 #include "../../SDK/Item.h"
 #include "../../SDK/BlockLegacy.h"
 #include "../../SDK/MinecraftUIRenderContext.h"
-#include "../../Utils/DrawUtils.h"
+#include "../../Horion/DrawUtils.h"
 #include "../../Utils/Logger.h"
 
 static inline bool isBedBlockLegacy(BlockLegacy* legacy) {
     if (!legacy) return false;
     // Bed blocks share "bed" in their legacy name across colors
-    auto name = legacy->getName().getText();
+    std::string name = legacy->getName().getText();
     return name.find("bed") != std::string::npos;
 }
 
 static inline bool isBedItem(Item* item) {
     if (!item) return false;
-    auto name = item->name.getText();
+    std::string name = item->name.getText();
     return name.find("bed") != std::string::npos;
 }
 
@@ -78,10 +79,11 @@ void BedAura::onDisable() {
 void BedAura::onTick(GameMode* gm) {
     auto lp = Game.getLocalPlayer();
     if (!lp || !gm) return;
-    if (!lp->region || !lp->level) return;
+    if (!lp->getRegion() || !lp->level) return;
 
     // Dimension guard: only act in Nether/End
-    int dimId = lp->level->dimension; // confirm actual field in your SDK
+    // dimension is void* pointer, cast to intptr_t for comparison
+    intptr_t dimId = reinterpret_cast<intptr_t>(lp->level->dimension);
     if (dimensionGuard && dimId == 0) {
         bedPositions.clear();
         return;
@@ -90,7 +92,7 @@ void BedAura::onTick(GameMode* gm) {
     delay++;
     bedPositions.clear();
 
-    const vec3_t playerPos = *lp->getPos();
+    const Vec3 playerPos = lp->getPos();
     vec3_ti basePos((int)floor(playerPos.x), (int)floor(playerPos.y), (int)floor(playerPos.z));
 
     // 1) Scan for nearby beds and detonate them
@@ -99,10 +101,10 @@ void BedAura::onTick(GameMode* gm) {
             for (int y = -2; y <= 2; y++) {
                 for (int z = -range; z <= range; z++) {
                     vec3_ti pos = basePos.add(x, y, z);
-                    auto block = lp->region->getBlock(pos);
+                    Block* block = lp->getRegion()->getBlock(Vec3i(pos.x, pos.y, pos.z));
                     if (!block) continue;
 
-                    auto legacy = block->toLegacy();
+                    BlockLegacy* legacy = block->toLegacy();
                     if (!legacy) continue;
 
                     if (isBedBlockLegacy(legacy)) {
@@ -120,7 +122,7 @@ void BedAura::onTick(GameMode* gm) {
             auto supplies = lp->getSupplies();
             ItemStack* selected = nullptr;
             if (supplies && supplies->inventory) {
-                selected = supplies->inventory->getItemStack(supplies->selectedHotbarSlot);
+                selected = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
             }
 
             gm->useItemOn(selected, blockPos, facing, hit);
@@ -137,7 +139,7 @@ void BedAura::onTick(GameMode* gm) {
 
         int bedSlot = -1;
         for (int slot = 0; slot < 9; slot++) {
-            auto stack = supplies->inventory->getItemStack(slot);
+            auto stack = supplies->inventory->getByGlobalIndex(slot);
             if (!stack || !stack->item) continue;
             if (isBedItem(stack->getItem())) {
                 bedSlot = slot;
@@ -148,19 +150,27 @@ void BedAura::onTick(GameMode* gm) {
         if (bedSlot != -1) {
             supplies->selectedHotbarSlot = bedSlot;
 
-            vec3_t forward = lp->viewAngles.toDirection(); // ensure you have this helper
+            // TODO: viewAngles not available - using placeholder direction
+            vec3_t forward = Vec3(0.0f, 0.0f, 1.0f);
+            /*
+            vec3_t forward = Vec3(
+                -sinf(lp->viewAngles.x * (3.14159f / 180.0f)) * cosf(lp->viewAngles.y * (3.14159f / 180.0f)),
+                -sinf(lp->viewAngles.y * (3.14159f / 180.0f)),
+                cosf(lp->viewAngles.x * (3.14159f / 180.0f)) * cosf(lp->viewAngles.y * (3.14159f / 180.0f))
+            );
+            */
             vec3_t placePosF = playerPos.add(forward).floor();
             Vec3i placePos((int)placePosF.x, (int)placePosF.y, (int)placePosF.z);
 
             uint8_t face = 1;
-            if (lp->level->hitResult.type == 0) {
+            if (lp->level->hitResult.type == HitResultType::Tile) {
                 face = (uint8_t)lp->level->hitResult.facing;
             }
 
             gm->buildBlock(&placePos, face, true);
 
             vec3_t hit(0.5f, 0.5f, 0.5f);
-            auto stack = supplies->inventory->getItemStack(bedSlot);
+            auto stack = supplies->inventory->getByGlobalIndex(bedSlot);
             gm->useItemOn(stack, placePos, face, hit);
         }
 

@@ -1,4 +1,6 @@
 #include "ModuleManagerFunctions.h"
+#include "../JsScriptModule.h"
+#include "../../../Utils/Logger.h"
 
 std::optional<std::shared_ptr<IModule>> ModuleManagerFunctions::getModuleFromValue(JsValueRef ref) {
 	if (ref == JS_INVALID_REFERENCE)
@@ -18,7 +20,7 @@ std::optional<std::shared_ptr<IModule>> ModuleManagerFunctions::getModuleFromVal
 	if (modInfo->dataType != ModuleDataType || err != JsNoError)
 		return std::optional<std::shared_ptr<IModule>>();
 
-	return std::optional<std::shared_ptr<IModule>>(modInfo->modPtr);
+	return std::optional<std::shared_ptr<IModule>>(modInfo->module);
 }
 
 JsValueRef CALLBACK ModuleManagerFunctions::getModuleByName(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {

@@ -92,8 +92,8 @@ namespace RenderUtils {
     }
 
     void drawEntityMesh(Entity* ent, ID3D11DeviceContext* ctx) {
-        if (!ent || !ctx) return;
-        // Assuming your Entity has a method to issue its mesh draw
-        ent->renderMesh(ctx);
+        // TODO: Implement entity mesh rendering with new API
+        // if (!ent || !ctx) return;
+        // ent->renderMesh(ctx);
     }
 }

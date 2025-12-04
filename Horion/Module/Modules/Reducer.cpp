@@ -25,7 +25,7 @@ const char* Reducer::getRawModuleName() {
 }
 
 void Reducer::onEnable() {
-	if (Game.getLocalPlayer() == nullptr) {
+	if (g_Data.getLocalPlayer() == nullptr) {
 		this->setEnabled(false);
 		return;
 	}
@@ -35,9 +35,9 @@ void Reducer::onEnable() {
 }
 
 void Reducer::onTick(GameMode* gm) {
-	if (Game.getLocalPlayer() == nullptr) return;
+	if (g_Data.getLocalPlayer() == nullptr) return;
 
-	LocalPlayer* player = Game.getLocalPlayer();
+	LocalPlayer* player = g_Data.getLocalPlayer();
 
 	switch (this->mode.selected) {
 	case 0:

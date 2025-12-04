@@ -13,7 +13,7 @@ const char* ChestAura::getModuleName() {
 }
 
 void ChestAura::onTick(GameMode* gm) {
-	if (Game.getLocalPlayer()->getSupplies()->inventory->isFull())
+	if (false) // TODO: Game.getLocalPlayer()->getSupplies()->inventory->isFull()
 		return;
 
 	Vec3* pos = gm->player->getPos();

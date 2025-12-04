@@ -1,4 +1,5 @@
 #include "Speed.h"
+#include "../../../Memory/GameData.h"
 
 Speed::Speed() : IModule(VK_NUMPAD2, Category::MOVEMENT, "Speed up!") {
 	registerFloatSetting("Speed", &speed, 1, 0.01f, 3.f);
@@ -11,7 +12,7 @@ const char* Speed::getModuleName() {
 }
 
 void Speed::onTick(GameMode* gm) {
-	if (auto localPlayer = Game.getLocalPlayer(); localPlayer != nullptr) {
+	if (auto localPlayer = g_Data.getLocalPlayer(); localPlayer != nullptr) {
 		if (auto speedAdr = reinterpret_cast<float*>(localPlayer->getSpeed() + 0x84); speedAdr != nullptr) {
 			*speedAdr = speed;
 		}
@@ -19,7 +20,7 @@ void Speed::onTick(GameMode* gm) {
 }
 
 void Speed::onEnable() {
-	if (auto localPlayer = Game.getLocalPlayer(); localPlayer != nullptr) {
+	if (auto localPlayer = g_Data.getLocalPlayer(); localPlayer != nullptr) {
 		origSpeed = *reinterpret_cast<float*>(localPlayer->getSpeed() + 0x84);
 	} else {
 		setEnabled(false);
@@ -27,7 +28,7 @@ void Speed::onEnable() {
 }
 
 void Speed::onDisable() {
-	if (auto localPlayer = Game.getLocalPlayer(); localPlayer != nullptr) {
+	if (auto localPlayer = g_Data.getLocalPlayer(); localPlayer != nullptr) {
 		if (auto speedAdr = reinterpret_cast<float*>(localPlayer->getSpeed() + 0x84); speedAdr != nullptr) {
 			*speedAdr = origSpeed;
 		}

@@ -1,4 +1,5 @@
 #include "Phase.h"
+#include "../../../Memory/GameData.h"
 
 Phase::Phase() : IModule('I', Category::MOVEMENT, "Walk straight through walls.") {
 }
@@ -15,6 +16,6 @@ void Phase::onTick(GameMode* gm) {
 }
 
 void Phase::onDisable() {
-	if (Game.getLocalPlayer() != nullptr)
-		Game.getLocalPlayer()->getAABBShapeComponent()->aabb.upper.y += 1.8f;
+	if (g_Data.getLocalPlayer() != nullptr)
+		g_Data.getLocalPlayer()->getAABBShapeComponent()->aabb.upper.y += 1.8f;
 }

@@ -3,6 +3,7 @@
 #include "Module.h"
 #include <vector>
 #include "../../SDK/Vec3.h"
+#include "../../DrawUtils.h"
 
 class Breadcrumbs : public IModule {
 private:
@@ -19,6 +20,6 @@ public:
 
     virtual const char* getModuleName() override;
     virtual void onTick(C_GameMode* gm) override;
-    virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
+    virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
     virtual void onEnable() override;
 };

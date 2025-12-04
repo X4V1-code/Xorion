@@ -1,4 +1,6 @@
 #include "Fucker.h"
+#include "../../../Memory/GameData.h"
+#include "../../../SDK/GameMode.h"
 
 Fucker::Fucker() : IModule(VK_NUMPAD9, Category::MISC, "Destroys certain blocks around you") {
 	registerIntSetting("Range", &this->range, this->range, 1, 10);
@@ -25,7 +27,9 @@ void Fucker::onTick(C_GameMode* gm) {
 				vec3_ti blockPos = vec3_ti(x, y, z);
 				bool destroy = false;
 				bool eat = false;
-				auto id = gm->player->region->getBlock(blockPos)->toLegacy()->blockId;
+				Block* block = gm->player->getRegion()->getBlock(Vec3i(x, y, z));
+				if (!block) continue;
+				auto id = block->toLegacy()->blockId;
 
 				if (id == 26 && this->beds) destroy = true;      // Beds
 				if (id == 122 && this->eggs) destroy = true;     // Dragon Eggs
@@ -34,13 +38,14 @@ void Fucker::onTick(C_GameMode* gm) {
 				if (id == 458 && this->barrels) destroy = true;  // Barrels
 
 				if (destroy) {
-					gm->destroyBlock(&blockPos, 0);
+					gm->destroyBlock(Vec3i(x, y, z), 0);
 					g_Data.getLocalPlayer()->swingArm();
 					return;
 				}
 				
 				if (eat) {
-					gm->buildBlock(&blockPos, 0);
+					Vec3i eatPos(x, y, z);
+					gm->buildBlock(&eatPos, 0, true);
 					g_Data.getLocalPlayer()->swingArm();
 					return;
 				}
@@ -49,10 +54,10 @@ void Fucker::onTick(C_GameMode* gm) {
 	}
 
 	if (this->treasures) {
-		g_Data.forEachEntity([](C_Entity* ent, bool b) {
+		g_Data.forEachEntity([](Entity* ent, bool b) {
 			std::string name = ent->getNameTag()->getText();
 			int id = ent->getEntityTypeId();
-			if (name.find("Treasure") != std::string::npos && g_Data.getLocalPlayer()->getPos()->dist(*ent->getPos()) <= 5) {
+			if (name.find("Treasure") != std::string::npos && g_Data.getLocalPlayer()->getPos().dist(*ent->getPos()) <= 5) {
 				g_Data.getLocalPlayer()->swingArm();
 				g_Data.getGameMode()->attack(ent);
 			}

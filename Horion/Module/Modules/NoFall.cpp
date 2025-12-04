@@ -16,7 +16,7 @@ const char* NoFall::getModuleName() {
 }
 
 void NoFall::onSendPacket(Packet* packet) {
-	LocalPlayer* localPlayer = Game.getLocalPlayer();
+	LocalPlayer* localPlayer = g_Data.getLocalPlayer();
 	if (localPlayer == nullptr)
 		return;
 
@@ -27,7 +27,7 @@ void NoFall::onSendPacket(Packet* packet) {
 		}
 	}
 	if (mode.selected == 4) {
-		if (packet->isInstanceOf<PlayerAuthInputPacket>() && !Game.getLocalPlayer()->isOnGround()) {
+		if (packet->isInstanceOf<PlayerAuthInputPacket>() && !g_Data.getLocalPlayer()->isOnGround()) {
 			PlayerAuthInputPacket* authInput = reinterpret_cast<PlayerAuthInputPacket*>(packet);
 			authInput->pos = closestGround;
 		}
@@ -39,8 +39,8 @@ void NoFall::onSendPacket(Packet* packet) {
 }
 
 bool NoFall::isOverVoid() {
-	for (float posY = Game.getLocalPlayer()->getPos()->y; posY > 0.0f; --posY) {
-		if (!(Game.getLocalPlayer()->getRegion()->getBlock(Vec3(Game.getLocalPlayer()->getPos()->x, posY, Game.getLocalPlayer()->getPos()->z))->blockLegacy->blockId == 0)) {
+	for (float posY = g_Data.getLocalPlayer()->getPos().y; posY > 0.0f; --posY) {
+		if (!(g_Data.getLocalPlayer()->getRegion()->getBlock(Vec3(g_Data.getLocalPlayer()->getPos().x, posY, g_Data.getLocalPlayer()->getPos().z))->blockLegacy->blockId == 0)) {
 			return false;
 		}
 	}
@@ -48,7 +48,7 @@ bool NoFall::isOverVoid() {
 };
 
 void NoFall::onTick(GameMode* gm) {
-	LocalPlayer* localPlayer = Game.getLocalPlayer();
+	LocalPlayer* localPlayer = g_Data.getLocalPlayer();
 	if (localPlayer != nullptr) {
 		if (localPlayer->getFallDistanceComponent()->fallDistance > 2.f) {
 			switch (mode.selected) {
@@ -61,7 +61,7 @@ void NoFall::onTick(GameMode* gm) {
 			}
 			case 2: {
 				localPlayer->entityLocation->velocity.y = 0.f;
-				localPlayer->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
+				localPlayer->setPos(localPlayer->getPos().add(0, (float)0.2, 0.f));
 				break;
 			}
 			case 3: {
@@ -71,7 +71,7 @@ void NoFall::onTick(GameMode* gm) {
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 			}
 			case 4: {
-				Vec3 blockBelow = *localPlayer->getPos();
+				Vec3 blockBelow = localPlayer->getPos();
 				blockBelow.y -= localPlayer->getAABBShapeComponent()->size.y;
 				blockBelow.y -= 0.17999f;
 				while (localPlayer->getRegion()->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->getRegion()->getBlock(blockBelow)->blockLegacy->isSolid) {
@@ -81,7 +81,7 @@ void NoFall::onTick(GameMode* gm) {
 					}
 				}
 				blockBelow.y += 2.62001f;
-				Vec3 pos = *localPlayer->getPos();
+				Vec3 pos = localPlayer->getPos();
 				closestGround = {pos.x, blockBelow.y, pos.z};
 			}
 			}

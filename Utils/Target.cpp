@@ -1,4 +1,5 @@
 ﻿#include "Target.h"
+#include "../SDK/ClientInstance.h"
 
 #include <regex>
 #include "../Horion/FriendList/FriendsManager.h"

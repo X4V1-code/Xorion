@@ -20,4 +20,8 @@ public:
 
 		return MC_Color(red, green, blue);
 	}
+	
+	inline static MC_Color rainbow(float seconds, float saturation, float brightness, long index) {
+		return getRainbowColor(seconds, saturation, brightness, index);
+	}
 };

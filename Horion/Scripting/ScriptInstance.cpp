@@ -13,6 +13,8 @@ ScriptInstance::~ScriptInstance() {
 	if (this->scriptThread.joinable())
 		this->scriptThread.join();
 
+	// TODO: moduleMgr no longer available
+	/*
 	{
 		auto lock = moduleMgr->lockModuleListExclusive();
 		auto list = moduleMgr->getModuleList();
@@ -83,16 +85,15 @@ void ScriptInstance::runSync() {
 		
 #define errLog(x, ...) (Logger::isActive() ? logF(x, __VA_ARGS__) : GameData::log(x, __VA_ARGS__))
 		
-		switch (err) {
-		case JsErrorScriptCompile:
-			errLog("Script failed to compile (code: %X)", err);
-			break;
-		default:
-			errLog("Script run failed: %X", err);
-			break;
-		}
-
-#undef errLog
+		
+switch (err) {
+case JsErrorScriptCompile:
+	logF("Script failed to compile (code: %X)", err);
+	break;
+default:
+	logF("Script run failed: %X", err);
+	break;
+}#undef errLog
 		returnString = L"Error! " + std::to_wstring(err) + L", you may find a stack trace in the console";
 
 		goto stopExecution;
@@ -102,6 +103,8 @@ void ScriptInstance::runSync() {
 	logF("Initial Script return: %S", returnString.c_str());
 	this->runPromises();
 
+	// TODO: GameData::shouldTerminate() doesn't exist
+	/*
 	while (this->isRunning && !GameData::shouldTerminate()) {
 		{
 			std::unique_lock<std::mutex> lk(callbackMutex);
@@ -118,6 +121,7 @@ void ScriptInstance::runSync() {
 
 		this->runPromises();
 	}
+	*/
 
 stopExecution:
 	chakra.JsSetCurrentContext_(JS_INVALID_REFERENCE);

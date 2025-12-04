@@ -2,6 +2,7 @@
 #include "../../DrawUtils.h"
 #include "../ModuleManager.h"
 #include "../../../Utils/ClientColors.h"
+#include "../../../SDK/Font.h"
 
 HudModule::HudModule() : IModule(0, Category::CLIENT, "Displays things like the ArrayList/TabGUI.") {
     registerBoolSetting("TabGui", &tabgui, tabgui);
@@ -48,9 +49,9 @@ void HudModule::drawKeystroke(char key, const Vec2& pos) {
 void HudModule::drawMouseKeystroke(Vec2 pos, std::string keyString) {
     Vec4 rectPos(pos.x, pos.y + 2, pos.x + 31.f, pos.y + 22.f);
     if (keyString == "LMB")
-        DrawUtils::fillRectangle(rectPos, GameData::isLeftClickDown() ? ClientColors::keyStrokeDownColor : ClientColors::keyStrokeUpColor, 1.f);
+        DrawUtils::fillRectangle(rectPos, g_Data.isLeftClickDown() ? ClientColors::keyStrokeDownColor : ClientColors::keyStrokeUpColor, 1.f);
     else if (keyString == "RMB")
-        DrawUtils::fillRectangle(rectPos, GameData::isRightClickDown() ? ClientColors::keyStrokeDownColor : ClientColors::keyStrokeUpColor, 1.f);
+        DrawUtils::fillRectangle(rectPos, g_Data.isRightClickDown() ? ClientColors::keyStrokeDownColor : ClientColors::keyStrokeUpColor, 1.f);
 
     Vec2 textPos((rectPos.x + (rectPos.z - rectPos.x) / 2) - (DrawUtils::getTextWidth(&keyString) / 2.f),
                  rectPos.y + 10.f - DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() / 2.f);
@@ -65,7 +66,7 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
     float startY = tabgui ? 7 * f : 0.f;
 
     { // FPS
-        if (!(Game.getLocalPlayer() == nullptr || !fps)) {
+        if (!(g_Data.getLocalPlayer() == nullptr || !fps)) {
             std::string fpsText = "FPS: " + std::to_string(Game.getFPS());
             Vec4 rectPos = Vec4(2.5f, startY + 5.f * scale, len, startY + 15.f * scale);
             Vec2 textPos = Vec2(rectPos.x + 1.5f, rectPos.y + 1.f);
@@ -76,7 +77,7 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
     }
 
     { // CPS
-        if (!(Game.getLocalPlayer() == nullptr || !cps)) {
+        if (!(g_Data.getLocalPlayer() == nullptr || !cps)) {
             std::string cpsText = "CPS: " + std::to_string(Game.getLeftCPS()) + " - " + std::to_string(Game.getRightCPS());
             Vec4 rectPos = Vec4(2.5f, startY + 5.f * scale, len, startY + 15.f * scale);
             Vec2 textPos = Vec2(rectPos.x + 1.5f, rectPos.y + 1.f);
@@ -87,11 +88,11 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
     }
 
     { // Coordinates
-        if (!(Game.getLocalPlayer() == nullptr || !coordinates)) {
-            Vec3* pos = Game.getLocalPlayer()->getPos();
-            std::string coords = "X: " + std::to_string((int)floorf(pos->x)) +
-                                 "\nY: " + std::to_string((int)floorf(pos->y)) +
-                                 "\nZ: " + std::to_string((int)floorf(pos->z));
+        if (!(g_Data.getLocalPlayer() == nullptr || !coordinates)) {
+            Vec3 pos = g_Data.getLocalPlayer()->getPos();
+            std::string coords = "X: " + std::to_string((int)floorf(pos.x)) +
+                                 "\nY: " + std::to_string((int)floorf(pos.y)) +
+                                 "\nZ: " + std::to_string((int)floorf(pos.z));
             Vec4 rectPos = Vec4(2.5f, startY + 5.f * scale, len, startY + 35.f * scale);
             Vec2 textPos = Vec2(rectPos.x + 1.5f, rectPos.y + 1.f);
             DrawUtils::fillRectangle(rectPos, ClientColors::coordinatesBackgroundColor, 1.f);
@@ -100,29 +101,29 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
     }
 
     { // ArmorHUD
-        if (!(Game.getLocalPlayer() == nullptr || !displayArmor || !GameData::canUseMoveKeys())) {
+        if (!(g_Data.getLocalPlayer() == nullptr || !displayArmor || !g_Data.canUseMoveKeys())) {
             static float constexpr scale = 1.f;
             static float constexpr opacity = 0.75f;
             static float constexpr spacing = scale + 15.f;
-            LocalPlayer* player = Game.getLocalPlayer();
+            LocalPlayer* player = g_Data.getLocalPlayer();
             float x = windowSize.x / 2.f + 5.f;
             float y = windowSize.y - 57.5f;
             for (int i = 0; i < 4; i++) {
                 ItemStack* stack = player->getArmor(i);
-                if (stack->isValid()) {
+                if (stack->isValid) {
                     DrawUtils::drawItem(stack, Vec2(x, y), opacity, scale, stack->isEnchanted());
                     x += scale * spacing;
                 }
             }
-            PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-            ItemStack* item = supplies->inventory->getItemStack(supplies->selectedHotbarSlot);
-            if (item->isValid())
+            PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+            ItemStack* item = supplies->inventory->getByGlobalIndex(supplies->selectedHotbarSlot);
+            if (item->isValid)
                 DrawUtils::drawItem(item, Vec2(x, y), opacity, scale, item->isEnchanted());
         }
     }
 
        { // Keystrokes
-        if (!(Game.getLocalPlayer() == nullptr || !keystrokes || !GameData::canUseMoveKeys())) {
+        if (!(g_Data.getLocalPlayer() == nullptr || !keystrokes || !g_Data.canUseMoveKeys())) {
             GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
             HudModule::drawKeystroke(*input->forwardKey, Vec2(32.f, windowSize.y - 84));
             HudModule::drawKeystroke(*input->leftKey, Vec2(10.f, windowSize.y - 62));
@@ -134,3 +135,4 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
         }
     }
 } // <- closes onPostRender
+

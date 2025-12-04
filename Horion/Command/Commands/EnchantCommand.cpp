@@ -1,5 +1,9 @@
 #include "EnchantCommand.h"
+#include "../../../Utils/TextFormat.h"
 
+#include "../../../SDK/Inventory.h"
+#include "../../../SDK/ItemStack.h"
+#include "../../../SDK/InventoryTransaction.h"
 #include "../../../Utils/Utils.h"
 
 EnchantCommand::EnchantCommand() : IMCCommand("enchant", "Enchants items", "<enchantment> [level] <mode: auto / manual : 1/0>") {
@@ -74,11 +78,11 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 		isAuto = static_cast<bool>(assertInt(args->at(3)));
 	}
 
-	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
-	Inventory* inv = supplies->inventory;
-	InventoryTransactionManager* manager = Game.getLocalPlayer()->getTransactionManager();
+	PlayerSupplies* supplies = g_Data.getLocalPlayer()->getSupplies();
+	PlayerInventory* inv = supplies->inventory;
+	InventoryTransactionManager* manager = g_Data.getLocalPlayer()->getTransactionManager();
 	int selectedSlot = supplies->selectedHotbarSlot;
-	ItemStack* item = inv->getItemStack(selectedSlot);
+	ItemStack* item = inv->getByGlobalIndex(selectedSlot);
 	InventoryAction* firstAction = nullptr;
 	InventoryAction* secondAction = nullptr;
 
