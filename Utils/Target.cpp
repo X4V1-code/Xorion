@@ -1,9 +1,10 @@
 ﻿#include "Target.h"
+#include "../SDK/ClientInstance.h"
 
 #include <regex>
-#include "../Xorion/FriendList/FriendsManager.h"
+#include "../Horion/FriendList/FriendsManager.h"
 
-#include "../Xorion/Module/ModuleManager.h"
+#include "../Horion/Module/ModuleManager.h"
 
 LocalPlayer** localPlayer;
 

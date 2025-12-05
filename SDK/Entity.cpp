@@ -9,20 +9,15 @@ InventoryTransactionManager *Entity::getTransactionManager() {
 	}*/
 	return reinterpret_cast<InventoryTransactionManager *>(reinterpret_cast<__int64>(this) + 0xEC8);
 }
+// TODO: Player::getSupplies and Player::getDeviceID not in class definition
+/*
 PlayerInventoryProxy *Player::getSupplies() {
-	/*static unsigned int offset = 0;
-	if (offset == 0) {
-		offset = *reinterpret_cast<int *>(FindSignature("48 8B 51 ?? 4C 8B 82 ?? ?? ?? ?? 48 8B B2 ?? ?? ?? ?? 41 80 B8") + 7);  // GameMode::startDestroyBlock -> GameMode::_canDestroy -> getSupplies
-	}*/
 	return *reinterpret_cast<PlayerInventoryProxy **>(reinterpret_cast<__int64>(this) + 0x848);
 }
 int Player::getDeviceID() {
-	/*static unsigned int offset = 0;
-	if (offset == 0) {
-		offset = *reinterpret_cast<int *>(FindSignature("8B 87 ? ? ? ? 89 83 ? ? ? ? 8B 87 ? ? ? ? 89 83 ? ? ? ? 4C 8D B3") + 3); // Player::getPlatform
-	}*/
 	return *reinterpret_cast<int*>(reinterpret_cast<__int64>(this) + 0x848);
 }
+*/
 void LocalPlayer::unlockAchievements() {  // MinecraftEventing::fireEventAwardAchievement
 	using fireEventAward = void(__fastcall *)(void *, int);
 	static fireEventAward fireEventAwardFunc = reinterpret_cast<fireEventAward>(FindSignature("48 85 C9 0F 84 ? ? ? ? 48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 01"));

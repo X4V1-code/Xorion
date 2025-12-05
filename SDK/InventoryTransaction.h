@@ -2,6 +2,7 @@
 #include "../Utils/HMath.h"
 #include "Inventory.h"
 #include "Item.h"
+#include "ItemStack.h"
 
 enum InventorySourceType : int32_t {
 	InvalidInventory = -1,

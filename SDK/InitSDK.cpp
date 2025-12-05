@@ -4,7 +4,7 @@
 #include "Memory/SignatureResolver.cpp"
 #include "Memory/SignatureReport.cpp"
 #include "SDK/GameMode.h"
-#include "Logger.h"
+#include "../Utils/Logger.h"
 
 #include <thread>
 

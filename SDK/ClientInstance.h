@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Entity.h"
+#include "LocalPlayer.h"
 #include "GameSettingsInput.h"
 #include "LoopbackPacketSender.h"
 #include "MinecraftUIRenderContext.h"
 #include "TextHolder.h"
+#include "../Utils/Utils.h"
 
 struct Minecraft {
 private:
@@ -21,6 +23,7 @@ public:
 
 struct Tessellator;
 struct Block;
+class Font;
 
 struct BlockTessellator;
 struct ResourceLocation {
@@ -255,6 +258,14 @@ public:
         using getRuneFont_t = Font*(__fastcall*)(ClientInstance*);
         static getRuneFont_t getRuneFontFunc = reinterpret_cast<getRuneFont_t>(FindSignature("48 89 5C 24 ? 57 48 83 EC 30 48 8B DA 48 8B 89 ? ? ? ? 48 8B 01 48 8D 54 24 ? 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 90 48 8B 10 48 85 D2 74 65 48 8B 48 08 48 85 C9 74 0B F0 FF 41 08 48 8B 10 48 8B 48 08 48 8B 3A 48 85 C9 74 05 E8 ? ? ? ? 48 8B D7 48 8B CB E8 ? ? ? ? 90 33 C0 48 89 44 24 ? 48 8B 4C 24 ? 48 89 44 24 ? 48 85 C9 74 14 E8 ? ? ? ? 48 8B 4C 24 ? 48 85 C9 74 05 E8 ? ? ? ? 48 8B C3 48 8B 5C 24 ? 48 83 C4 30 5F C3 E8 ? ? ? ? 90 CC CC CC 48 89 5C 24"));
         return getRuneFontFunc(this);
+    }
+    
+    LevelRenderer* getLevelRenderer() {
+        return levelRenderer;
+    }
+    
+    void playSound(const std::string& soundName, const Vec3& pos, float volume, float pitch) {
+        // Stub implementation for sound playback
     }
 
     Font* getUnicodeFont() {

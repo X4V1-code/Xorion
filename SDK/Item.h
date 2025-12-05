@@ -10,11 +10,11 @@ class Tag;
 class BlockLegacy;
 class BlockSource;
 class Block;
-class Entity;
+struct Entity;
 class ItemStack;
 class ScreenContext;
 class ItemRenderer;
-class ClientInstance;
+struct ClientInstance;
 class MinecraftGame;
 
 class BaseActorRenderContext {
@@ -257,7 +257,7 @@ public:
 	void fromStack(ItemStack *item);
 };
 
-class ItemStack {
+/*class ItemStack {
 private:
 	uintptr_t **vTable;  //0x0000
 public:
@@ -347,7 +347,7 @@ public:
 
 private:
 	inline void setVtable(void);
-};
+};*/
 
 class ArmorItem : public Item {
 private:

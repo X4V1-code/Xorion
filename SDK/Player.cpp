@@ -1,7 +1,9 @@
 #include "Player.h"
+#include "LocalPlayer.h"
 #include "PlayerSignatures.h"
 #include "../Utils/Utils.h"
-#include "../SDK/FindSignatures.h"
+#include "../Utils/FindSignatures.h"
+#include "../Utils/Logger.h"
 #include <vector>
 #include <cstdio>
 #include <cstring>
@@ -21,7 +23,7 @@ extern void* ResolveLocalPlayerApplyTurn();
 extern void* ResolveLocalPlayerGetGameMode();
 extern void* ResolveLocalPlayerUnlock();
 
-// Typedefs with calling conventions - tuned for Xorion style / MSVC x64 / typical game functions.
+// Typedefs with calling conventions - tuned for Horion style / MSVC x64 / typical game functions.
 // On MSVC/x64 all non-member functions use the x64 calling convention. On 32-bit you may need __thiscall.
 // We include explicit __fastcall/__thiscall for clarity for ports that require them.
 using Player_getName_t = const char*(__cdecl*)(void*);           // usually plain pointer returns const char*
@@ -101,13 +103,13 @@ static void ResolvePlayerSignaturesOnce() {
     if (p) s_local_unlock_fn = reinterpret_cast<LocalPlayer_unlock_t>(p);
 
     // Log summary
-    Utils::Log("[Player] Signature resolution complete: name=%p heldItem=%p getPos=%p setPos=%p getHealth=%p sendPacket=%p\n",
+    logF("[Player] Signature resolution complete: name=%p heldItem=%p getPos=%p setPos=%p getHealth=%p sendPacket=%p\n",
                (void*)s_getName_fn, (void*)s_getHeldItem_fn, (void*)s_getPos_fn, (void*)s_setPos_fn, (void*)s_getHealth_fn, (void*)s_sendNetworkPacket_fn);
-    Utils::Log("[LocalPlayer] swing=%p turn=%p applyTurn=%p getGameMode=%p unlock=%p\n",
+    logF("[LocalPlayer] swing=%p turn=%p applyTurn=%p getGameMode=%p unlock=%p\n",
                (void*)s_local_swing_fn, (void*)s_local_turn_fn, (void*)s_local_applyTurn_fn, (void*)s_local_getGameMode_fn, (void*)s_local_unlock_fn);
 }
 
-// --- Player implementation (Xorion-style wrappers) ---
+// --- Player implementation (Horion-style wrappers) ---
 
 // Offsets used as validated fallbacks; keep in one place so you can tune for your build.
 static constexpr ptrdiff_t OFF_SUPPLIES_PTR = OFF_SUPPLIES_PTR_DEFAULT;
@@ -119,12 +121,16 @@ static constexpr ptrdiff_t ITEM_OFF_NAME    = ITEM_RAW_OFF_NAME;
 static constexpr ptrdiff_t ITEM_OFF_TAG     = ITEM_RAW_OFF_TAG;
 static constexpr ptrdiff_t LOCALPLAYER_GAMEMODE_PTR = LOCALPLAYER_GAMEMODE_OFF;
 
+// TODO: Entity has reference members, can't default construct
+// Player constructor disabled - Player objects shouldn't be constructed, they're memory overlays
+/*
 Player::Player(void* mcPlayerPtr) : mcPlayerPtr(mcPlayerPtr) {
     // Defer heavy resolution; but it's useful to kick it early if possible
     ResolvePlayerSignaturesOnce();
 }
 
 Player::~Player() = default;
+*/
 
 void Player::ensureIntegration() const {
     ResolvePlayerSignaturesOnce();
@@ -164,7 +170,7 @@ Vec3 Player::getPos() const {
     // Fallback: call base Entity::getPos if available
     Vec3* p = nullptr;
     try {
-        p = Entity::getPos();
+        p = const_cast<Player*>(this)->Entity::getPos();
     } catch (...) {
         p = nullptr;
     }
@@ -178,7 +184,7 @@ void Player::setPos(const Vec3& pos) {
         s_setPos_fn(mcPlayerPtr, pos);
         return;
     }
-    // fallback: attempt common CallVFunc index (Xorion candidate)
+    // fallback: attempt common CallVFunc index (Horion candidate)
     Utils::CallVFunc</*idx*/ 100, void, const Vec3&>(mcPlayerPtr, pos);
 }
 
@@ -200,11 +206,11 @@ void Player::setHealth(float health) {
 }
 
 bool Player::isSneaking() const {
-    return Entity::getStatusFlag(SNEAKING);
+    return const_cast<Player*>(this)->Entity::getStatusFlag(SNEAKING);
 }
 
 bool Player::isSprinting() const {
-    return Entity::getStatusFlag(SPRINTING);
+    return const_cast<Player*>(this)->Entity::getStatusFlag(SPRINTING);
 }
 
 PlayerSupplies* Player::getSupplies() const {
@@ -216,7 +222,8 @@ PlayerSupplies* Player::getSupplies() const {
 ItemStack* Player::getSelectedItemStack() const {
     PlayerSupplies* s = getSupplies();
     if (!s) return nullptr;
-    return s->getHotbarSlot(s->selectedHotbarSlot);
+    // TODO: getHotbarSlot not available
+    return s->inventory->getByGlobalIndex(s->selectedHotbarSlot);
 }
 
 int Player::getSelectedItemId() const {

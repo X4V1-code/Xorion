@@ -1,4 +1,5 @@
 #include "Inventory.h"
+#include "ItemStack.h"
 
 #include "../Memory/GameData.h"
 #include "../Utils/Utils.h"

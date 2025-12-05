@@ -9,7 +9,7 @@
 #include "../SDK/Item.h"
 #include "../Utils/Utils.h"
 
-// A relatively full ItemStack representation similar to Xorion's SDK wrappers.
+// A relatively full ItemStack representation similar to Horion's SDK wrappers.
 // Not all internals are available at compile time; many functions are thin calls
 // into the game's memory via resolved vfuncs or signatures. Provide a rich API
 // modules expect: comparisons, serialization helpers, enchantments, NBT stubs,
@@ -37,7 +37,7 @@ public:
     int itemId = 0;               // numerical id (cached)
     bool isValid = false;         // indicates proper initialization
 
-    // Optional metadata fields that Xorion modules sometimes inspect
+    // Optional metadata fields that Horion modules sometimes inspect
     std::vector<Enchantment> enchantments;
     ItemAttributes attributes;
     TextHolder customName;
@@ -132,6 +132,10 @@ public:
         for (const auto &e : enchantments) if (e.id == enchId) return e.level;
         return std::nullopt;
     }
+    
+    bool isEnchanted() const {
+        return !enchantments.empty();
+    }
 
     // Custom name helpers
     void setCustomName(const std::string& name) {
@@ -200,6 +204,33 @@ public:
         return s;
     }
 
+    // Stub: Calculate armor value including enchantments
+    int getArmorValueWithEnchants() const {
+        // TODO: Implement proper armor + enchantment calculation
+        return 0;
+    }
+
+    // Stub: Load ItemStack from NBT tag
+    void fromTag(void* tag) {
+        // TODO: Parse NBT tag and populate fields
+    }
+
+    // Stub: Set user data
+    void setUserData(void* data) {
+        // TODO: Store user data pointer
+    }
+
+    // Stub: Set item lore
+    void setLore(const std::string& lore) {
+        // TODO: Set item lore text
+    }
+
+    // Stub: Get attacking damage with enchantments
+    int getAttackingDamageWithEnchants() const {
+        // TODO: Calculate damage based on item and enchantments
+        return 0;
+    }
+
 private:
     void parseEnchantmentsFromTag() {
         // Placeholder: inspect rawTag and populate enchantments if present.
@@ -216,3 +247,6 @@ private:
         }
     }
 };
+
+// Legacy alias
+using C_ItemStack = ItemStack;

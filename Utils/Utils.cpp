@@ -17,6 +17,9 @@
 #include <wtsapi32.h>
 #include <playsoundapi.h>
 
+#include "../Memory/SlimMem.h"
+#include "../SDK/ClientInstance.h"
+
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "urlmon.lib")
 #pragma comment(lib, "wininet.lib")
@@ -287,7 +290,6 @@ uintptr_t** Utils::getVtableFromSignature(const char* szSignature, int offset) {
 // --------------------------------------------------------------------------------------
 // Hashing (Vec3i)
 // --------------------------------------------------------------------------------------
-struct Vec3i { int x, y, z; };
 
 size_t Utils::posToHash(const Vec3i& pos) {
     return rotBy(pos.x, 0) | rotBy(pos.z, 24) | (static_cast<unsigned __int64>(pos.y) << 48u);

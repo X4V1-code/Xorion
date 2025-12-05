@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Xorion.rc (Xorion branding)
+// Used by Horion.rc (Xorion branding)
 
 #pragma once
 

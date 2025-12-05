@@ -17,6 +17,10 @@ public:
     // Accessors
     GameMode* getGameMode() const;
     void unlockAchievements();
+    
+    bool isAlive() const {
+        return ticksAlive > 0;
+    }
 
 protected:
     // Resolved function pointers for LocalPlayer specific calls

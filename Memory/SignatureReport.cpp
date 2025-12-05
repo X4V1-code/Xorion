@@ -1,6 +1,6 @@
 // Memory/SignatureReport.cpp
 #include "SignatureGlobals.h"
-#include "Logger.h"
+#include "../Utils/Logger.h"
 
 void PrintSignatureReport() {
     struct Item { const char* name; void* addr; } items[] = {

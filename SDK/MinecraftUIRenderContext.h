@@ -18,3 +18,6 @@ struct MinecraftUIRenderContext {
     inline void drawLine(float x1, float y1, float x2, float y2, float thickness = 1.0f) { (void)x1; (void)y1; (void)x2; (void)y2; (void)thickness; }
     inline void drawBox(const Vec3& start, const Vec3& end, float thickness = 0.4f) { (void)start; (void)end; (void)thickness; }
 };
+
+// Legacy alias
+using C_MinecraftUIRenderContext = MinecraftUIRenderContext;

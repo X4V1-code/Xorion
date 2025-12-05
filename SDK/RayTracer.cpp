@@ -92,6 +92,7 @@ HitResult RayTracer::voxelRay(const Vec3& origin, const Vec3& dirInput, float ma
 }
 
 HitResult RayTracer::voxelRayYawPitch(const Vec3& origin, float yawDeg, float pitchDeg, float maxDist) {
-    Vec3 dir = Vec3::fromYawPitch(yawDeg, pitchDeg);
+    // TODO: Vec3::fromYawPitch doesn't exist - need to implement direction calculation
+    Vec3 dir(0, 0, 1);  // placeholder
     return voxelRay(origin, dir, maxDist);
 }

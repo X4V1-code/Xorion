@@ -8,7 +8,7 @@
 #include "../SDK/TextHolder.h"
 #include "../Utils/Utils.h"
 
-// PlayerSupplies is a Xorion-style wrapper for a player's inventory/hotbar/armor/offhand.
+// PlayerSupplies is a Horion-style wrapper for a player's inventory/hotbar/armor/offhand.
 // Provide a complete set of helpers modules call: searching, swapping, adding, removing,
 // quick-moving, serialization, slot indexes, and network updates.
 
@@ -24,7 +24,7 @@ struct ContainerSlot {
     int slotIndex = -1;
 };
 
-struct Inventory {
+struct PlayerInventory {
     // Layout assumption: [hotbar(0..8)] [main inventory(9..35)] [armor slots 36..39] [offhand 40]
     std::array<ItemStack, HOTBAR_SIZE> hotbar;
     std::array<ItemStack, MAIN_INV_SIZE> mainInv;
@@ -73,10 +73,37 @@ struct Inventory {
         if (globalIdx == offhandIdx) return &offhand;
         return nullptr;
     }
+
+    // Find first empty slot (-1 if inventory full)
+    int getFirstEmptySlot() {
+        for (int i = 0; i < HOTBAR_SIZE; ++i) {
+            if (hotbar[i].getItem() == nullptr || hotbar[i].isNull()) return i;
+        }
+        for (int i = 0; i < MAIN_INV_SIZE; ++i) {
+            if (mainInv[i].getItem() == nullptr || mainInv[i].isNull()) return HOTBAR_SIZE + i;
+        }
+        return -1;
+    }
+
+    // Add item to first empty slot (return false if full)
+    bool addItemToFirstEmptySlot(ItemStack* item) {
+        if (!item) return false;
+        int slot = getFirstEmptySlot();
+        if (slot < 0) return false;
+        ItemStack* target = getByGlobalIndex(slot);
+        if (target) *target = *item;
+        return true;
+    }
+
+    // Set item at specific slot
+    void setItem(int globalIdx, const ItemStack& item) {
+        ItemStack* target = getByGlobalIndex(globalIdx);
+        if (target) *target = item;
+    }
 };
 
 struct PlayerSupplies {
-    Inventory* inventory = nullptr;   // raw pointer to game's Inventory structure
+    PlayerInventory* inventory = nullptr;   // raw pointer to player inventory structure
     int selectedHotbarSlot = 0;       // 0..8
     int carriedSlotIndex = -1;        // slot being carried (dragging) for GUIs
 
@@ -200,7 +227,7 @@ struct PlayerSupplies {
 
     // Notify engine that slot changed; modules rely on this to refresh UI or send packets
     void onInventoryChanged(int slotIdx) {
-        // Placeholder: in Xorion this often calls Player::sendInventory or a vfunc on Player
+        // Placeholder: in Horion this often calls Player::sendInventory or a vfunc on Player
         (void)slotIdx;
         // e.g., Utils::CallVFunc</*idx*/ 200, void>(ownerPlayer, ...);
     }

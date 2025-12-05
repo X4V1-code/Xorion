@@ -1,7 +1,7 @@
 // SDK/GameMode.cpp
 #include "SDK/GameMode.h"
 #include "Memory/SignatureGlobals.h"
-#include "Logger.h"
+#include "../Utils/Logger.h"
 #include <cstring> // for memcmp if doing quick runtime validation
 
 namespace SDK {

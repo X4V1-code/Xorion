@@ -4,6 +4,8 @@
 //#define PERFORMANCE_TEST
 #endif
 
+struct SkinData;  // Forward declaration
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <dxgi.h>
@@ -12,11 +14,11 @@
 #include <thread>
 #include <unordered_map>
 
-#include "../Xorion/Command/CommandMgr.h"
-#include "../Xorion/Config/ConfigManager.h"
-#include "../Xorion/DrawUtils.h"
-#include "../Xorion/Menu/ClickGui.h"
-#include "../Xorion/Module/ModuleManager.h"
+#include "../Horion/Command/CommandMgr.h"
+#include "../Horion/Config/ConfigManager.h"
+#include "../Horion/DrawUtils.h"
+#include "../Horion/Menu/ClickGui.h"
+#include "../Horion/Module/ModuleManager.h"
 #include "../SDK/BlockLegacy.h"
 #include "../SDK/Camera.h"
 #include "../SDK/ChestBlockActor.h"

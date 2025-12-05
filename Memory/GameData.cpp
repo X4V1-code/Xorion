@@ -7,6 +7,8 @@
 
 #include "../Utils/Logger.h"
 #include "../Utils/Utils.h"
+#include "../SDK/ClientInstance.h"
+#include "../SDK/HIDController.h"
 #include "Hooks.h"
 
 // Singleton instance
@@ -19,7 +21,39 @@ SlimUtils::SlimMem* GameData::slimMem = nullptr;
 // Hash for AABB relies on AABB::lower being a Vec3i-like integer position.
 // Ensure AABB’s lower has x/y/z integers (or adapt hashing accordingly).
 size_t AABBHasher::operator()(const AABB& i) const {
-    return Utils::posToHash(i.lower);
+	return Utils::posToHash(i.lower);
+}
+
+// Method implementations moved from header inline definitions
+ClientInstance* GameData::getClientInstance() {
+    return clientInstance;
+}
+
+GuiData* GameData::getGuiData() {
+    return clientInstance ? clientInstance->getGuiData() : nullptr;
+}
+
+LocalPlayer* GameData::getLocalPlayer() {
+    if (clientInstance)
+        return clientInstance->getCILocalPlayer();
+    return nullptr;
+}
+
+LocalPlayer** GameData::getPtrLocalPlayer() {
+    static LocalPlayer* lp = getLocalPlayer();
+    return &lp;
+}
+
+bool GameData::isInGame() {
+    return getLocalPlayer() != nullptr;
+}
+
+RakNetConnector* GameData::getRakNetConnector() {
+    if (!clientInstance || !clientInstance->loopbackPacketSender ||
+        !clientInstance->loopbackPacketSender->networkSystem ||
+        !clientInstance->loopbackPacketSender->networkSystem->remoteConnectorComposite)
+        return nullptr;
+    return clientInstance->loopbackPacketSender->networkSystem->remoteConnectorComposite->rakNetConnector;
 }
 
 // Resolve ClientInstance via signature + readPointer chain.
@@ -35,7 +69,7 @@ void GameData::retrieveClientInstance() {
     }
 
     // Read pointer chain defensively
-    clientInstance = reinterpret_cast<ClientInstance*>(
+    g_Data.clientInstance = reinterpret_cast<ClientInstance*>(
         Utils::readPointer<uintptr_t*>(clientInstanceOffset, {0x0, 0x0, 0x48, 0x0})
     );
 
@@ -101,9 +135,9 @@ void GameData::updateGameData(GameMode* gm) {
     retrieveClientInstance();
 
     // Refresh local player via client instance
-    localPlayer = getLocalPlayer();
+    LocalPlayer* localPlayer = getLocalPlayer();
 
-    if (localPlayer != nullptr && gm != nullptr && gm->player == localPlayer) {
+    if (localPlayer != nullptr && gm != nullptr && gm->player == (Entity*)localPlayer) {
         gameMode = gm;
 
         LARGE_INTEGER counter{};
@@ -165,21 +199,23 @@ void GameData::setHIDController(HIDController* Hid) {
 }
 
 void GameData::forEachEntity(std::function<void(Entity*, bool)> callback) {
-    if (localPlayer && localPlayer->level) {
+    LocalPlayer* lp = getLocalPlayer();
+    if (lp && lp->level) {
         // Players from hook-managed list
         for (const auto& ent : g_Hooks.entityList)
             if (ent.ent != nullptr && ent.ent->isPlayer())
                 callback(ent.ent, false);
 
-        // Everything else from level’s misc list
-        for (const auto& ent : getLocalPlayer()->level->getMiscEntityList())
+        // Everything else from level's misc list
+        for (const auto& ent : lp->level->getMiscEntityList())
             if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer())
                 callback(ent, false);
     }
 }
 
 void GameData::forEachPlayer(std::function<void(Entity*, bool)> callback) {
-    if (localPlayer && localPlayer->level) {
+    LocalPlayer* lp = getLocalPlayer();
+    if (lp && lp->level) {
         for (const auto& ent : g_Hooks.entityList)
             if (ent.ent != nullptr && ent.ent->isPlayer())
                 callback(ent.ent, false);
@@ -187,8 +223,9 @@ void GameData::forEachPlayer(std::function<void(Entity*, bool)> callback) {
 }
 
 void GameData::forEachMob(std::function<void(Entity*, bool)> callback) {
-    if (localPlayer && localPlayer->level) {
-        for (const auto& ent : getLocalPlayer()->level->getMiscEntityList())
+    LocalPlayer* lp = getLocalPlayer();
+    if (lp && lp->level) {
+        for (const auto& ent : lp->level->getMiscEntityList())
             if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer())
                 callback(ent, false);
     }
