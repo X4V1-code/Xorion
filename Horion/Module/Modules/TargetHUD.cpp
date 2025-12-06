@@ -1,4 +1,4 @@
-// Horion/Module/Modules/TargetHUD.cpp
+// Xorion/Module/Modules/TargetHUD.cpp
 #include "TargetHUD.h"
 #include "../../DrawUtils.h"
 #include "../../../SDK/LocalPlayer.h"

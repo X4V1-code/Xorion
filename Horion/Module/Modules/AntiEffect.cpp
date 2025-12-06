@@ -1,4 +1,4 @@
-// Horion/Module/Modules/AntiEffect.cpp
+// Xorion/Module/Modules/AntiEffect.cpp
 #include "AntiEffect.h"
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/LocalPlayer.h"

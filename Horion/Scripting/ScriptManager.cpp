@@ -11,7 +11,7 @@
 #include "Functions/LocalPlayerFunctions.h"
 #include "Functions/InventoryFunctions.h"
 #include "Functions/GameFunctions.h"
-#include "Functions/HorionFunctions.h"
+#include "Functions/XorionFunctions.h"
 #include "Functions/CommandManagerFunctions.h"
 #include "Functions/ModuleManagerFunctions.h"
 #include "Functions/LevelFunctions.h"
@@ -151,19 +151,19 @@ void ScriptManager::prepareGameFunctions(JsValueRef global, ContextObjects* objs
 	chakra.defineFunction(gameObject, L"getLevel", GameFunctions::getLevel, objs);
 }
 
-void ScriptManager::prepareHorionFunctions(JsValueRef global, ContextObjects* obj) {
+void ScriptManager::prepareXorionFunctions(JsValueRef global, ContextObjects* obj) {
 	this->prepareDrawFunctions(global, obj);
 	this->prepareCommandManagerFunctions(global, obj);
 	this->prepareModuleManagerFunctions(global, obj);
 
-	JsValueRef horionObject;
-	chakra.JsCreateObject_(&horionObject);
+	JsValueRef xorionObject;
+	chakra.JsCreateObject_(&xorionObject);
 
-	chakra.addPropertyToObj(global, L"Horion", horionObject);
+	chakra.addPropertyToObj(global, L"Xorion", xorionObject);
 
-	chakra.defineFunction(horionObject, L"getCommandManager", HorionFunctions::getCommandManager, obj);
-	chakra.defineFunction(horionObject, L"getModuleManager", HorionFunctions::getModuleManager, obj);
-	chakra.defineFunction(horionObject, L"getDrawUtils", HorionFunctions::getDrawUtils, obj);
+	chakra.defineFunction(xorionObject, L"getCommandManager", XorionFunctions::getCommandManager, obj);
+	chakra.defineFunction(xorionObject, L"getModuleManager", XorionFunctions::getModuleManager, obj);
+	chakra.defineFunction(xorionObject, L"getDrawUtils", XorionFunctions::getDrawUtils, obj);
 }
 
 void ScriptManager::prepareDrawFunctions(JsValueRef global, ContextObjects* objs) {
@@ -235,7 +235,7 @@ void ScriptManager::prepareContext(JsContextRef* ctx, ContextObjects* obj) {
 	chakra.JsGetGlobalObject_(&globalObject);
 
 	prepareGlobals(globalObject, obj);
-	prepareHorionFunctions(globalObject, obj);
+	prepareXorionFunctions(globalObject, obj);
 	prepareGameFunctions(globalObject, obj);
 	prepareVector2Prototype(globalObject, obj);
 	prepareVector3Prototype(globalObject, obj);

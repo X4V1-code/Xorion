@@ -1,4 +1,4 @@
-// Horion/Module/Modules/Breadcrumbs.cpp
+// Xorion/Module/Modules/Breadcrumbs.cpp
 #include "Breadcrumbs.h"
 #include "../../DrawUtils.h"
 #include "../../../SDK/LocalPlayer.h"

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(Horion)
+project(Xorion)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,7 +23,7 @@ include_directories(include/glm/)
 
 link_directories(minhook)
 
-add_library(Horion SHARED
+add_library(Xorion SHARED
         Horion/Command/Commands/BindCommand.cpp
         Horion/Command/Commands/BindCommand.h
         Horion/Command/Commands/BruhCommand.cpp
@@ -363,8 +363,8 @@ add_library(Horion SHARED
         Horion/Scripting/Functions/GameFunctions.h
         Horion/Scripting/Functions/GlobalFunctions.cpp
         Horion/Scripting/Functions/GlobalFunctions.h
-        Horion/Scripting/Functions/HorionFunctions.cpp
-        Horion/Scripting/Functions/HorionFunctions.h
+        Horion/Scripting/Functions/XorionFunctions.cpp
+        Horion/Scripting/Functions/XorionFunctions.h
         Horion/Scripting/Functions/InventoryFunctions.cpp
         Horion/Scripting/Functions/InventoryFunctions.h
         Horion/Scripting/Functions/LevelFunctions.cpp
@@ -448,8 +448,8 @@ add_library(Horion SHARED
         SDK/GameType.h
         SDK/HIDController.h
         SDK/HitResult.h
-        SDK/HorionNameTag.cpp
-        SDK/HorionNameTag.h
+        SDK/XorionNameTag.cpp
+        SDK/XorionNameTag.h
         SDK/InitSDK.cpp
         SDK/InitSDK.h
         SDK/Inventory.cpp
@@ -569,7 +569,7 @@ add_library(Horion SHARED
 )
 
 # Link required libraries
-target_link_libraries(Horion
+target_link_libraries(Xorion
     d3d11.lib
     d3dcompiler.lib
     chakrart.lib
@@ -601,6 +601,6 @@ if(WIN32)
     # Group them into a target
     add_custom_target(Shaders ALL DEPENDS ${COMPILED_SHADERS})
 
-    # Make Horion depend on shaders
-    add_dependencies(Horion Shaders)
+    # Make Xorion depend on shaders
+    add_dependencies(Xorion Shaders)
 endif()

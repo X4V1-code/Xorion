@@ -1,4 +1,4 @@
-// Horion/Module/Modules/AntiEffect.h
+// Xorion/Module/Modules/AntiEffect.h
 #pragma once
 #include "Module.h"
 #include <vector>

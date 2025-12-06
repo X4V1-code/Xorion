@@ -1,4 +1,4 @@
-// Horion/Module/Modules/InventoryViewer.h
+// Xorion/Module/Modules/InventoryViewer.h
 #pragma once
 #include "Module.h"
 #include <vector>

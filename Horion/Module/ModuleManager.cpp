@@ -2,8 +2,8 @@
 #include "../../Utils/Logger.h"
 #include "../../Utils/Json.hpp"
 
-// Always-on cosmetic: Horion-style nametag for local player
-#include "../SDK/HorionNameTag.h"
+// Always-on cosmetic: Xorion-style nametag for local player
+#include "../../SDK/XorionNameTag.h"
 
 using json = nlohmann::json;
 
@@ -338,8 +338,8 @@ void ModuleManager::onLevelRender() {
             it->onLevelRender();
     }
 
-    // Always render Horion-style nametag for the local player (cosmetic, client-side)
-    HorionNameTag::renderLocalPlayerName();
+    // Always render Xorion-style nametag for the local player (cosmetic, client-side)
+    XorionNameTag::renderLocalPlayerName();
 }
 
 // Global instance

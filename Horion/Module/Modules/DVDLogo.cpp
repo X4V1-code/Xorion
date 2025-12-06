@@ -1,4 +1,4 @@
-// Horion/Module/Modules/DVDLogo.cpp
+// Xorion/Module/Modules/DVDLogo.cpp
 #include "DVDLogo.h"
 #include "../../DrawUtils.h"
 #include "../../../Memory/GameData.h"

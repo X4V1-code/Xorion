@@ -79,11 +79,11 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	}
 
 	if (pos.iszero()) {
-		clientMessageF("[%sHorion%s] %sCouldn't find player: %s!", GOLD, WHITE, RED, nameOfPlayer.c_str());
+		clientMessageF("[%sXorion%s] %sCouldn't find player: %s!", GOLD, WHITE, RED, nameOfPlayer.c_str());
 		return true;
 	}
 
 	Game.getLocalPlayer()->setPos(pos);
-	clientMessageF("[%sHorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());
+	clientMessageF("[%sXorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());
 	return true;
 }

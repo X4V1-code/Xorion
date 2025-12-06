@@ -1,4 +1,4 @@
-// Horion/Module/Modules/AntiCrystal.cpp
+// Xorion/Module/Modules/AntiCrystal.cpp
 #include "AntiCrystal.h"
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/LocalPlayer.h"

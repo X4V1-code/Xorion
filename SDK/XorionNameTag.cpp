@@ -1,7 +1,7 @@
-#include "HorionNameTag.h"
+#include "XorionNameTag.h"
 #include "Font.h"   // or whatever your client uses to manage fonts
 
-void HorionNameTag::renderLocalPlayerName() {
+void XorionNameTag::renderLocalPlayerName() {
     LocalPlayer* lp = g_Data.getLocalPlayer();
     if (lp == nullptr) return;
 

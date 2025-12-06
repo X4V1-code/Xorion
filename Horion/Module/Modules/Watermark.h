@@ -1,4 +1,4 @@
-// Horion/Module/Modules/Watermark.h
+// Xorion/Module/Modules/Watermark.h
 #pragma once
 #include "Module.h"
 
@@ -8,7 +8,7 @@ private:
     float y = 6.0f;
     float scale = 1.0f;
     bool rainbow = true;
-    std::string text = "Horion";
+    std::string text = "Xorion";
 
 public:
     Watermark();

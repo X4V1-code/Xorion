@@ -1,7 +1,7 @@
 #include "GameFunctions.h"
 
 JsValueRef CALLBACK GameFunctions::getClient(JsValueRef callee, bool isConstructCall, JsValueRef* arguments, unsigned short argumentCount, void* callbackState) {
-	std::wstring name(L"Horion");
+	std::wstring name(L"Xorion");
 	JsValueRef ref;
 	chakra.JsPointerToString_(name.c_str(), name.size(), &ref);
 	return ref;

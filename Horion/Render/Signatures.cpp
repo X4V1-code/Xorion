@@ -94,7 +94,7 @@ namespace Signatures {
     };
 }
 
-// Helper that logs resolution (Horion-style)
+// Helper that logs resolution (Xorion-style)
 static void logResolution(const char* name, const char* pattern, void* addr) {
 #if defined(_MSC_VER)
     // Windows: use OutputDebugString if desired via Utils or fallback to printf

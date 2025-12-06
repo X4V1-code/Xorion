@@ -105,7 +105,7 @@ void CommandMgr::execute(char* message) {
     }
 
     // If the command doesn't exist, display an error message
-    Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sCommand '%s' could not be found!", GOLD, WHITE, RED, cmd.c_str());
+    Game.getGuiData()->displayClientMessageF("[%sXorion%s] %sCommand '%s' could not be found!", GOLD, WHITE, RED, cmd.c_str());
     // Loop through all commands for suggestions
     for (auto it = this->commandList.begin(); it != this->commandList.end(); ++it) {
         IMCCommand* c = *it;

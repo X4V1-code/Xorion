@@ -31,9 +31,9 @@ bool GameModeCommand::execute(std::vector<std::string>* args) {
 	if (gamemode >= 0 && gamemode <= 6) {
 		// TODO: setPlayerGameType not available in 1.21.123
 		// Game.getLocalPlayer()->setPlayerGameType(static_cast<GameType>(gamemode));
-		clientMessageF("[%sHorion%s] %sGameMode change not available in 1.21.123!", GOLD, WHITE, RED);
+		clientMessageF("[%sXorion%s] %sGameMode change not available in 1.21.123!", GOLD, WHITE, RED);
 	} else {
-		clientMessageF("[%sHorion%s] %sInvalid gamemode! Use 0-6", GOLD, WHITE, RED);
+		clientMessageF("[%sXorion%s] %sInvalid gamemode! Use 0-6", GOLD, WHITE, RED);
 	}
 
 	return true;

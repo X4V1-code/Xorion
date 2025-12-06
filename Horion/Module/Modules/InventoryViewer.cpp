@@ -1,4 +1,4 @@
-// Horion/Module/Modules/InventoryViewer.cpp
+// Xorion/Module/Modules/InventoryViewer.cpp
 #include "InventoryViewer.h"
 #include "../../DrawUtils.h"
 #include "../../../Memory/GameData.h"

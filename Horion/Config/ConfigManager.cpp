@@ -62,7 +62,7 @@ void ConfigManager::loadConfig(std::string name, bool create) {
 			} catch (json::parse_error& e) {
 				logF("Config Load Exception!: %s", e.what());
 			}
-			currentConfigObj["from"] = "Horion";
+			currentConfigObj["from"] = "Xorion";
 		}
 
 		if (configExists) {
@@ -82,15 +82,15 @@ void ConfigManager::loadConfig(std::string name, bool create) {
 
 		if (Game.getLocalPlayer() != nullptr) {
 			static bool helpedUser = false;
-			Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sSuccessfully %s config %s%s%s!", GOLD, WHITE, GREEN, !configExists ? "created" : "loaded", GRAY, name.c_str(), GREEN);
+			Game.getGuiData()->displayClientMessageF("[%sXorion%s] %sSuccessfully %s config %s%s%s!", GOLD, WHITE, GREEN, !configExists ? "created" : "loaded", GRAY, name.c_str(), GREEN);
 			if (!helpedUser && name != "default") {
 				helpedUser = true;
-				Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sEnter \"%s%cconfig load default%s\" to load your old config!", GOLD, WHITE, YELLOW, WHITE, cmdMgr->prefix, YELLOW);
+				Game.getGuiData()->displayClientMessageF("[%sXorion%s] %sEnter \"%s%cconfig load default%s\" to load your old config!", GOLD, WHITE, YELLOW, WHITE, cmdMgr->prefix, YELLOW);
 			}
 		}
 	} else {
 		if (Game.getLocalPlayer() != nullptr) 
-			Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sCould not load config %s%s%s!", GOLD, WHITE, RED, GRAY, name.c_str(), RED);
+			Game.getGuiData()->displayClientMessageF("[%sXorion%s] %sCould not load config %s%s%s!", GOLD, WHITE, RED, GRAY, name.c_str(), RED);
 	}
 
 	delete[] fullPath;

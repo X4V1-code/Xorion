@@ -1,4 +1,4 @@
-// Horion/Module/Modules/DVDLogo.h
+// Xorion/Module/Modules/DVDLogo.h
 #pragma once
 #include "Module.h"
 

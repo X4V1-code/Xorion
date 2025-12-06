@@ -82,7 +82,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 		}
 
 		if (tar == nullptr) {
-			clientMessageF("[%sHorion%s] %sCouldn't find player: %s!", GOLD, WHITE, RED, nameOfPlayer.c_str());
+			clientMessageF("[%sXorion%s] %sCouldn't find player: %s!", GOLD, WHITE, RED, nameOfPlayer.c_str());
 			return true;
 		}
 

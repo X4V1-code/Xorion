@@ -2,7 +2,7 @@
 
 #include "../ScriptManager.h"
 
-class HorionFunctions {
+class XorionFunctions {
 public:
 	DECL_FUN(getCommandManager);
 	DECL_FUN(getModuleManager);

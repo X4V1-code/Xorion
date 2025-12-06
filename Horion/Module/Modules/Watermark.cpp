@@ -1,4 +1,4 @@
-// Horion/Module/Modules/Watermark.cpp
+// Xorion/Module/Modules/Watermark.cpp
 #include "Watermark.h"
 #include "../../DrawUtils.h"
 #include "../../Utils/ColorUtil.h"

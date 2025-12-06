@@ -1,4 +1,4 @@
-// Horion/Module/Modules/TargetHUD.h
+// Xorion/Module/Modules/TargetHUD.h
 #pragma once
 #include "Module.h"
 #include "../../DrawUtils.h"

@@ -84,7 +84,7 @@ public:
     void prepareLocalPlayerPrototype(JsValueRef proto, ContextObjects* objs);
     void prepareInventoryFunctions(JsValueRef proto, ContextObjects* objs);
     void prepareGameFunctions(JsValueRef global, ContextObjects* objs);
-    void prepareHorionFunctions(JsValueRef global, ContextObjects* obj);
+    void prepareXorionFunctions(JsValueRef global, ContextObjects* obj);
     void prepareDrawFunctions(JsValueRef global, ContextObjects* objs);
     void prepareCommandManagerFunctions(JsValueRef global, ContextObjects* objs);
     void prepareModuleManagerFunctions(JsValueRef global, ContextObjects* obj);
