@@ -4,7 +4,7 @@
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/LocalPlayer.h"
 #include "../../Utils/Target.h"
-#include "../../../Horion/FriendList/FriendList.h"
+#include "../../../Xorion/FriendList/FriendList.h"
 #include "../../SDK/Inventory.h"
 
 InventoryViewer::InventoryViewer() : IModule(0x0, Category::VISUAL, "View nearby entity inventory") {

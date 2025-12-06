@@ -3,7 +3,7 @@
 #include "../../../SDK/Entity.h"
 #include "../../../SDK/ClientInstance.h"
 #include "../../../SDK/Level.h"
-// #include "../../../Horion/Render/RenderUtils.h" // TODO: RenderUtils.h not found in expected location
+// #include "../../../Xorion/Render/RenderUtils.h" // TODO: RenderUtils.h not found in expected location
 #include "../../../Utils/Logger.h"
 
 namespace {
