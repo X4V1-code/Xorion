@@ -1,19 +1,23 @@
 #include "FullAuto.h"
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/GameMode.h"
+#include "../../../SDK/Attribute.h"
 #include "../../../Utils/Target.h"
 #include <random>
 #include <algorithm>
+#include <mutex>
 
 // Constants
 static constexpr int AUTOCLICKER_BURST_DURATION_TICKS = 50;  // 2.5 seconds at 20 ticks/sec
 static constexpr float HEALTH_THRESHOLD = 8.0f;  // Health threshold for NoKnockback
 static constexpr float VOID_Y_THRESHOLD = 10.0f;  // Y position threshold for void detection
 static constexpr float FALL_VELOCITY_THRESHOLD = -0.5f;  // Falling velocity threshold
+static constexpr float FALL_DISTANCE_MULTIPLIER = 3.0f;  // Multiplier for estimating fall distance
 
-// Static random generator for better performance
+// Static random generator for better performance (with thread safety)
 static std::random_device rd;
 static std::mt19937 gen(rd());
+static std::mutex rng_mutex;  // Protect random number generation
 
 FullAuto::FullAuto() : IModule(0, Category::COMBAT, "Full automation module with AI-controlled gameplay") {
 	// Register settings
@@ -33,6 +37,9 @@ void FullAuto::onEnable() {
 	autoclickerBurstTicks = 0;
 	isInBurst = false;
 	
+	// Safety check for moduleMgr
+	if (!moduleMgr) return;
+	
 	// Enable base modules based on hack mode
 	if (hacksMode == 0) {
 		disableAllHacks();
@@ -47,12 +54,15 @@ void FullAuto::onEnable() {
 }
 
 void FullAuto::onDisable() {
+	// Safety check for moduleMgr
+	if (!moduleMgr) return;
+	
 	// Disable all automation-controlled modules
 	disableAllHacks();
 }
 
 void FullAuto::onTick(C_GameMode* gm) {
-	if (!gm || !gm->player) return;
+	if (!gm || !gm->player || !moduleMgr) return;
 	
 	Entity* player = gm->player;
 	
@@ -83,7 +93,7 @@ void FullAuto::onTick(C_GameMode* gm) {
 }
 
 void FullAuto::onPlayerTick(Player* player) {
-	if (!player) return;
+	if (!player || !moduleMgr) return;
 	
 	// Handle air jump for safety in low risk and full modes
 	if (hacksMode >= 1) {
@@ -157,14 +167,18 @@ void FullAuto::handleKillMode(Entity* player, C_GameMode* gm) {
 				// In perfection mode, fucker works perfectly
 				if (!fucker->isEnabled()) fucker->setEnabled(true);
 			} else if (hacksMode == 1) {
-				// Low risk: use fucker 2/10 times
+				// Low risk: use fucker 2/10 times (thread-safe counter)
 				static int fuckerCounter = 0;
-				fuckerCounter++;
-				if (fuckerCounter >= 10) fuckerCounter = 0;
-				if (fuckerCounter < 2) {
-					if (!fucker->isEnabled()) fucker->setEnabled(true);
-				} else {
-					if (fucker->isEnabled()) fucker->setEnabled(false);
+				static std::mutex fuckerMutex;
+				{
+					std::lock_guard<std::mutex> lock(fuckerMutex);
+					fuckerCounter++;
+					if (fuckerCounter >= 10) fuckerCounter = 0;
+					if (fuckerCounter < 2) {
+						if (!fucker->isEnabled()) fucker->setEnabled(true);
+					} else {
+						if (fucker->isEnabled()) fucker->setEnabled(false);
+					}
 				}
 			} else {
 				// Full hacks: fucker works flawlessly
@@ -179,6 +193,8 @@ void FullAuto::handleRunMode(Entity* player, C_GameMode* gm) {
 }
 
 void FullAuto::enableLowRiskHacks() {
+	if (!moduleMgr) return;
+	
 	// Enable base modules
 	if (auto fb = moduleMgr->getModule<FullBright>()) fb->setEnabled(true);
 	if (auto as = moduleMgr->getModule<AutoSprint>()) as->setEnabled(true);
@@ -187,6 +203,8 @@ void FullAuto::enableLowRiskHacks() {
 }
 
 void FullAuto::enableFullHacks() {
+	if (!moduleMgr) return;
+	
 	// Enable base modules
 	if (auto fb = moduleMgr->getModule<FullBright>()) fb->setEnabled(true);
 	if (auto as = moduleMgr->getModule<AutoSprint>()) as->setEnabled(true);
@@ -198,6 +216,8 @@ void FullAuto::enableFullHacks() {
 }
 
 void FullAuto::disableAllHacks() {
+	if (!moduleMgr) return;
+	
 	// Disable all automation-managed modules
 	if (auto ab = moduleMgr->getModule<Aimbot>()) ab->setEnabled(false);
 	if (auto ac = moduleMgr->getModule<AutoClicker>()) ac->setEnabled(false);
@@ -212,18 +232,21 @@ void FullAuto::disableAllHacks() {
 
 bool FullAuto::shouldPlaceFail() {
 	if (perfectionMode) return false;
+	std::lock_guard<std::mutex> lock(rng_mutex);
 	std::uniform_int_distribution<> dis(1, 18);
 	return dis(gen) == 1;  // 1/18 chance
 }
 
 bool FullAuto::shouldAimbotMiss() {
 	if (perfectionMode) return false;
+	std::lock_guard<std::mutex> lock(rng_mutex);
 	std::uniform_int_distribution<> dis(1, 6);
 	return dis(gen) == 1;  // 1/6 chance
 }
 
 bool FullAuto::shouldFuckerIgnore() {
 	if (perfectionMode) return false;
+	std::lock_guard<std::mutex> lock(rng_mutex);
 	std::uniform_int_distribution<> dis(1, 100);
 	return dis(gen) > 70;  // 30% chance to ignore
 }
@@ -335,7 +358,7 @@ bool FullAuto::shouldAirJumpForSafety(Entity* player) {
 		}
 		
 		// Estimate fall distance
-		float fallDistance = std::abs(velocity.y) * 3.0f;
+		float fallDistance = std::abs(velocity.y) * FALL_DISTANCE_MULTIPLIER;
 		if (fallDistance > 10.0f) {
 			return true;
 		}
