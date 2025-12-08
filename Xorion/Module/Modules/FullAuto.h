@@ -16,7 +16,6 @@ private:
 	
 	// Internal state tracking
 	int autoclickerBurstTicks = 0;
-	int autoclickerBurstDuration = 0;  // in ticks (2.5 seconds = 50 ticks)
 	bool isInBurst = false;
 	
 	// Helper methods

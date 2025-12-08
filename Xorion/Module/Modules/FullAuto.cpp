@@ -5,6 +5,16 @@
 #include <random>
 #include <algorithm>
 
+// Constants
+static constexpr int AUTOCLICKER_BURST_DURATION_TICKS = 50;  // 2.5 seconds at 20 ticks/sec
+static constexpr float HEALTH_THRESHOLD = 8.0f;  // Health threshold for NoKnockback
+static constexpr float VOID_Y_THRESHOLD = 10.0f;  // Y position threshold for void detection
+static constexpr float FALL_VELOCITY_THRESHOLD = -0.5f;  // Falling velocity threshold
+
+// Static random generator for better performance
+static std::random_device rd;
+static std::mt19937 gen(rd());
+
 FullAuto::FullAuto() : IModule(0, Category::COMBAT, "Full automation module with AI-controlled gameplay") {
 	// Register settings
 	registerBoolSetting("Perfection Mode", &this->perfectionMode, this->perfectionMode);
@@ -57,7 +67,7 @@ void FullAuto::onTick(C_GameMode* gm) {
 		// Low risk: manage burst autoclicker
 		if (isInBurst) {
 			autoclickerBurstTicks++;
-			if (autoclickerBurstTicks >= 50) {  // 2.5 seconds at 20 ticks/sec
+			if (autoclickerBurstTicks >= AUTOCLICKER_BURST_DURATION_TICKS) {
 				isInBurst = false;
 				if (auto ac = moduleMgr->getModule<AutoClicker>()) ac->setEnabled(false);
 			}
@@ -130,10 +140,10 @@ void FullAuto::handleKillMode(Entity* player, C_GameMode* gm) {
 			}
 		}
 		
-		// Enable NoKnockback temporarily if health > 8
+		// Enable NoKnockback temporarily if health > HEALTH_THRESHOLD
 		static HealthAttribute healthAttr;
 		auto healthInst = player->getAttribute(&healthAttr);
-		if (healthInst && healthInst->currentValue > 8.0f) {
+		if (healthInst && healthInst->currentValue > HEALTH_THRESHOLD) {
 			if (auto vel = moduleMgr->getModule<Velocity>()) {
 				if (!vel->isEnabled()) vel->setEnabled(true);
 			}
@@ -202,24 +212,18 @@ void FullAuto::disableAllHacks() {
 
 bool FullAuto::shouldPlaceFail() {
 	if (perfectionMode) return false;
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(1, 18);
 	return dis(gen) == 1;  // 1/18 chance
 }
 
 bool FullAuto::shouldAimbotMiss() {
 	if (perfectionMode) return false;
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(1, 6);
 	return dis(gen) == 1;  // 1/6 chance
 }
 
 bool FullAuto::shouldFuckerIgnore() {
 	if (perfectionMode) return false;
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(1, 100);
 	return dis(gen) > 70;  // 30% chance to ignore
 }
@@ -322,12 +326,11 @@ bool FullAuto::shouldAirJumpForSafety(Entity* player) {
 	if (!player->entityLocation) return false;
 	
 	Vec3 velocity = player->entityLocation->velocity;
-	Vec3 velocity = player->entityLocation->velocity;
 	
 	// Check if falling fast (potential fall damage)
-	if (velocity.y < -0.5f) {
-		// Check if close to void (y < 10)
-		if (pos.y < 10.0f) {
+	if (velocity.y < FALL_VELOCITY_THRESHOLD) {
+		// Check if close to void (y < VOID_Y_THRESHOLD)
+		if (pos.y < VOID_Y_THRESHOLD) {
 			return true;
 		}
 		
