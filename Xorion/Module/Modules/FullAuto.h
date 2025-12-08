@@ -25,9 +25,6 @@ private:
 	void enableLowRiskHacks();
 	void enableFullHacks();
 	void disableAllHacks();
-	bool shouldPlaceFail();  // Returns true if scaffold should fail (1/18 chance)
-	bool shouldAimbotMiss();  // Returns true if aimbot should miss slightly (1/6 chance)
-	bool shouldFuckerIgnore();  // Returns true if fucker should ignore (30% chance)
 	Entity* findNearestPlayer(Entity* localPlayer);
 	void findAndRunFromPlayers(Entity* localPlayer, C_GameMode* gm);
 	bool isOpponentSidestepping(Entity* target);
@@ -43,4 +40,10 @@ public:
 	virtual void onPlayerTick(Player* player) override;
 	virtual void onEnable() override;
 	virtual void onDisable() override;
+	
+	// Public getters for other modules to check perfection mode
+	bool isPerfectionModeEnabled() const { return perfectionMode; }
+	bool shouldPlaceFail();  // For Scaffold module integration
+	bool shouldAimbotMiss();  // For Aimbot module integration
+	bool shouldFuckerIgnore();  // For Fucker module integration
 };
