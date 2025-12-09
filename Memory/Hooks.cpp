@@ -218,6 +218,24 @@ void Hooks::Init() {
 			}
 		}
 
+		// Weather::vtable for particle blocking
+		{
+			uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 89 91 ? ? ? ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C 24");
+			if (sigOffset != 0x0) {
+				int offset = *reinterpret_cast<int*>(sigOffset + 3);
+				uintptr_t** weatherVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
+				if (weatherVtable != 0x0) {
+					// addParticle is at vtable index 11, addParticleEffect is at index 13
+					g_Hooks.Weather_addParticleHook = std::make_unique<FuncHook>(weatherVtable[11], Hooks::Weather_addParticle);
+					g_Hooks.Weather_addParticleEffectHook = std::make_unique<FuncHook>(weatherVtable[13], Hooks::Weather_addParticleEffect);
+				} else {
+					logF("Weather vtable is null!");
+				}
+			} else {
+				logF("Weather signature not found!");
+			}
+		}
+
 		// PackAccessStrategy vtables for isTrusted
 		{
 			uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 49 89 06 49 8D 76 ? 45 33 E4");
@@ -1286,6 +1304,31 @@ bool Hooks::Actor__isInWall(Entity* ent) {
 
 	return func(ent);
 }
+
+void Hooks::Weather_addParticle(class Weather* _this, class ParticleType type, Vec3 const& pos, Vec3 const& vel, int a5, class CompoundTag const* tag, bool a7) {
+	static auto oFunc = g_Hooks.Weather_addParticleHook->GetFastcall<void, Weather*, ParticleType, Vec3 const&, Vec3 const&, int, CompoundTag const*, bool>();
+	
+	// Block particles when NoRender is enabled
+	static auto noRenderMod = moduleMgr->getModule<NoRender>();
+	if (noRenderMod && noRenderMod->isEnabled()) {
+		return; // Don't spawn particle
+	}
+	
+	oFunc(_this, type, pos, vel, a5, tag, a7);
+}
+
+void Hooks::Weather_addParticleEffect(class Weather* _this, class HashedString const& name, Vec3 const& pos, class MolangVariableMap const& vars) {
+	static auto oFunc = g_Hooks.Weather_addParticleEffectHook->GetFastcall<void, Weather*, HashedString const&, Vec3 const&, MolangVariableMap const&>();
+	
+	// Block particle effects when NoRender is enabled
+	static auto noRenderMod = moduleMgr->getModule<NoRender>();
+	if (noRenderMod && noRenderMod->isEnabled()) {
+		return; // Don't spawn particle effect
+	}
+	
+	oFunc(_this, name, pos, vars);
+}
+
 /*
 void Hooks::testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4) {
 	auto func = g_Hooks.testHook->GetFastcall<void, networkhandler*, const void*, Packet*, int>();

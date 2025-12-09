@@ -5,6 +5,11 @@
 #endif
 
 struct SkinData;  // Forward declaration
+class ParticleType;  // Forward declaration
+class HashedString;  // Forward declaration
+class MolangVariableMap;  // Forward declaration
+class CompoundTag;  // Forward declaration
+class Weather;  // Forward declaration
 
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -28,6 +33,7 @@ struct SkinData;  // Forward declaration
 #include "../SDK/RakNetConnector.h"
 #include "../SDK/TextHolder.h"
 #include "../SDK/UIScene.h"
+#include "../SDK/Dimension.h"
 #include "../Utils/Logger.h"
 #include "../Utils/TextFormat.h"
 #include "GameData.h"
@@ -129,6 +135,8 @@ private:
 	static bool Actor_canSee(Entity* _this, Entity& entity);
 	static bool Actor_shouldRender(Entity* _this);
 	static bool Actor__isInWall(Entity* ent);
+	static void Weather_addParticle(class Weather* _this, class ParticleType, Vec3 const&, Vec3 const&, int, class CompoundTag const*, bool);
+	static void Weather_addParticleEffect(class Weather* _this, class HashedString const&, Vec3 const&, class MolangVariableMap const&);
 	//static void testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
 
 	std::unique_ptr<FuncHook> Actor_rotationHook;
@@ -191,6 +199,8 @@ private:
 	std::unique_ptr<FuncHook> Actor_canSeeHook;
 	std::unique_ptr<FuncHook> Actor_shouldRenderHook;
 	std::unique_ptr<FuncHook> ActorisInWallHook;
+	std::unique_ptr<FuncHook> Weather_addParticleHook;
+	std::unique_ptr<FuncHook> Weather_addParticleEffectHook;
 	//std::unique_ptr<FuncHook> testFunctionHook;
 };
 

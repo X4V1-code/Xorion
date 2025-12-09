@@ -1,6 +1,6 @@
 #include "NoRender.h"
 
-NoRender::NoRender() : IModule(0, Category::VISUAL, "See through water and lava like glass.") {
+NoRender::NoRender() : IModule(0, Category::VISUAL, "See through water and lava like glass. Blocks particles.") {
 }
 
 NoRender::~NoRender() {}
