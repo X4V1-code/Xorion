@@ -96,6 +96,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<NoFriends>());
         moduleList.emplace_back(std::make_shared<NoHurtcam>());
         moduleList.emplace_back(std::make_shared<NoPacket>());
+        moduleList.emplace_back(std::make_shared<NoRender>());
         moduleList.emplace_back(std::make_shared<NoSlowDown>());
         moduleList.emplace_back(std::make_shared<NoSwing>());
         moduleList.emplace_back(std::make_shared<NoWeb>());

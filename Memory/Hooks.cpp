@@ -570,7 +570,29 @@ float* Hooks::Dimension_getFogColor(Dimension* _this, float* color, __int64 a3, 
 		color[3] = 1;
 		return color;
 	}
-	return oGetFogColor(_this, color, a3, a4);
+	
+	// Get the original fog color
+	auto result = oGetFogColor(_this, color, a3, a4);
+	
+	// Check NoRender module for water/lava fog removal
+	static auto noRenderMod = moduleMgr->getModule<NoRender>();
+	if (noRenderMod && noRenderMod->isEnabled()) {
+		// Check if this is water fog (blue-ish color) or lava fog (red-orange color)
+		bool isWaterFog = (color[2] > color[0] && color[2] > color[1]); // Blue dominant
+		bool isLavaFog = (color[0] > color[1] && color[0] > color[2]);  // Red dominant
+		
+		if ((isWaterFog && noRenderMod->shouldHideWaterFog()) || 
+		    (isLavaFog && noRenderMod->shouldHideLavaFog())) {
+			// Set to clear/normal fog color
+			color[0] = 0.753f;
+			color[1] = 0.847f;
+			color[2] = 1.0f;
+			color[3] = 1.0f;
+			return color;
+		}
+	}
+	
+	return result;
 }
 
 float Hooks::Dimension_getTimeOfDay(Dimension* _this, int time, float a) {
