@@ -7,15 +7,19 @@
 // Inventory size constants
 constexpr int TOTAL_INVENTORY_SLOTS = 36; // Hotbar (0-8) + Main inventory (9-35)
 
+// Bed item ID range for Bedrock Edition 1.20+ (all 16 colors)
+constexpr int BED_ITEM_ID_MIN = 355;
+constexpr int BED_ITEM_ID_MAX = 370;
+
 // Cache for bed item detection to avoid string operations every tick
 // Note: Bed item IDs are typically in the 355-370 range in Bedrock Edition 1.20+
 // This covers all 16 bed colors. The range may vary in older versions or with mods.
 static inline bool isBedItem(Item* item) {
 	if (!item) return false;
 	
-	// Check by item ID first for efficiency (beds are typically 355-370)
+	// Check by item ID first for efficiency
 	int itemId = item->itemId;
-	if (itemId >= 355 && itemId <= 370) {
+	if (itemId >= BED_ITEM_ID_MIN && itemId <= BED_ITEM_ID_MAX) {
 		return true;
 	}
 	
@@ -56,7 +60,8 @@ void BedStack::onTick(C_GameMode* gm) {
 		// Check if this is a bed item
 		if (isBedItem(stack->item)) {
 			// Only modify if properties are not already set to avoid unnecessary operations
-			if (stack->item->maxStackSize != static_cast<int16_t>(maxStackSize)) {
+			int16_t targetStackSize = static_cast<int16_t>(maxStackSize);
+			if (stack->item->maxStackSize != targetStackSize) {
 				stack->item->setMaxStackSize(static_cast<uint8_t>(maxStackSize));
 			}
 			// Note: setStackedByData is typically set once and doesn't need repeated calls

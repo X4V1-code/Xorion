@@ -18,14 +18,12 @@ const char* Replenish::getModuleName() {
 }
 
 void Replenish::onEnable() {
-	delay = 0;
 	lastSlot = -1;
 	lastItemId = -1;
 	lastAuxValue = -1;
 }
 
 void Replenish::onDisable() {
-	delay = 0;
 	lastSlot = -1;
 	lastItemId = -1;
 	lastAuxValue = -1;

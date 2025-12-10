@@ -4,7 +4,6 @@
 
 class Replenish : public IModule {
 private:
-	int delay = 0;
 	int lastSlot = -1;
 	int lastItemId = -1;
 	int lastAuxValue = -1;
