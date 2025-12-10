@@ -1,13 +1,14 @@
 #pragma once
 
-#include "PlayerSignatures.h"
+#include "OffsetConstants.h"
 
 // Minecraft 1.21.130 offsets
 // Sourced from the current 1.21.130 layout used by Entity/Player wrappers.
 
 struct LocalPlayerOffsets {
-    // Sneak is tracked via ActorFlags rather than a direct byte; keep -1 to signal flag-based access.
-    int sneakingFlag = -1;
+    // Sneak is tracked via ActorFlags rather than a direct byte; set flag to true when using ActorFlags::SNEAKING.
+    bool useActorFlagSneak = true;
+    int sneakingFlag = 0;
     // EntityLocation* lives at 0x2A0; positions are the first Vec3 inside it.
     int posX         = 0x02A0;
     int posY         = 0x02A4;
