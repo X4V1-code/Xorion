@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PlayerSignatures.h"
+
 // Minecraft 1.21.130 offsets
 // Sourced from the current 1.21.130 layout used by Entity/Player wrappers.
 
@@ -15,8 +17,8 @@ struct LocalPlayerOffsets {
 };
 
 struct ItemStackOffsets {
-    int count = 0x0014; // matches ITEM_RAW_OFF_COUNT
-    int name  = 0x0020; // matches ITEM_RAW_OFF_NAME
+    int count = ITEM_RAW_OFF_COUNT;
+    int name  = ITEM_RAW_OFF_NAME;
 };
 
 struct PlayerSuppliesOffsets {
