@@ -74,6 +74,7 @@
 #include "Modules/Freelook.h"
 #include "Modules/Scaffold.h"
 #include "Modules/NoPacket.h"
+#include "Modules/NoRender.h"
 #include "Modules/Velocity.h"
 #include "Modules/NameTags.h"
 #include "Modules/MidClick.h"

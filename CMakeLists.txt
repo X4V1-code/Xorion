@@ -262,6 +262,8 @@ add_library(Xorion SHARED
         Xorion/Module/Modules/NoPacket.h
         Xorion/Module/Modules/NoPaintingCrash.cpp
         Xorion/Module/Modules/NoPaintingCrash.h
+        Xorion/Module/Modules/NoRender.cpp
+        Xorion/Module/Modules/NoRender.h
         Xorion/Module/Modules/NoSlowDown.cpp
         Xorion/Module/Modules/NoSlowDown.h
         Xorion/Module/Modules/NoSwing.cpp
