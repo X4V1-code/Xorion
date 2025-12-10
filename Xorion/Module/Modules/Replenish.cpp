@@ -4,6 +4,9 @@
 #include "../../../SDK/ItemStack.h"
 #include "../../../SDK/Inventory.h"
 
+// Inventory size constants
+constexpr int TOTAL_INVENTORY_SLOTS = 36; // Hotbar (0-8) + Main inventory (9-35)
+
 Replenish::Replenish() : IModule(0, Category::COMBAT, "Automatically replenishes items in your hotbar from inventory when they run out.") {
 }
 
@@ -59,8 +62,8 @@ void Replenish::onTick(C_GameMode* gm) {
 			// The slot is now empty, search for matching items in inventory
 			bool foundReplacement = false;
 			
-			// Search through all inventory slots (0-35 covers hotbar + main inventory)
-			for (int i = 0; i < 36; i++) {
+			// Search through all inventory slots
+			for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
 				// Skip the current slot
 				if (i == currentSlot)
 					continue;

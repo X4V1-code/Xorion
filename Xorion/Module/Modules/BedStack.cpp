@@ -4,10 +4,22 @@
 #include "../../../SDK/ItemStack.h"
 #include "../../../SDK/Inventory.h"
 
+// Inventory size constants
+constexpr int TOTAL_INVENTORY_SLOTS = 36; // Hotbar (0-8) + Main inventory (9-35)
+
+// Cache for bed item detection to avoid string operations every tick
 static inline bool isBedItem(Item* item) {
 	if (!item) return false;
+	
+	// Check by item ID if known (beds are typically 355-370 depending on color)
+	// This is more efficient than string matching
+	int itemId = item->itemId;
+	if (itemId >= 355 && itemId <= 370) {
+		return true;
+	}
+	
+	// Fallback to string matching for mod beds or unknown IDs
 	std::string name = item->name.getText();
-	// Check if the item name contains "bed"
 	return name.find("bed") != std::string::npos;
 }
 
@@ -34,7 +46,7 @@ void BedStack::onTick(C_GameMode* gm) {
 	auto inv = supplies->inventory;
 	
 	// Iterate through all inventory slots
-	for (int i = 0; i < 36; i++) {
+	for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
 		ItemStack* stack = inv->getByGlobalIndex(i);
 		if (!stack || !stack->item)
 			continue;
