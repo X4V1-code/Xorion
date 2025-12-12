@@ -10,7 +10,7 @@
   <p>
     <b>Xorion</b> is a Minecraft: Bedrock Edition Utility Client designed to enhance gameplay. We do not take responsibility in anything done with this Hacking Client.
     <br />Targeted Minecraft version: <b>1.21.130</b>.
-If you want to contribute to this project, feel free to fork this repository and submit a pull request.
+    <br />If you want to contribute to this project, feel free to fork this repository and submit a pull request.
   </p>
 </div>
 
