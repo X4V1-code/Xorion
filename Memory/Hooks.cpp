@@ -1310,8 +1310,8 @@ bool Hooks::Actor__isInWall(Entity* ent) {
 	return func(ent);
 }
 
-void Hooks::Weather_addParticle(class Weather* _this, class ParticleType type, Vec3 const& pos, Vec3 const& vel, int a5, class CompoundTag const* tag, bool a7) {
-	static auto oFunc = g_Hooks.Weather_addParticleHook->GetFastcall<void, Weather*, ParticleType, Vec3 const&, Vec3 const&, int, CompoundTag const*, bool>();
+void Hooks::Weather_addParticle(class Weather* _this, class ParticleType* type, Vec3 const& pos, Vec3 const& vel, int a5, class CompoundTag const* tag, bool a7) {
+	static auto oFunc = g_Hooks.Weather_addParticleHook->GetFastcall<void, Weather*, ParticleType*, Vec3 const&, Vec3 const&, int, CompoundTag const*, bool>();
 	
 	// Block particles when NoRender is enabled
 	static auto noRenderMod = moduleMgr->getModule<NoRender>();

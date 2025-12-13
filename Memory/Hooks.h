@@ -135,7 +135,7 @@ private:
 	static bool Actor_canSee(Entity* _this, Entity& entity);
 	static bool Actor_shouldRender(Entity* _this);
 	static bool Actor__isInWall(Entity* ent);
-	static void Weather_addParticle(class Weather* _this, class ParticleType, Vec3 const&, Vec3 const&, int, class CompoundTag const*, bool);
+	static void Weather_addParticle(class Weather* _this, class ParticleType*, Vec3 const&, Vec3 const&, int, class CompoundTag const*, bool);
 	static void Weather_addParticleEffect(class Weather* _this, class HashedString const&, Vec3 const&, class MolangVariableMap const&);
 	//static void testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
 

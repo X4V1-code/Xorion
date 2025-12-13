@@ -1,6 +1,6 @@
 // GameDataChecks.cpp
 #include "GameDataChecks.h"
-#include "GameData.h"
+#include "Memory/GameData.h"
 #include "Utils/Logger.h"
 #include "SDK/VersionTag.h"
 

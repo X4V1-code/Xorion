@@ -2,6 +2,7 @@
 #include <cmath>
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/Entity.h"
+#include "../../../SDK/LocalPlayer.h"
 
 Nuker::Nuker() : IModule(VK_NUMPAD5, Category::WORLD, "Break multiple blocks at once.") {
 	registerIntSetting("Radius", &nukerRadius, nukerRadius, 1, 10);
@@ -73,5 +74,6 @@ void Nuker::onTick(GameMode* gm) {
 			}
 		}
 	}
-	player->swingArm();
+	auto lp = reinterpret_cast<LocalPlayer*>(player);
+	if (lp) lp->swingArm();
 }
