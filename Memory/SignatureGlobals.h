@@ -21,7 +21,7 @@ extern void* g_GSReadD;
 extern void* g_WrapperEarlyCallAlt;
 
 // Known-good 1.21.130 resolved addresses (from Dump-1.txt)
-constexpr std::uintptr_t k130_WrapperEarlyCall    = 0x7FF8074A3180;
+constexpr std::uintptr_t k130_WrapperEarlyCall    = 0x7FF807527C18;
 constexpr std::uintptr_t k130_WrapperCallB        = 0x7FF80752BF00;
 constexpr std::uintptr_t k130_TwoArgCallA         = 0x7FF80753A300;
 constexpr std::uintptr_t k130_MethodRCX_RDX       = 0x7FF807534A70;
