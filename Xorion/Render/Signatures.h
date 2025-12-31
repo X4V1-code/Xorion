@@ -8,7 +8,7 @@ namespace Signatures {
 
     // Wrappers / early-call dispatchers
     inline constexpr const char* PATTERN_WrapperEarlyCall =
-        // 1.21.130 Dump-1.txt @ 0x7FF8074A3180
+        // 1.21.130 Dump-1.txt @ 0x7FF807527C18
         "48 89 5C 24 08 57 48 83 EC 20 48 8B F9 E8 ? ? ? ?";
 
     inline constexpr const char* PATTERN_WrapperCallB =
