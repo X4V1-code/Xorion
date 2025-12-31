@@ -34,6 +34,12 @@ namespace {
 	static bool fallbackXuidInit = false;
 	static std::mt19937_64 fallbackXuidRng;
 	static bool fallbackXuidRngSeeded = false;
+
+	inline uint32_t makeFallbackSeed() {
+		std::random_device rd;
+		uint64_t seed64 = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
+		return static_cast<uint32_t>(seed64 ^ (seed64 >> 32)); // fold to 32-bit for mt19937
+	}
 }
 
 void Hooks::Init() {
@@ -1140,9 +1146,7 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 	auto ensureFallbackDeviceId = []() -> TextHolder* {
 		if (!fallbackDeviceIdInit) {
 			if (!fallbackDeviceIdRngSeeded) {
-				std::random_device rd;
-				uint64_t seed = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
-				fallbackDeviceIdRng.seed(static_cast<unsigned int>(seed));
+				fallbackDeviceIdRng.seed(makeFallbackSeed());
 				fallbackDeviceIdRngSeeded = true;
 			}
 			// Standard UUID format: 8-4-4-4-12 hex characters
@@ -1170,9 +1174,7 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 	auto ensureFallbackXuid = []() -> TextHolder* {
 		if (!fallbackXuidInit) {
 			if (!fallbackXuidRngSeeded) {
-				std::random_device rd;
-				uint64_t seed = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
-				fallbackXuidRng.seed(seed);
+				fallbackXuidRng.seed(makeFallbackSeed());
 				fallbackXuidRngSeeded = true;
 			}
 			// Typical Xbox Live User IDs are 16 digits; use a plausible public range.
