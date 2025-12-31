@@ -1139,11 +1139,13 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 
 	// Spoof the displayed player name if provided
 	TextHolder* effectiveThirdPartyName = thirdPartyName;
+	bool effectiveThirdPartyNameOnly = thirdPartyNameOnly;
 	if (Game.getFakeName() != nullptr) {
 		effectiveThirdPartyName = Game.getFakeName();
+		effectiveThirdPartyNameOnly = true; // enforce spoofed name usage
 	}
 
-	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, effectiveThirdPartyName, thirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
+	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, effectiveThirdPartyName, effectiveThirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
 }
 
 void Hooks::InventoryTransactionManager_addAction(InventoryTransactionManager* _this, InventoryAction* action) {
