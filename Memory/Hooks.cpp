@@ -1137,7 +1137,13 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 		effectivePlatformOfflineId = Game.getFakeXuid();
 	}
 
-	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, thirdPartyName, thirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
+	// Spoof the displayed player name if provided
+	TextHolder* effectiveThirdPartyName = thirdPartyName;
+	if (Game.getFakeName() != nullptr) {
+		effectiveThirdPartyName = Game.getFakeName();
+	}
+
+	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, effectiveThirdPartyName, thirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
 }
 
 void Hooks::InventoryTransactionManager_addAction(InventoryTransactionManager* _this, InventoryAction* action) {
