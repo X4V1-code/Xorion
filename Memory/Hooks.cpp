@@ -16,6 +16,7 @@
 #include "../Utils/ColorUtil.h"
 #include <random>
 #include <sstream>
+#include <chrono>
 
 Hooks g_Hooks;
 bool isTicked = false;
@@ -26,13 +27,13 @@ TextHolder styledReturnText;
 namespace {
 	static TextHolder fallbackDeviceIdHolder;
 	static bool fallbackDeviceIdInit = false;
-	// Seeded with std::random_device; acceptable for spoofing (non-cryptographic).
-	static std::mt19937 fallbackDeviceIdRng(std::random_device{}());
+	static std::mt19937 fallbackDeviceIdRng;
+	static bool fallbackDeviceIdRngSeeded = false;
 
 	static TextHolder fallbackXuidHolder;
 	static bool fallbackXuidInit = false;
-	// Seeded with std::random_device; acceptable for spoofing (non-cryptographic).
-	static std::mt19937_64 fallbackXuidRng(std::random_device{}());
+	static std::mt19937_64 fallbackXuidRng;
+	static bool fallbackXuidRngSeeded = false;
 }
 
 void Hooks::Init() {
@@ -1138,6 +1139,13 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 	// Static fallback generators (cached) for stronger spoofing even when module didn't set fake IDs
 	auto ensureFallbackDeviceId = []() -> TextHolder* {
 		if (!fallbackDeviceIdInit) {
+			if (!fallbackDeviceIdRngSeeded) {
+				std::random_device rd;
+				uint64_t seed = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
+				fallbackDeviceIdRng.seed(static_cast<unsigned int>(seed));
+				fallbackDeviceIdRngSeeded = true;
+			}
+			// Standard UUID format: 8-4-4-4-12 hex characters
 			constexpr int kUuidSeg1 = 8;
 			constexpr int kUuidSegMid = 4;
 			constexpr int kUuidSegLast = 12;
@@ -1161,8 +1169,16 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 
 	auto ensureFallbackXuid = []() -> TextHolder* {
 		if (!fallbackXuidInit) {
+			if (!fallbackXuidRngSeeded) {
+				std::random_device rd;
+				uint64_t seed = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
+				fallbackXuidRng.seed(seed);
+				fallbackXuidRngSeeded = true;
+			}
 			// Typical Xbox Live User IDs are 16 digits; use a plausible public range.
-			std::uniform_int_distribution<uint64_t> dist(1000000000000000ULL, 2999999999999999ULL);
+			constexpr uint64_t kMinXuidValue = 1000000000000000ULL;
+			constexpr uint64_t kMaxXuidValue = 2999999999999999ULL;
+			std::uniform_int_distribution<uint64_t> dist(kMinXuidValue, kMaxXuidValue);
 			uint64_t xuidValue = dist(fallbackXuidRng);
 			fallbackXuidHolder.setText(std::to_string(xuidValue));
 			fallbackXuidInit = true;
