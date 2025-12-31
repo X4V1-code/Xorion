@@ -14,6 +14,8 @@
 #include "../SDK/Font.h"
 #include "../Utils/ClientColors.h"
 #include "../Utils/ColorUtil.h"
+#include <random>
+#include <sstream>
 
 Hooks g_Hooks;
 bool isTicked = false;
@@ -1121,10 +1123,51 @@ float Hooks::GameMode_getPickRange(GameMode* _this, __int64 currentInputMode, ch
 __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager, void* a3, TextHolder* selfSignedId, TextHolder* serverAddress, __int64 clientRandomId, TextHolder* skinId, SkinData* skinData, __int64 capeData, __int64* serializedSkin, TextHolder* deviceId, int inputMode, int uiProfile, int guiScale, TextHolder* languageCode, bool sendEduModeParams, char a17, TextHolder* tenantId, __int64 a19, TextHolder* platformUserId, TextHolder* thirdPartyName, bool thirdPartyNameOnly, TextHolder* platformOnlineId, TextHolder* platformOfflineId, TextHolder* capeId, char a26) {
 	static auto oFunc = g_Hooks.ConnectionRequest_createHook->GetFastcall<__int64, __int64, __int64, void*, TextHolder*, TextHolder*, __int64, TextHolder*, SkinData*, __int64, __int64*, TextHolder*, int, int, int, TextHolder*, bool, char, TextHolder*, __int64, TextHolder*, TextHolder*, bool, TextHolder*, TextHolder*, TextHolder*, char>();
 
+	// Local fallback generators (cached) for stronger spoofing even when module didn't set fake IDs
+	static TextHolder fallbackDeviceIdHolder;
+	static bool fallbackDeviceIdInit = false;
+	auto ensureFallbackDeviceId = [&]() -> TextHolder* {
+		if (!fallbackDeviceIdInit) {
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<> hexDist(0, 15);
+			const char* hexChars = "0123456789abcdef";
+			std::stringstream ss;
+			for (int i = 0; i < 8; i++) ss << hexChars[hexDist(gen)];
+			ss << "-";
+			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gen)];
+			ss << "-";
+			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gen)];
+			ss << "-";
+			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gen)];
+			ss << "-";
+			for (int i = 0; i < 12; i++) ss << hexChars[hexDist(gen)];
+			fallbackDeviceIdHolder.setText(ss.str());
+			fallbackDeviceIdInit = true;
+		}
+		return &fallbackDeviceIdHolder;
+	};
+
+	static TextHolder fallbackXuidHolder;
+	static bool fallbackXuidInit = false;
+	auto ensureFallbackXuid = [&]() -> TextHolder* {
+		if (!fallbackXuidInit) {
+			std::random_device rd;
+			std::mt19937_64 gen(rd());
+			std::uniform_int_distribution<uint64_t> dist(1000000000000000ULL, 2999999999999999ULL);
+			uint64_t xuidValue = dist(gen);
+			fallbackXuidHolder.setText(std::to_string(xuidValue));
+			fallbackXuidInit = true;
+		}
+		return &fallbackXuidHolder;
+	};
+
 	// Spoof Device ID if set
 	TextHolder* effectiveDeviceId = deviceId;
 	if (Game.getFakeDeviceId() != nullptr) {
 		effectiveDeviceId = Game.getFakeDeviceId();
+	} else {
+		effectiveDeviceId = ensureFallbackDeviceId();
 	}
 	
 	// Spoof Xbox Live ID (XUID) if set - this affects platformUserId, platformOnlineId, platformOfflineId
@@ -1135,6 +1178,11 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 		effectivePlatformUserId = Game.getFakeXuid();
 		effectivePlatformOnlineId = Game.getFakeXuid();
 		effectivePlatformOfflineId = Game.getFakeXuid();
+	} else {
+		TextHolder* fallbackXuid = ensureFallbackXuid();
+		effectivePlatformUserId = fallbackXuid;
+		effectivePlatformOnlineId = fallbackXuid;
+		effectivePlatformOfflineId = fallbackXuid;
 	}
 
 	// Spoof the displayed player name if provided
