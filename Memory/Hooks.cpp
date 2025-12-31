@@ -37,7 +37,7 @@ namespace {
 
 	inline uint32_t makeFallbackSeed() {
 		std::random_device rd;
-		uint64_t seed64 = rd.entropy() ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
+		uint64_t seed64 = rd.entropy() != 0.0 ? rd() : static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
 		return static_cast<uint32_t>(seed64 ^ (seed64 >> 32)); // fold to 32-bit for mt19937
 	}
 }
@@ -1177,7 +1177,7 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 				fallbackXuidRng.seed(makeFallbackSeed());
 				fallbackXuidRngSeeded = true;
 			}
-			// Typical Xbox Live User IDs are 16 digits; use a plausible public range.
+			// Typical Xbox Live User IDs are 16 digits; use a plausible public range seen in practice (~1e15 to ~2.9e15).
 			constexpr uint64_t kMinXuidValue = 1000000000000000ULL;
 			constexpr uint64_t kMaxXuidValue = 2999999999999999ULL;
 			std::uniform_int_distribution<uint64_t> dist(kMinXuidValue, kMaxXuidValue);
