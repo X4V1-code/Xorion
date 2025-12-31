@@ -24,13 +24,15 @@ TextHolder styledReturnText;
 //#define TEST_DEBUG
 
 namespace {
-	static TextHolder gFallbackDeviceIdHolder;
-	static bool gFallbackDeviceIdInit = false;
-	static std::mt19937 gFallbackDeviceIdRng(std::random_device{}());
+	static TextHolder fallbackDeviceIdHolder;
+	static bool fallbackDeviceIdInit = false;
+	// Seeded with std::random_device; acceptable for spoofing (non-cryptographic).
+	static std::mt19937 fallbackDeviceIdRng(std::random_device{}());
 
-	static TextHolder gFallbackXuidHolder;
-	static bool gFallbackXuidInit = false;
-	static std::mt19937_64 gFallbackXuidRng(std::random_device{}());
+	static TextHolder fallbackXuidHolder;
+	static bool fallbackXuidInit = false;
+	// Seeded with std::random_device; acceptable for spoofing (non-cryptographic).
+	static std::mt19937_64 fallbackXuidRng(std::random_device{}());
 }
 
 void Hooks::Init() {
@@ -1135,33 +1137,37 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 
 	// Static fallback generators (cached) for stronger spoofing even when module didn't set fake IDs
 	auto ensureFallbackDeviceId = []() -> TextHolder* {
-		if (!gFallbackDeviceIdInit) {
+		if (!fallbackDeviceIdInit) {
+			constexpr int kUuidSeg1 = 8;
+			constexpr int kUuidSegMid = 4;
+			constexpr int kUuidSegLast = 12;
 			std::uniform_int_distribution<> hexDist(0, 15);
 			const char* hexChars = "0123456789abcdef";
 			std::stringstream ss;
-			for (int i = 0; i < 8; i++) ss << hexChars[hexDist(gFallbackDeviceIdRng)];
+			for (int i = 0; i < kUuidSeg1; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
 			ss << "-";
-			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gFallbackDeviceIdRng)];
+			for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
 			ss << "-";
-			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gFallbackDeviceIdRng)];
+			for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
 			ss << "-";
-			for (int i = 0; i < 4; i++) ss << hexChars[hexDist(gFallbackDeviceIdRng)];
+			for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
 			ss << "-";
-			for (int i = 0; i < 12; i++) ss << hexChars[hexDist(gFallbackDeviceIdRng)];
-			gFallbackDeviceIdHolder.setText(ss.str());
-			gFallbackDeviceIdInit = true;
+			for (int i = 0; i < kUuidSegLast; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+			fallbackDeviceIdHolder.setText(ss.str());
+			fallbackDeviceIdInit = true;
 		}
-		return &gFallbackDeviceIdHolder;
+		return &fallbackDeviceIdHolder;
 	};
 
 	auto ensureFallbackXuid = []() -> TextHolder* {
-		if (!gFallbackXuidInit) {
+		if (!fallbackXuidInit) {
+			// Typical Xbox Live User IDs are 16 digits; use a plausible public range.
 			std::uniform_int_distribution<uint64_t> dist(1000000000000000ULL, 2999999999999999ULL);
-			uint64_t xuidValue = dist(gFallbackXuidRng);
-			gFallbackXuidHolder.setText(std::to_string(xuidValue));
-			gFallbackXuidInit = true;
+			uint64_t xuidValue = dist(fallbackXuidRng);
+			fallbackXuidHolder.setText(std::to_string(xuidValue));
+			fallbackXuidInit = true;
 		}
-		return &gFallbackXuidHolder;
+		return &fallbackXuidHolder;
 	};
 
 	// Spoof Device ID if set
