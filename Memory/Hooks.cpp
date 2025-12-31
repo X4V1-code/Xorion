@@ -1149,52 +1149,46 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 
 	// Static fallback generators (cached) for stronger spoofing even when module didn't set fake IDs
 	auto ensureFallbackDeviceId = []() -> TextHolder* {
-		if (!fallbackDeviceIdInit) {
-			if (!fallbackDeviceIdRngSeeded) {
-				fallbackDeviceIdRng.seed(makeFallbackSeed());
-				fallbackDeviceIdRngSeeded = true;
-			}
-			// Standard UUID format: 8-4-4-4-12 hex characters
-			constexpr int kUuidSeg1 = 8;
-			constexpr int kUuidSegMid = 4;
-			constexpr int kUuidSegLast = 12;
-			std::uniform_int_distribution<> hexDist(0, 15);
-			const char* hexChars = "0123456789abcdef";
-			std::stringstream ss;
-			for (int i = 0; i < kUuidSeg1; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
-			ss << "-";
-			for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
-			ss << "-";
-			// UUID v4: set version nibble to 4
-			ss << '4';
-			for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
-			ss << "-";
-			// UUID variant: high bits 10xx (8,9,a,b)
-			const char variantChars[] = { '8', '9', 'a', 'b' };
-			ss << variantChars[hexDist(fallbackDeviceIdRng) & 0x3];
-			for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
-			ss << "-";
-			for (int i = 0; i < kUuidSegLast; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
-			fallbackDeviceIdHolder.setText(ss.str());
-			fallbackDeviceIdInit = true;
+		if (!fallbackDeviceIdRngSeeded) {
+			fallbackDeviceIdRng.seed(makeFallbackSeed());
+			fallbackDeviceIdRngSeeded = true;
 		}
+		// Standard UUID format: 8-4-4-4-12 hex characters
+		constexpr int kUuidSeg1 = 8;
+		constexpr int kUuidSegMid = 4;
+		constexpr int kUuidSegLast = 12;
+		std::uniform_int_distribution<> hexDist(0, 15);
+		const char* hexChars = "0123456789abcdef";
+		std::stringstream ss;
+		for (int i = 0; i < kUuidSeg1; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		// UUID v4: set version nibble to 4
+		ss << '4';
+		for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		// UUID variant: high bits 10xx (8,9,a,b)
+		const char variantChars[] = { '8', '9', 'a', 'b' };
+		ss << variantChars[hexDist(fallbackDeviceIdRng) & 0x3];
+		for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		for (int i = 0; i < kUuidSegLast; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		fallbackDeviceIdHolder.setText(ss.str());
 		return &fallbackDeviceIdHolder;
 	};
 
 	auto ensureFallbackXuid = []() -> TextHolder* {
-		if (!fallbackXuidInit) {
-			if (!fallbackXuidRngSeeded) {
-				fallbackXuidRng.seed(makeFallbackSeed());
-				fallbackXuidRngSeeded = true;
-			}
-			// Typical Xbox Live User IDs are 16 digits; use a plausible public range seen in practice (~1e15 to ~2.9e15) from community-observed XUIDs.
-			constexpr uint64_t kMinXuidValue = 1000000000000000ULL;
-			constexpr uint64_t kMaxXuidValue = 2999999999999999ULL;
-			std::uniform_int_distribution<uint64_t> dist(kMinXuidValue, kMaxXuidValue);
-			uint64_t xuidValue = dist(fallbackXuidRng);
-			fallbackXuidHolder.setText(std::to_string(xuidValue));
-			fallbackXuidInit = true;
+		if (!fallbackXuidRngSeeded) {
+			fallbackXuidRng.seed(makeFallbackSeed());
+			fallbackXuidRngSeeded = true;
 		}
+		// Typical Xbox Live User IDs are 16 digits; use a plausible public range seen in practice (~1e15 to ~2.9e15) from community-observed XUIDs.
+		constexpr uint64_t kMinXuidValue = 1000000000000000ULL;
+		constexpr uint64_t kMaxXuidValue = 2999999999999999ULL;
+		std::uniform_int_distribution<uint64_t> dist(kMinXuidValue, kMaxXuidValue);
+		uint64_t xuidValue = dist(fallbackXuidRng);
+		fallbackXuidHolder.setText(std::to_string(xuidValue));
 		return &fallbackXuidHolder;
 	};
 
