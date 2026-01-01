@@ -5,6 +5,7 @@
 #include "../../../SDK/TextHolder.h"
 #include "../../../Utils/Utils.h"
 #include <random>
+#include <chrono>
 #include <ctime>
 #include <sstream>
 #include <iomanip>
@@ -12,6 +13,34 @@
 // Xorion green color (same as xorion-banner.png)
 static const MC_Color xorionGreen = MC_Color(37, 164, 64);
 static const MC_Color whiteColor = MC_Color(255, 255, 255);
+
+namespace {
+    template <typename Engine>
+    Engine makeSeededEngine() {
+        static std::random_device rd;
+        static const bool deterministic = (rd.entropy() <= 0.0);
+        if (deterministic) {
+            auto now64 = static_cast<std::uint64_t>(
+                std::chrono::high_resolution_clock::now().time_since_epoch().count());
+            std::seed_seq seq{
+                static_cast<std::uint32_t>(now64 & 0xFFFFFFFFu),
+                static_cast<std::uint32_t>(now64 >> 32)
+            };
+            return Engine{ seq };
+        }
+        return Engine{ rd() };
+    }
+
+    std::mt19937& rng32() {
+        thread_local auto gen = makeSeededEngine<std::mt19937>();
+        return gen;
+    }
+
+    std::mt19937_64& rng64() {
+        thread_local auto gen = makeSeededEngine<std::mt19937_64>();
+        return gen;
+    }
+}
 
 // Word list for generating random usernames
 const char* Unbanner::wordList[] = {
@@ -95,8 +124,8 @@ void Unbanner::clearSpoofedIP() {
 }
 
 void Unbanner::generateSpoofedUsername() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    clearSpoofedName();
+    auto& gen = rng32();
     
     // Pick a random word from the list
     std::uniform_int_distribution<> wordDist(0, wordListSize - 1);
@@ -112,21 +141,13 @@ void Unbanner::generateSpoofedUsername() {
     spoofedUsername = word + numbers;
     usernameGenerated = true;
     
-    // Clean up old holder before creating new one
-    if (fakeNameHolder != nullptr) {
-        if (Game.getFakeName() == fakeNameHolder) {
-            Game.setFakeName(nullptr);
-        }
-        delete fakeNameHolder;
-        fakeNameHolder = nullptr;
-    }
     fakeNameHolder = new TextHolder(spoofedUsername);
     Game.setFakeName(fakeNameHolder);
 }
 
 void Unbanner::generateSpoofedDeviceId() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    clearSpoofedDeviceId();
+    auto& gen = rng32();
     std::uniform_int_distribution<> hexDist(0, 15);
     
     // Generate UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -151,21 +172,13 @@ void Unbanner::generateSpoofedDeviceId() {
     spoofedDeviceId = ss.str();
     deviceIdGenerated = true;
     
-    // Clean up old holder before creating new one
-    if (fakeDeviceIdHolder != nullptr) {
-        if (Game.getFakeDeviceId() == fakeDeviceIdHolder) {
-            Game.setFakeDeviceId(nullptr);
-        }
-        delete fakeDeviceIdHolder;
-        fakeDeviceIdHolder = nullptr;
-    }
     fakeDeviceIdHolder = new TextHolder(spoofedDeviceId);
     Game.setFakeDeviceId(fakeDeviceIdHolder);
 }
 
 void Unbanner::generateSpoofedXuid() {
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
+    clearSpoofedXuid();
+    auto& gen = rng64();
     
     // XUID is typically a 16-digit number (range 1-2 quadrillion)
     std::uniform_int_distribution<uint64_t> dist(1000000000000000ULL, 2999999999999999ULL);
@@ -174,21 +187,13 @@ void Unbanner::generateSpoofedXuid() {
     spoofedXuid = std::to_string(xuidValue);
     xuidGenerated = true;
     
-    // Clean up old holder before creating new one
-    if (fakeXuidHolder != nullptr) {
-        if (Game.getFakeXuid() == fakeXuidHolder) {
-            Game.setFakeXuid(nullptr);
-        }
-        delete fakeXuidHolder;
-        fakeXuidHolder = nullptr;
-    }
     fakeXuidHolder = new TextHolder(spoofedXuid);
     Game.setFakeXuid(fakeXuidHolder);
 }
 
 void Unbanner::generateSpoofedIP() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    clearSpoofedIP();
+    auto& gen = rng32();
     
     // Generate a realistic-looking public IP address
     // Avoid private IP ranges (10.x.x.x, 172.16-31.x.x, 192.168.x.x)
@@ -224,14 +229,6 @@ void Unbanner::generateSpoofedIP() {
     spoofedIP = ss.str();
     ipGenerated = true;
     
-    // Clean up old holder before creating new one
-    if (fakeIPHolder != nullptr) {
-        if (Game.getFakeIP() == fakeIPHolder) {
-            Game.setFakeIP(nullptr);
-        }
-        delete fakeIPHolder;
-        fakeIPHolder = nullptr;
-    }
     fakeIPHolder = new TextHolder(spoofedIP);
     Game.setFakeIP(fakeIPHolder);
 }
