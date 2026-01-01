@@ -36,45 +36,62 @@ Unbanner::Unbanner()
 }
 
 Unbanner::~Unbanner() {
-    // Clean up the fake name holder if it exists
-    if (fakeNameHolder != nullptr) {
-        if (Game.getFakeName() == fakeNameHolder) {
-            Game.setFakeName(nullptr);
-        }
-        delete fakeNameHolder;
-        fakeNameHolder = nullptr;
-    }
-    
-    // Clean up Device ID holder
-    if (fakeDeviceIdHolder != nullptr) {
-        if (Game.getFakeDeviceId() == fakeDeviceIdHolder) {
-            Game.setFakeDeviceId(nullptr);
-        }
-        delete fakeDeviceIdHolder;
-        fakeDeviceIdHolder = nullptr;
-    }
-    
-    // Clean up XUID holder
-    if (fakeXuidHolder != nullptr) {
-        if (Game.getFakeXuid() == fakeXuidHolder) {
-            Game.setFakeXuid(nullptr);
-        }
-        delete fakeXuidHolder;
-        fakeXuidHolder = nullptr;
-    }
-    
-    // Clean up IP holder
-    if (fakeIPHolder != nullptr) {
-        if (Game.getFakeIP() == fakeIPHolder) {
-            Game.setFakeIP(nullptr);
-        }
-        delete fakeIPHolder;
-        fakeIPHolder = nullptr;
-    }
+    clearSpoofedName();
+    clearSpoofedDeviceId();
+    clearSpoofedXuid();
+    clearSpoofedIP();
 }
 
 const char* Unbanner::getModuleName() {
     return "Unbanner";
+}
+
+void Unbanner::clearSpoofedName() {
+    if (Game.getFakeName() == fakeNameHolder) {
+        Game.setFakeName(nullptr);
+    }
+    if (fakeNameHolder != nullptr) {
+        delete fakeNameHolder;
+        fakeNameHolder = nullptr;
+    }
+    usernameGenerated = false;
+    spoofedUsername.clear();
+}
+
+void Unbanner::clearSpoofedDeviceId() {
+    if (Game.getFakeDeviceId() == fakeDeviceIdHolder) {
+        Game.setFakeDeviceId(nullptr);
+    }
+    if (fakeDeviceIdHolder != nullptr) {
+        delete fakeDeviceIdHolder;
+        fakeDeviceIdHolder = nullptr;
+    }
+    deviceIdGenerated = false;
+    spoofedDeviceId.clear();
+}
+
+void Unbanner::clearSpoofedXuid() {
+    if (Game.getFakeXuid() == fakeXuidHolder) {
+        Game.setFakeXuid(nullptr);
+    }
+    if (fakeXuidHolder != nullptr) {
+        delete fakeXuidHolder;
+        fakeXuidHolder = nullptr;
+    }
+    xuidGenerated = false;
+    spoofedXuid.clear();
+}
+
+void Unbanner::clearSpoofedIP() {
+    if (Game.getFakeIP() == fakeIPHolder) {
+        Game.setFakeIP(nullptr);
+    }
+    if (fakeIPHolder != nullptr) {
+        delete fakeIPHolder;
+        fakeIPHolder = nullptr;
+    }
+    ipGenerated = false;
+    spoofedIP.clear();
 }
 
 void Unbanner::generateSpoofedUsername() {
@@ -276,37 +293,10 @@ void Unbanner::onEnable() {
 }
 
 void Unbanner::onDisable() {
-    // Clear all fake IDs from GameData
-    Game.setFakeName(nullptr);
-    Game.setFakeDeviceId(nullptr);
-    Game.setFakeXuid(nullptr);
-    Game.setFakeIP(nullptr);
-    
-    if (fakeNameHolder != nullptr) {
-        delete fakeNameHolder;
-        fakeNameHolder = nullptr;
-    }
-    if (fakeDeviceIdHolder != nullptr) {
-        delete fakeDeviceIdHolder;
-        fakeDeviceIdHolder = nullptr;
-    }
-    if (fakeXuidHolder != nullptr) {
-        delete fakeXuidHolder;
-        fakeXuidHolder = nullptr;
-    }
-    if (fakeIPHolder != nullptr) {
-        delete fakeIPHolder;
-        fakeIPHolder = nullptr;
-    }
-    
-    usernameGenerated = false;
-    deviceIdGenerated = false;
-    xuidGenerated = false;
-    ipGenerated = false;
-    spoofedUsername.clear();
-    spoofedDeviceId.clear();
-    spoofedXuid.clear();
-    spoofedIP.clear();
+    clearSpoofedName();
+    clearSpoofedDeviceId();
+    clearSpoofedXuid();
+    clearSpoofedIP();
     
     auto clientInstance = Game.getClientInstance();
     if (clientInstance != nullptr) {
@@ -319,31 +309,48 @@ void Unbanner::onDisable() {
 
 void Unbanner::onTick(GameMode* gm) {
     // Ensure we have spoofed IDs generated
-    if (spoofName && !usernameGenerated) {
-        generateSpoofedUsername();
+    if (spoofName) {
+        if (!usernameGenerated) {
+            generateSpoofedUsername();
+        }
+        if (usernameGenerated && Game.getFakeName() == nullptr && fakeNameHolder != nullptr) {
+            Game.setFakeName(fakeNameHolder);
+        }
+    } else if (usernameGenerated || fakeNameHolder != nullptr || Game.getFakeName() != nullptr) {
+        clearSpoofedName();
     }
-    if (spoofDeviceId && !deviceIdGenerated) {
-        generateSpoofedDeviceId();
+
+    if (spoofDeviceId) {
+        if (!deviceIdGenerated) {
+            generateSpoofedDeviceId();
+        }
+        if (deviceIdGenerated && Game.getFakeDeviceId() == nullptr && fakeDeviceIdHolder != nullptr) {
+            Game.setFakeDeviceId(fakeDeviceIdHolder);
+        }
+    } else if (deviceIdGenerated || fakeDeviceIdHolder != nullptr || Game.getFakeDeviceId() != nullptr) {
+        clearSpoofedDeviceId();
     }
-    if (spoofXuid && !xuidGenerated) {
-        generateSpoofedXuid();
+
+    if (spoofXuid) {
+        if (!xuidGenerated) {
+            generateSpoofedXuid();
+        }
+        if (xuidGenerated && Game.getFakeXuid() == nullptr && fakeXuidHolder != nullptr) {
+            Game.setFakeXuid(fakeXuidHolder);
+        }
+    } else if (xuidGenerated || fakeXuidHolder != nullptr || Game.getFakeXuid() != nullptr) {
+        clearSpoofedXuid();
     }
-    if (spoofIP && !ipGenerated) {
-        generateSpoofedIP();
-    }
-    
-    // Keep the fake values in GameData synchronized
-    if (spoofName && usernameGenerated && Game.getFakeName() == nullptr && fakeNameHolder != nullptr) {
-        Game.setFakeName(fakeNameHolder);
-    }
-    if (spoofDeviceId && deviceIdGenerated && Game.getFakeDeviceId() == nullptr && fakeDeviceIdHolder != nullptr) {
-        Game.setFakeDeviceId(fakeDeviceIdHolder);
-    }
-    if (spoofXuid && xuidGenerated && Game.getFakeXuid() == nullptr && fakeXuidHolder != nullptr) {
-        Game.setFakeXuid(fakeXuidHolder);
-    }
-    if (spoofIP && ipGenerated && Game.getFakeIP() == nullptr && fakeIPHolder != nullptr) {
-        Game.setFakeIP(fakeIPHolder);
+
+    if (spoofIP) {
+        if (!ipGenerated) {
+            generateSpoofedIP();
+        }
+        if (ipGenerated && Game.getFakeIP() == nullptr && fakeIPHolder != nullptr) {
+            Game.setFakeIP(fakeIPHolder);
+        }
+    } else if (ipGenerated || fakeIPHolder != nullptr || Game.getFakeIP() != nullptr) {
+        clearSpoofedIP();
     }
 }
 
