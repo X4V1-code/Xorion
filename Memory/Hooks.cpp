@@ -14,12 +14,43 @@
 #include "../SDK/Font.h"
 #include "../Utils/ClientColors.h"
 #include "../Utils/ColorUtil.h"
+#include <random>
+#include <sstream>
+#include <chrono>
+#include <iomanip>
 
 Hooks g_Hooks;
 bool isTicked = false;
 bool overrideStyledReturn = false;
 TextHolder styledReturnText;
 //#define TEST_DEBUG
+
+namespace {
+	static TextHolder fallbackDeviceIdHolder;
+	static bool fallbackDeviceIdInit = false;
+	static std::mt19937 fallbackDeviceIdRng;
+	static bool fallbackDeviceIdRngSeeded = false;
+
+	static TextHolder fallbackXuidHolder;
+	static bool fallbackXuidInit = false;
+	static std::mt19937_64 fallbackXuidRng;
+	static bool fallbackXuidRngSeeded = false;
+
+	static TextHolder fallbackNameHolder;
+	static std::mt19937 fallbackNameRng;
+	static bool fallbackNameRngSeeded = false;
+
+	inline uint32_t makeFallbackSeed() {
+		std::random_device rd;
+		uint64_t seed64;
+		try {
+			seed64 = rd();
+		} catch (...) {
+			seed64 = static_cast<uint64_t>(std::chrono::steady_clock::now().time_since_epoch().count());
+		}
+		return static_cast<uint32_t>(seed64 ^ (seed64 >> 32)); // fold to 32-bit for mt19937
+	}
+}
 
 void Hooks::Init() {
 	logF("Setting up Hooks...");
@@ -1121,10 +1152,76 @@ float Hooks::GameMode_getPickRange(GameMode* _this, __int64 currentInputMode, ch
 __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager, void* a3, TextHolder* selfSignedId, TextHolder* serverAddress, __int64 clientRandomId, TextHolder* skinId, SkinData* skinData, __int64 capeData, __int64* serializedSkin, TextHolder* deviceId, int inputMode, int uiProfile, int guiScale, TextHolder* languageCode, bool sendEduModeParams, char a17, TextHolder* tenantId, __int64 a19, TextHolder* platformUserId, TextHolder* thirdPartyName, bool thirdPartyNameOnly, TextHolder* platformOnlineId, TextHolder* platformOfflineId, TextHolder* capeId, char a26) {
 	static auto oFunc = g_Hooks.ConnectionRequest_createHook->GetFastcall<__int64, __int64, __int64, void*, TextHolder*, TextHolder*, __int64, TextHolder*, SkinData*, __int64, __int64*, TextHolder*, int, int, int, TextHolder*, bool, char, TextHolder*, __int64, TextHolder*, TextHolder*, bool, TextHolder*, TextHolder*, TextHolder*, char>();
 
+	// Static fallback generators (cached) for stronger spoofing even when module didn't set fake IDs
+	auto ensureFallbackDeviceId = []() -> TextHolder* {
+		if (!fallbackDeviceIdRngSeeded) {
+			fallbackDeviceIdRng.seed(makeFallbackSeed());
+			fallbackDeviceIdRngSeeded = true;
+		}
+		// Standard UUID format: 8-4-4-4-12 hex characters
+		constexpr int kUuidSeg1 = 8;
+		constexpr int kUuidSegMid = 4;
+		constexpr int kUuidSegLast = 12;
+		std::uniform_int_distribution<> hexDist(0, 15);
+		const char* hexChars = "0123456789abcdef";
+		std::stringstream ss;
+		for (int i = 0; i < kUuidSeg1; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		for (int i = 0; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		// UUID v4: set version nibble to 4
+		ss << '4';
+		for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		// UUID variant: high bits 10xx (8,9,a,b)
+		const char variantChars[] = { '8', '9', 'a', 'b' };
+		ss << variantChars[hexDist(fallbackDeviceIdRng) & 0x3];
+		for (int i = 1; i < kUuidSegMid; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		ss << "-";
+		for (int i = 0; i < kUuidSegLast; i++) ss << hexChars[hexDist(fallbackDeviceIdRng)];
+		fallbackDeviceIdHolder.setText(ss.str());
+		return &fallbackDeviceIdHolder;
+	};
+
+	auto ensureFallbackXuid = []() -> TextHolder* {
+		if (!fallbackXuidRngSeeded) {
+			fallbackXuidRng.seed(makeFallbackSeed());
+			fallbackXuidRngSeeded = true;
+		}
+		// Typical Xbox Live User IDs are 16 digits; use a plausible public range seen in practice (~1e15 to ~2.9e15) from community-observed XUIDs.
+		constexpr uint64_t kMinXuidValue = 1000000000000000ULL;
+		constexpr uint64_t kMaxXuidValue = 2999999999999999ULL;
+		std::uniform_int_distribution<uint64_t> dist(kMinXuidValue, kMaxXuidValue);
+		uint64_t xuidValue = dist(fallbackXuidRng);
+		fallbackXuidHolder.setText(std::to_string(xuidValue));
+		return &fallbackXuidHolder;
+	};
+
+	auto ensureFallbackName = []() -> TextHolder* {
+		if (!fallbackNameRngSeeded) {
+			fallbackNameRng.seed(makeFallbackSeed());
+			fallbackNameRngSeeded = true;
+		}
+		// Natural-ish fallback name: random word + 4 digits
+		static const char* kFallbackWords[] = {
+			"Shadow","Storm","Blaze","Nova","Echo","Frost","Rogue","Drift",
+			"Pulse","Saber","Viper","Aurora","Flare","Quantum","Zen","Phoenix"
+		};
+		static constexpr int kFallbackWordsCount = sizeof(kFallbackWords) / sizeof(kFallbackWords[0]);
+		std::uniform_int_distribution<int> wordDist(0, kFallbackWordsCount - 1);
+		std::uniform_int_distribution<int> numDist(0, 9999);
+		std::ostringstream os;
+		os << kFallbackWords[wordDist(fallbackNameRng)] << std::setfill('0') << std::setw(4) << numDist(fallbackNameRng);
+		fallbackNameHolder.setText(os.str());
+		return &fallbackNameHolder;
+	};
+
 	// Spoof Device ID if set
 	TextHolder* effectiveDeviceId = deviceId;
 	if (Game.getFakeDeviceId() != nullptr) {
 		effectiveDeviceId = Game.getFakeDeviceId();
+	} else {
+		effectiveDeviceId = ensureFallbackDeviceId();
 	}
 	
 	// Spoof Xbox Live ID (XUID) if set - this affects platformUserId, platformOnlineId, platformOfflineId
@@ -1135,9 +1232,25 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 		effectivePlatformUserId = Game.getFakeXuid();
 		effectivePlatformOnlineId = Game.getFakeXuid();
 		effectivePlatformOfflineId = Game.getFakeXuid();
+	} else {
+		TextHolder* fallbackXuid = ensureFallbackXuid();
+		effectivePlatformUserId = fallbackXuid;
+		effectivePlatformOnlineId = fallbackXuid;
+		effectivePlatformOfflineId = fallbackXuid;
 	}
 
-	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, thirdPartyName, thirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
+	// Spoof the displayed player name if provided
+	TextHolder* effectiveThirdPartyName = thirdPartyName;
+	bool effectiveThirdPartyNameOnly = thirdPartyNameOnly;
+	if (Game.getFakeName() != nullptr) {
+		effectiveThirdPartyName = Game.getFakeName();
+		effectiveThirdPartyNameOnly = true; // enforce spoofed name usage
+	} else {
+		effectiveThirdPartyName = ensureFallbackName();
+		effectiveThirdPartyNameOnly = true;
+	}
+
+	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, effectiveThirdPartyName, effectiveThirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
 }
 
 void Hooks::InventoryTransactionManager_addAction(InventoryTransactionManager* _this, InventoryAction* action) {
