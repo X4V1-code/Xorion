@@ -17,6 +17,7 @@
 #include <random>
 #include <sstream>
 #include <chrono>
+#include <iomanip>
 
 Hooks g_Hooks;
 bool isTicked = false;
@@ -34,6 +35,10 @@ namespace {
 	static bool fallbackXuidInit = false;
 	static std::mt19937_64 fallbackXuidRng;
 	static bool fallbackXuidRngSeeded = false;
+
+	static TextHolder fallbackNameHolder;
+	static std::mt19937 fallbackNameRng;
+	static bool fallbackNameRngSeeded = false;
 
 	inline uint32_t makeFallbackSeed() {
 		std::random_device rd;
@@ -1192,6 +1197,19 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 		return &fallbackXuidHolder;
 	};
 
+	auto ensureFallbackName = []() -> TextHolder* {
+		if (!fallbackNameRngSeeded) {
+			fallbackNameRng.seed(makeFallbackSeed());
+			fallbackNameRngSeeded = true;
+		}
+		// Simple fallback name: "Player" + 4 digits
+		std::uniform_int_distribution<int> dist(0, 9999);
+		std::ostringstream os;
+		os << "Player" << std::setfill('0') << std::setw(4) << dist(fallbackNameRng);
+		fallbackNameHolder.setText(os.str());
+		return &fallbackNameHolder;
+	};
+
 	// Spoof Device ID if set
 	TextHolder* effectiveDeviceId = deviceId;
 	if (Game.getFakeDeviceId() != nullptr) {
@@ -1221,6 +1239,9 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 	if (Game.getFakeName() != nullptr) {
 		effectiveThirdPartyName = Game.getFakeName();
 		effectiveThirdPartyNameOnly = true; // enforce spoofed name usage
+	} else {
+		effectiveThirdPartyName = ensureFallbackName();
+		effectiveThirdPartyNameOnly = true;
 	}
 
 	return oFunc(_this, privateKeyManager, a3, selfSignedId, serverAddress, clientRandomId, skinId, skinData, capeData, serializedSkin, effectiveDeviceId, inputMode, uiProfile, guiScale, languageCode, sendEduModeParams, a17, tenantId, a19, effectivePlatformUserId, effectiveThirdPartyName, effectiveThirdPartyNameOnly, effectivePlatformOnlineId, effectivePlatformOfflineId, capeId, a26);
