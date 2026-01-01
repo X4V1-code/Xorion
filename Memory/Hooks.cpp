@@ -1202,10 +1202,16 @@ __int64 Hooks::ConnectionRequest_create(__int64 _this, __int64 privateKeyManager
 			fallbackNameRng.seed(makeFallbackSeed());
 			fallbackNameRngSeeded = true;
 		}
-		// Simple fallback name: "Player" + 4 digits
-		std::uniform_int_distribution<int> dist(0, 9999);
+		// Natural-ish fallback name: random word + 4 digits
+		static const char* kFallbackWords[] = {
+			"Shadow","Storm","Blaze","Nova","Echo","Frost","Rogue","Drift",
+			"Pulse","Saber","Viper","Aurora","Flare","Quantum","Zen","Phoenix"
+		};
+		static constexpr int kFallbackWordsCount = sizeof(kFallbackWords) / sizeof(kFallbackWords[0]);
+		std::uniform_int_distribution<int> wordDist(0, kFallbackWordsCount - 1);
+		std::uniform_int_distribution<int> numDist(0, 9999);
 		std::ostringstream os;
-		os << "Player" << std::setfill('0') << std::setw(4) << dist(fallbackNameRng);
+		os << kFallbackWords[wordDist(fallbackNameRng)] << std::setfill('0') << std::setw(4) << numDist(fallbackNameRng);
 		fallbackNameHolder.setText(os.str());
 		return &fallbackNameHolder;
 	};
