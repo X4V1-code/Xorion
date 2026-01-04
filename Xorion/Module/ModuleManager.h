@@ -41,6 +41,7 @@
 #include "Modules/ClickGuiMod.h"
 #include "Modules/AutoClicker.h"
 //#include "Modules/AirStuck.h"
+#include "Modules/DiscordPresence.h"
 #include "Modules/TriggerBot.h"
 #include "Modules/Replenish.h"
 #include "Modules/BedStack.h"

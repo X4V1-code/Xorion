@@ -56,6 +56,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<ChestStealer>());
         moduleList.emplace_back(std::make_shared<ClickGuiMod>());
         moduleList.emplace_back(std::make_shared<ClientTheme>());
+        moduleList.emplace_back(std::make_shared<DiscordPresence>());
         moduleList.emplace_back(std::make_shared<Compass>());
         moduleList.emplace_back(std::make_shared<Crasher>());
         moduleList.emplace_back(std::make_shared<Criticals>());
