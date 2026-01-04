@@ -56,6 +56,10 @@ public:
 private:
     // Render the "Try Unban Me" button
     void renderUnbanButton(MinecraftUIRenderContext* ctx);
+    void clearSpoofedName();
+    void clearSpoofedDeviceId();
+    void clearSpoofedXuid();
+    void clearSpoofedIP();
     
     // Random word list for username generation
     static const char* wordList[];
