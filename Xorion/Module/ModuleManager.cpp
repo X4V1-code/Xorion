@@ -157,6 +157,7 @@ void ModuleManager::initModules() {
     if (auto cg = getModule<ClickGuiMod>()) cg->setEnabled(false);
     if (auto hm = getModule<HudModule>())  hm->setEnabled(true);
     if (auto ab = getModule<AntiBot>())    ab->setEnabled(true);
+    if (auto dp = getModule<DiscordPresence>()) dp->setEnabled(true);
     if (auto acb = getModule<AntiCheatBlocker>()) acb->setEnabled(true);  // Always-on by default
     if (auto acd = getModule<AntiCheatDelete>()) acd->setEnabled(true);   // Always-on by default
 }
@@ -183,6 +184,7 @@ void ModuleManager::onLoadConfig(void* confVoid) {
     if (auto cg = getModule<ClickGuiMod>()) cg->setEnabled(false);
     if (auto hm = getModule<HudModule>())  hm->setEnabled(true);
     if (auto ab = getModule<AntiBot>())    ab->setEnabled(true);
+    if (auto dp = getModule<DiscordPresence>()) dp->setEnabled(true);
     if (auto acb = getModule<AntiCheatBlocker>()) acb->setEnabled(true);  // Always-on by default
     if (auto acd = getModule<AntiCheatDelete>()) acd->setEnabled(true);   // Always-on by default
 }
