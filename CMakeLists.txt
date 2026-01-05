@@ -182,6 +182,8 @@ add_library(Xorion SHARED
         Xorion/Module/Modules/Derp.h
         Xorion/Module/Modules/Dicker.cpp
         Xorion/Module/Modules/Dicker.h
+        Xorion/Module/Modules/DiscordPresence.cpp
+        Xorion/Module/Modules/DiscordPresence.h
         Xorion/Module/Modules/DVDLogo.cpp
         Xorion/Module/Modules/DVDLogo.h
         Xorion/Module/Modules/EditionFaker.cpp

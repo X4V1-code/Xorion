@@ -519,6 +519,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\Derp.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\Dicker.cpp" />
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\Dicker.h" />
+    <ClCompile Include="C:\Xorion\Xorion\Module\Modules\DiscordPresence.cpp" />
+    <ClInclude Include="C:\Xorion\Xorion\Module\Modules\DiscordPresence.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\DVDLogo.cpp" />
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\DVDLogo.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\EditionFaker.cpp" />
