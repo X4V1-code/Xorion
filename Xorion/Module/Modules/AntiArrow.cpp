@@ -25,8 +25,10 @@ void AntiArrow::onTick(C_GameMode* gm) {
 	if (lp == nullptr)
 		return;
 
-	Entity* lpEntity = reinterpret_cast<Entity*>(lp);
+	Entity* lpEntity = static_cast<Entity*>(lp);
 	Vec3* lpPos = lp->getPos();
+	if (lpPos == nullptr)
+		return;
 
 	g_Data.forEachEntity([&](Entity* ent, bool) {
 		if (ent == nullptr || ent == lpEntity)
@@ -35,7 +37,11 @@ void AntiArrow::onTick(C_GameMode* gm) {
 		if (ent->getEntityTypeId() != kArrowEntityTypeId) // Arrow entity id
 			return;
 
-		if (ent->getPos()->dist(*lpPos) <= range) {
+		Vec3* entPos = ent->getPos();
+		if (entPos == nullptr)
+			return;
+
+		if (entPos->dist(*lpPos) <= range) {
 			ent->despawn();
 		}
 	});
