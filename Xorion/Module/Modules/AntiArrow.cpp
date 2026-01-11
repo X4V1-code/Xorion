@@ -14,7 +14,7 @@ const char* AntiArrow::getModuleName() {
 	return "AntiArrow";
 }
 
-void AntiArrow::onTick(C_GameMode* gm) {
+void AntiArrow::onTick(GameMode* gm) {
 	if (!g_Data.isInGame())
 		return;
 
