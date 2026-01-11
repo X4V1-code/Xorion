@@ -30,7 +30,7 @@ void AntiArrow::onTick(C_GameMode* gm) {
 		if (ent == nullptr)
 			return;
 
-		if (ent->getEntityTypeId() != static_cast<int>(EntityTypeId::Arrow)) // Arrow entity id
+		if (ent->getEntityTypeId() != static_cast<int>(EntityTypeId::Arrow))
 			return;
 
 		Vec3* entPos = ent->getPos();
