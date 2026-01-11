@@ -2,7 +2,11 @@
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/LocalPlayer.h"
 
-AntiArrow::AntiArrow() : IModule(0x0, Category::COMBAT, "Stops arrows within a 3 block radius") {
+namespace {
+	constexpr int kArrowEntityTypeId = 80;
+}
+
+AntiArrow::AntiArrow() : IModule(0x0, Category::COMBAT, "Stops arrows around you") {
 	registerFloatSetting("range", &range, range, 1.f, 6.f);
 }
 
@@ -28,7 +32,7 @@ void AntiArrow::onTick(GameMode* gm) {
 		if (ent == nullptr || ent == lpEntity)
 			return;
 
-		if (ent->getEntityTypeId() != 80) // Arrow entity id
+		if (ent->getEntityTypeId() != kArrowEntityTypeId) // Arrow entity id
 			return;
 
 		if (ent->getPos()->dist(*lpPos) <= range) {
