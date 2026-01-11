@@ -3,6 +3,7 @@
 #include "../../../SDK/LocalPlayer.h"
 
 namespace {
+	// Bedrock entity type id for arrows
 	constexpr int kArrowEntityTypeId = 80;
 }
 
@@ -25,13 +26,12 @@ void AntiArrow::onTick(C_GameMode* gm) {
 	if (lp == nullptr)
 		return;
 
-	Entity* lpEntity = static_cast<Entity*>(lp);
 	Vec3* lpPos = lp->getPos();
 	if (lpPos == nullptr)
 		return;
 
 	g_Data.forEachEntity([&](Entity* ent, bool) {
-		if (ent == nullptr || ent == lpEntity)
+		if (ent == nullptr)
 			return;
 
 		if (ent->getEntityTypeId() != kArrowEntityTypeId) // Arrow entity id
