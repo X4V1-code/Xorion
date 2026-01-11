@@ -473,6 +473,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\AirSwim.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\AntiBot.cpp" />
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\AntiBot.h" />
+    <ClCompile Include="C:\Xorion\Xorion\Module\Modules\AntiArrow.cpp" />
+    <ClInclude Include="C:\Xorion\Xorion\Module\Modules\AntiArrow.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\AntiCrystal.cpp" />
     <ClInclude Include="C:\Xorion\Xorion\Module\Modules\AntiCrystal.h" />
     <ClCompile Include="C:\Xorion\Xorion\Module\Modules\AntiEffect.cpp" />
