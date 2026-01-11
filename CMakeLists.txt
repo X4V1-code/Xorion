@@ -453,6 +453,7 @@ add_library(Xorion SHARED
         SDK/DrawUtils.h
         SDK/Entity.cpp
         SDK/Entity.h
+        SDK/EntityTypeIds.h
         SDK/EntityContext.h
         SDK/EntityList.h
         SDK/EntityRefs.h

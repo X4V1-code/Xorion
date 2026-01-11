@@ -785,6 +785,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Xorion\SDK\DrawUtils.h" />
     <ClCompile Include="C:\Xorion\SDK\Entity.cpp" />
     <ClInclude Include="C:\Xorion\SDK\Entity.h" />
+    <ClInclude Include="C:\Xorion\SDK\EntityTypeIds.h" />
     <ClInclude Include="C:\Xorion\SDK\EntityContext.h" />
     <ClInclude Include="C:\Xorion\SDK\EntityList.h" />
     <ClInclude Include="C:\Xorion\SDK\EntityRefs.h" />

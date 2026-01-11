@@ -1,11 +1,7 @@
 #include "AntiArrow.h"
 #include "../../../Memory/GameData.h"
 #include "../../../SDK/LocalPlayer.h"
-
-namespace {
-	// Bedrock entity type id for arrows
-	constexpr int kArrowEntityTypeId = 80;
-}
+#include "../../../SDK/EntityTypeIds.h"
 
 AntiArrow::AntiArrow() : IModule(0x0, Category::COMBAT, "Stops arrows around you") {
 	registerFloatSetting("range", &range, range, 1.f, 6.f);
@@ -34,7 +30,7 @@ void AntiArrow::onTick(C_GameMode* gm) {
 		if (ent == nullptr)
 			return;
 
-		if (ent->getEntityTypeId() != kArrowEntityTypeId) // Arrow entity id
+		if (ent->getEntityTypeId() != static_cast<int>(EntityTypeId::Arrow)) // Arrow entity id
 			return;
 
 		Vec3* entPos = ent->getPos();
