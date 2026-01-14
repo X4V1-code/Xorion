@@ -94,6 +94,7 @@
 #include "Modules/Crasher.h"
 #include "Modules/Breaker.h"
 #include "Modules/AntiBot.h"
+#include "Modules/AntiArrow.h"
 #include "Modules/AirSwim.h"
 #include "Modules/AirJump.h"
 #include "Modules/Spider.h"
