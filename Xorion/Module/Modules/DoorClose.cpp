@@ -4,6 +4,7 @@
 #include "../../../SDK/GameMode.h"
 
 #include <algorithm>
+#include <unordered_set>
 
 DoorClose::DoorClose() : IModule(0, Category::WORLD, "Automatically closes nearby doors and keeps them shut.") {
     registerIntSetting("Radius", &radius, radius, 1, 10);
@@ -25,9 +26,10 @@ void DoorClose::onTick(GameMode* gm) {
     if (!pos)
         return;
 
+    constexpr int DOOR_VERTICAL_RANGE = 2;
     const int startX = (int)pos->x - radius;
     const int endX = (int)pos->x + radius;
-    const int verticalRange = std::min(radius, 2);
+    const int verticalRange = std::min(radius, DOOR_VERTICAL_RANGE);
     const int startY = (int)pos->y - verticalRange;
     const int endY = (int)pos->y + verticalRange;
     const int startZ = (int)pos->z - radius;
@@ -56,12 +58,26 @@ void DoorClose::onTick(GameMode* gm) {
                 if (!legacy)
                     continue;
 
-                std::string name = legacy->getName().getText();
-                if (name.find("door") == std::string::npos)
-                    continue;
+                short blockId = legacy->blockId;
+                static std::unordered_set<short> doorIds;
+                static std::unordered_set<short> nonDoorIds;
 
+                if (doorIds.find(blockId) == doorIds.end()) {
+                    if (nonDoorIds.find(blockId) != nonDoorIds.end())
+                        continue;
+
+                    std::string name = legacy->getName().getText();
+                    if (name.find("door") == std::string::npos) {
+                        nonDoorIds.insert(blockId);
+                        continue;
+                    }
+
+                    doorIds.insert(blockId);
+                }
+
+                constexpr uint8_t INTERACT_FACE = 0;
                 bool useBlockSide = true;
-                gm->buildBlock(&blockPos, 0, useBlockSide);
+                gm->buildBlock(&blockPos, INTERACT_FACE, useBlockSide);
                 lp->swingArm();
             }
         }
