@@ -11,6 +11,7 @@
 
 DoorClose::DoorClose() : IModule(0, Category::WORLD, "Automatically closes nearby doors and keeps them shut.") {
     registerIntSetting("Radius", &radius, radius, 1, 10);
+    registerIntSetting("Height", &verticalRangeSetting, verticalRangeSetting, 1, 6);
 }
 
 DoorClose::~DoorClose() {
@@ -25,7 +26,7 @@ void DoorClose::onDisable() {
     nonDoorIds.clear();
 }
 
-void DoorClose::onTick(GameMode* gm) {
+void DoorClose::onTick(C_GameMode* gm) {
     auto lp = Game.getLocalPlayer();
     if (!gm || !lp || !lp->getRegion())
         return;
@@ -34,10 +35,9 @@ void DoorClose::onTick(GameMode* gm) {
     if (!pos)
         return;
 
-    constexpr int DOOR_VERTICAL_RANGE = 2;  // Doors are two blocks tall; no need to scan higher
     const int startX = (int)pos->x - radius;
     const int endX = (int)pos->x + radius;
-    const int verticalRange = std::min(radius, DOOR_VERTICAL_RANGE);
+    const int verticalRange = std::min(radius, verticalRangeSetting);  // Doors are two blocks tall by default
     const int startY = (int)pos->y - verticalRange;
     const int endY = (int)pos->y + verticalRange;
     const int startZ = (int)pos->z - radius;
@@ -61,10 +61,20 @@ void DoorClose::onTick(GameMode* gm) {
 
         auto nameHasDoor = [](const TextHolder& holder) {
             std::string_view text(holder.getText(), holder.getTextLength());
-            std::string lowered(text);
-            std::transform(lowered.begin(), lowered.end(), lowered.begin(),
-                           [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-            return lowered.find("door") != std::string::npos;
+            constexpr std::string_view needle = "door";
+            for (size_t i = 0; i + needle.size() <= text.size(); i++) {
+                bool match = true;
+                for (size_t j = 0; j < needle.size(); j++) {
+                    char c = static_cast<char>(std::tolower(static_cast<unsigned char>(text[i + j])));
+                    if (c != needle[j]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                    return true;
+            }
+            return false;
         };
 
         if (nameHasDoor(legacy->getName()) || nameHasDoor(legacy->tileName)) {
@@ -99,7 +109,7 @@ void DoorClose::onTick(GameMode* gm) {
                 constexpr bool USE_BLOCK_SIDE = true;
 
                 uint8_t interactFace = DEFAULT_INTERACT_FACE;
-                if (lp->level)
+                if (lp->level && lp->level->hitResult.type == HitResultType::Tile)
                     interactFace = static_cast<uint8_t>(lp->level->hitResult.facing);
 
                 gm->buildBlock(&blockPos, interactFace, USE_BLOCK_SIDE);
