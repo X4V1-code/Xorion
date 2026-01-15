@@ -37,7 +37,8 @@ void DoorClose::onTick(C_GameMode* gm) {
 
     const int startX = (int)pos->x - radius;
     const int endX = (int)pos->x + radius;
-    const int verticalRange = std::min(radius, verticalRangeSetting);  // Doors are two blocks tall by default
+    // Limit vertical scan to the configured height but never exceed the horizontal search radius
+    const int verticalRange = std::min(radius, verticalRangeSetting);
     const int startY = (int)pos->y - verticalRange;
     const int endY = (int)pos->y + verticalRange;
     const int startZ = (int)pos->z - radius;
@@ -105,13 +106,14 @@ void DoorClose::onTick(C_GameMode* gm) {
                 if (!isDoorBlock(legacy))
                     continue;
 
-                constexpr uint8_t DEFAULT_INTERACT_FACE = 1;  // Default to top face when no hitResult is available
+                constexpr uint8_t DEFAULT_INTERACT_FACE = 1;  // Face index 1 = top; used when no hitResult is available
                 constexpr bool USE_BLOCK_SIDE = true;
 
                 uint8_t interactFace = DEFAULT_INTERACT_FACE;
                 if (lp->level && lp->level->hitResult.type == HitResultType::Tile)
                     interactFace = static_cast<uint8_t>(lp->level->hitResult.facing);
 
+                // buildBlock triggers the door toggle interaction when useBlockSide is true
                 gm->buildBlock(&blockPos, interactFace, USE_BLOCK_SIDE);
                 lp->swingArm();
             }
