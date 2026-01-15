@@ -65,7 +65,8 @@ void DoorClose::onTick(C_GameMode* gm) {
             constexpr std::string_view needle = "door";
             auto it = std::search(text.begin(), text.end(), needle.begin(), needle.end(),
                                   [](char a, char b) {
-                                      return std::tolower(static_cast<unsigned char>(a)) == b;
+                                      return std::tolower(static_cast<unsigned char>(a)) ==
+                                             std::tolower(static_cast<unsigned char>(b));
                                   });
             return it != text.end();
         };
