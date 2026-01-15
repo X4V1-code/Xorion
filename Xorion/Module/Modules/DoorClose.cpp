@@ -48,7 +48,7 @@ void DoorClose::onTick(C_GameMode* gm) {
     constexpr uint8_t DOOR_OPEN_BIT = 0x4;   // open_bit flag in block data
     constexpr uint8_t DOOR_UPPER_BIT = 0x8;  // upper_block_bit flag in block data
 
-    auto isDoorBlock = [this](BlockLegacy* legacy) {
+    auto isDoorBlock = [&doorIds = this->doorIds, &nonDoorIds = this->nonDoorIds](BlockLegacy* legacy) {
         if (!legacy)
             return false;
 
@@ -63,19 +63,11 @@ void DoorClose::onTick(C_GameMode* gm) {
         auto nameHasDoor = [](const TextHolder& holder) {
             std::string_view text(holder.getText(), holder.getTextLength());
             constexpr std::string_view needle = "door";
-            for (size_t i = 0; i + needle.size() <= text.size(); i++) {
-                bool match = true;
-                for (size_t j = 0; j < needle.size(); j++) {
-                    char c = static_cast<char>(std::tolower(static_cast<unsigned char>(text[i + j])));
-                    if (c != needle[j]) {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match)
-                    return true;
-            }
-            return false;
+            auto it = std::search(text.begin(), text.end(), needle.begin(), needle.end(),
+                                  [](char a, char b) {
+                                      return std::tolower(static_cast<unsigned char>(a)) == b;
+                                  });
+            return it != text.end();
         };
 
         if (nameHasDoor(legacy->getName()) || nameHasDoor(legacy->tileName)) {
@@ -109,12 +101,8 @@ void DoorClose::onTick(C_GameMode* gm) {
                 constexpr uint8_t DEFAULT_INTERACT_FACE = 1;  // Face index 1 = top; used when no hitResult is available
                 constexpr bool USE_BLOCK_SIDE = true;
 
-                uint8_t interactFace = DEFAULT_INTERACT_FACE;
-                if (lp->level && lp->level->hitResult.type == HitResultType::Tile)
-                    interactFace = static_cast<uint8_t>(lp->level->hitResult.facing);
-
                 // buildBlock triggers the door toggle interaction when useBlockSide is true
-                gm->buildBlock(&blockPos, interactFace, USE_BLOCK_SIDE);
+                gm->buildBlock(&blockPos, DEFAULT_INTERACT_FACE, USE_BLOCK_SIDE);
                 lp->swingArm();
             }
         }
