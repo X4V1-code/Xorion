@@ -4,7 +4,6 @@
 #include "../../../SDK/GameMode.h"
 
 #include <algorithm>
-#include <cctype>
 
 DoorClose::DoorClose() : IModule(0, Category::WORLD, "Automatically closes nearby doors and keeps them shut.") {
     registerIntSetting("Radius", &radius, radius, 1, 10);
@@ -28,13 +27,15 @@ void DoorClose::onTick(GameMode* gm) {
 
     const int startX = (int)pos->x - radius;
     const int endX = (int)pos->x + radius;
-    const int startY = (int)pos->y - radius;
-    const int endY = (int)pos->y + radius;
+    const int verticalRange = std::min(radius, 2);
+    const int startY = (int)pos->y - verticalRange;
+    const int endY = (int)pos->y + verticalRange;
     const int startZ = (int)pos->z - radius;
     const int endZ = (int)pos->z + radius;
 
-    constexpr uint8_t DOOR_OPEN_BIT = 0x4;
-    constexpr uint8_t DOOR_UPPER_BIT = 0x8;
+    // Door block state bits
+    constexpr uint8_t DOOR_OPEN_BIT = 0x4;   // open_bit flag in block data
+    constexpr uint8_t DOOR_UPPER_BIT = 0x8;  // upper_block_bit flag in block data
 
     for (int x = startX; x <= endX; x++) {
         for (int y = startY; y <= endY; y++) {
@@ -44,22 +45,20 @@ void DoorClose::onTick(GameMode* gm) {
                 if (!block)
                     continue;
 
-                BlockLegacy* legacy = block->toLegacy();
-                if (!legacy)
-                    continue;
-
-                std::string name = legacy->getName().getText();
-                std::transform(name.begin(), name.end(), name.begin(),
-                               [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-                if (name.find("door") == std::string::npos)
-                    continue;
-
                 uint8_t data = block->data;
                 if ((data & DOOR_OPEN_BIT) == 0)
                     continue;  // already closed
 
                 if (data & DOOR_UPPER_BIT)
                     continue;  // operate on the lower half only to avoid double toggles
+
+                BlockLegacy* legacy = block->toLegacy();
+                if (!legacy)
+                    continue;
+
+                std::string name = legacy->getName().getText();
+                if (name.find("door") == std::string::npos)
+                    continue;
 
                 bool useBlockSide = true;
                 gm->buildBlock(&blockPos, 0, useBlockSide);
