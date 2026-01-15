@@ -91,12 +91,14 @@ void DoorClose::onTick(GameMode* gm) {
                 if (!isDoorBlock(legacy))
                     continue;
 
-                uint8_t interactFace = 1;
+                constexpr uint8_t DEFAULT_INTERACT_FACE = 1;
+                constexpr bool USE_BLOCK_SIDE = true;
+
+                uint8_t interactFace = DEFAULT_INTERACT_FACE;
                 if (lp->level)
                     interactFace = static_cast<uint8_t>(lp->level->hitResult.facing);
 
-                bool useBlockSide = true;
-                gm->buildBlock(&blockPos, interactFace, useBlockSide);
+                gm->buildBlock(&blockPos, interactFace, USE_BLOCK_SIDE);
                 lp->swingArm();
             }
         }
