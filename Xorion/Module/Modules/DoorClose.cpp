@@ -4,6 +4,7 @@
 #include "../../../SDK/GameMode.h"
 
 #include <algorithm>
+#include <string_view>
 #include <unordered_set>
 
 DoorClose::DoorClose() : IModule(0, Category::WORLD, "Automatically closes nearby doors and keeps them shut.") {
@@ -25,6 +26,9 @@ void DoorClose::onTick(GameMode* gm) {
     Vec3* pos = lp->getPos();
     if (!pos)
         return;
+
+    static std::unordered_set<short> doorIds;
+    static std::unordered_set<short> nonDoorIds;
 
     constexpr int DOOR_VERTICAL_RANGE = 2;
     const int startX = (int)pos->x - radius;
@@ -59,15 +63,14 @@ void DoorClose::onTick(GameMode* gm) {
                     continue;
 
                 short blockId = legacy->blockId;
-                static std::unordered_set<short> doorIds;
-                static std::unordered_set<short> nonDoorIds;
 
                 if (doorIds.find(blockId) == doorIds.end()) {
                     if (nonDoorIds.find(blockId) != nonDoorIds.end())
                         continue;
 
-                    std::string name = legacy->getName().getText();
-                    if (name.find("door") == std::string::npos) {
+                    TextHolder blockName = legacy->getName();
+                    std::string_view name(blockName.getText(), blockName.getTextLength());
+                    if (name.find("door") == std::string_view::npos) {
                         nonDoorIds.insert(blockId);
                         continue;
                     }
@@ -75,9 +78,9 @@ void DoorClose::onTick(GameMode* gm) {
                     doorIds.insert(blockId);
                 }
 
-                constexpr uint8_t INTERACT_FACE = 0;
+                constexpr uint8_t INTERACT_FACE_Y_NEG = 0;  // interact on bottom face to toggle state
                 bool useBlockSide = true;
-                gm->buildBlock(&blockPos, INTERACT_FACE, useBlockSide);
+                gm->buildBlock(&blockPos, INTERACT_FACE_Y_NEG, useBlockSide);
                 lp->swingArm();
             }
         }
