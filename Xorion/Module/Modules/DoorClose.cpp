@@ -5,6 +5,7 @@
 #include "../../../SDK/HitResult.h"
 
 #include <algorithm>
+#include <cctype>
 #include <string_view>
 #include <unordered_set>
 
@@ -33,7 +34,7 @@ void DoorClose::onTick(GameMode* gm) {
     if (!pos)
         return;
 
-    constexpr int DOOR_VERTICAL_RANGE = 2;
+    constexpr int DOOR_VERTICAL_RANGE = 2;  // Doors are two blocks tall; no need to scan higher
     const int startX = (int)pos->x - radius;
     const int endX = (int)pos->x + radius;
     const int verticalRange = std::min(radius, DOOR_VERTICAL_RANGE);
@@ -60,7 +61,10 @@ void DoorClose::onTick(GameMode* gm) {
 
         auto nameHasDoor = [](const TextHolder& holder) {
             std::string_view text(holder.getText(), holder.getTextLength());
-            return text.find("door") != std::string_view::npos;
+            std::string lowered(text);
+            std::transform(lowered.begin(), lowered.end(), lowered.begin(),
+                           [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+            return lowered.find("door") != std::string::npos;
         };
 
         if (nameHasDoor(legacy->getName()) || nameHasDoor(legacy->tileName)) {
@@ -91,7 +95,7 @@ void DoorClose::onTick(GameMode* gm) {
                 if (!isDoorBlock(legacy))
                     continue;
 
-                constexpr uint8_t DEFAULT_INTERACT_FACE = 1;
+                constexpr uint8_t DEFAULT_INTERACT_FACE = 1;  // Default to top face when no hitResult is available
                 constexpr bool USE_BLOCK_SIDE = true;
 
                 uint8_t interactFace = DEFAULT_INTERACT_FACE;
