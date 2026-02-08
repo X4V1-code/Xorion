@@ -27,6 +27,7 @@ const std::vector<std::string> AntiCheatBlocker::builtInAntiCheats = {
     "polar", "polarac", "polar-anticheat",
     "watchdog", "hypixel-watchdog", "hypixelwatchdog",
     "sentinel", "sentinelac", "sentinel-anticheat",
+    "lifeboat", "lifeboatac", "lifeboat-anticheat", "lbsg", "lbsg-anticheat",
     // Game-wide Anti-Cheats
     "fairfight", "fair-fight",
     "battleye", "battle-eye", "be-anticheat",

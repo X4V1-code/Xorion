@@ -86,6 +86,7 @@ const std::vector<std::string> AntiCheatDelete::antiCheatPluginNames = {
     "anticheat", "nocheatplus", "ncp", "aac", "advancedanticheat",
     "spartan", "matrix", "vulcan", "verus", "grim", "grimac",
     "karhu", "intave", "polar", "watchdog", "sentinel",
+    "lifeboat", "lifeboatac", "lifeboat-anticheat", "lbsg", "lbsg-anticheat",
     // Screen Share Tools
     "screenshare", "paladin",
     // Other Anti-Cheats
