@@ -27,6 +27,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<AirJump>());
         moduleList.emplace_back(std::make_shared<AirSwim>());
         moduleList.emplace_back(std::make_shared<AntiBot>());
+        moduleList.emplace_back(std::make_shared<AntiArrow>());
         moduleList.emplace_back(std::make_shared<AntiCheatBlocker>());  // Always-on anti-cheat protection
         moduleList.emplace_back(std::make_shared<AntiCheatDelete>());   // Aggressive anti-cheat deletion (cascades to AntiCheatBlocker)
         moduleList.emplace_back(std::make_shared<AntiCrystal>());

@@ -15,7 +15,7 @@ InfiniteAura::InfiniteAura() : IModule(0, Category::COMBAT, "Killaura but with i
 	registerEnumSetting("Mode", &mode, 0);
 	*/
 	registerFloatSetting("TPDistance", &tpDistance, tpDistance, 1.f, 20.f);
-	registerFloatSetting("Range", &range, range, 15.f, 128.f);
+	registerFloatSetting("Range", &range, range, 15.f, 256.f);
 	registerIntSetting("Delay", &delay, delay, 0, 20);
 	registerBoolSetting("RenderPos", &renderPos, renderPos);
 }
@@ -129,4 +129,3 @@ void InfiniteAura::onEnable() {
 	posList.clear();
 	ticks = 0;
 }
-

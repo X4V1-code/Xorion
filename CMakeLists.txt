@@ -150,6 +150,8 @@ add_library(Xorion SHARED
         Xorion/Module/Modules/AirSwim.h
         Xorion/Module/Modules/AntiBot.cpp
         Xorion/Module/Modules/AntiBot.h
+        Xorion/Module/Modules/AntiArrow.cpp
+        Xorion/Module/Modules/AntiArrow.h
         Xorion/Module/Modules/AntiCrystal.cpp
         Xorion/Module/Modules/AntiCrystal.h
         Xorion/Module/Modules/AntiEffect.cpp
@@ -469,6 +471,7 @@ add_library(Xorion SHARED
         SDK/DrawUtils.h
         SDK/Entity.cpp
         SDK/Entity.h
+        SDK/EntityTypeIds.h
         SDK/EntityContext.h
         SDK/EntityList.h
         SDK/EntityRefs.h
