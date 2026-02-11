@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "../entt/src/entt/entity/registry.hpp"
+#include "entt/entity/registry.hpp"
 
 class EntityRegistryBase {
 public:

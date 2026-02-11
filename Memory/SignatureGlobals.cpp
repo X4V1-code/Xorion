@@ -16,3 +16,12 @@ void* g_ConstCheckB           = nullptr;
 void* g_SSESetup              = nullptr;
 void* g_GSReadD               = nullptr;
 void* g_WrapperEarlyCallAlt   = nullptr;
+
+// Entity/Actor function pointers
+void* g_Actor_getRotation     = nullptr;
+void* g_Actor_setRotation     = nullptr;
+void* g_Actor_isOnGround      = nullptr;
+void* g_RuntimeId_Generic     = nullptr;
+void* g_ActorUniqueID         = nullptr;
+void* g_ActorRuntimeID        = nullptr;
+void* g_RuntimeId_Member      = nullptr;

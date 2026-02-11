@@ -26,7 +26,8 @@ void Jesus::onTick(GameMode* gm) {
 	bool inLava = false;
 
 	if (auto region = gm->player->getRegion()) {
-		Vec3 pos = gm->player->getPos();
+		Vec3* posPtr = gm->player->getPos();
+		Vec3 pos = *posPtr;  // Dereference pointer to get value
 		Vec3i feetPos = Vec3i(pos.floor());
 		Block* feetBlock = region->getBlock(feetPos);
 		Block* belowBlock = region->getBlock(feetPos.add(0, -1, 0));

@@ -20,6 +20,15 @@ extern void* g_SSESetup;
 extern void* g_GSReadD;
 extern void* g_WrapperEarlyCallAlt;
 
+// Entity/Actor function pointers
+extern void* g_Actor_getRotation;
+extern void* g_Actor_setRotation;
+extern void* g_Actor_isOnGround;
+extern void* g_RuntimeId_Generic;
+extern void* g_ActorUniqueID;
+extern void* g_ActorRuntimeID;
+extern void* g_RuntimeId_Member;
+
 // Known-good 1.21.130 resolved addresses (from Dump-1.txt)
 constexpr std::uintptr_t k130_WrapperEarlyCall    = 0x7FF807527C18;
 constexpr std::uintptr_t k130_WrapperCallB        = 0x7FF80752BF00;

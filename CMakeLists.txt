@@ -1,25 +1,43 @@
 cmake_minimum_required(VERSION 3.12)
+
 project(Xorion)
+
+if(MSVC)
+    cmake_policy(SET CMP0091 NEW)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    # Fix LNK4098 warning for Debug builds
+    add_link_options($<$<CONFIG:Debug>:/NODEFAULTLIB:msvcrt.lib>)
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    add_compile_options(-Wno-dynamic-class-memaccess -Wno-microsoft-goto -Wno-delete-incomplete /EHsc /Ob1)
+    add_compile_options(-Wno-dynamic-class-memaccess -Wno-microsoft-goto -Wno-delete-incomplete /EHsc)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(/MP /Ob1)
+    add_compile_options(/MP)
 endif()
 
 add_compile_definitions(WIN32_LEAN_AND_MEAN)
 add_compile_definitions(NOMINMAX)
-if(CMAKE_BUILD_TYPE MATCHES Release)
-
-elseif(CMAKE_BUILD_TYPE MATCHES BetaConf)
-    add_compile_definitions(_BETA)
-endif()
+add_compile_definitions($<$<CONFIG:BetaConf>:_BETA>)
 
 include_directories(.)
 include_directories(include)
-include_directories(include/glm/)
+include_directories(include/glm)
+include_directories(entt/src)
+include_directories(entt/src/entt)
+include_directories(entt/src/entt/config)
+include_directories(entt/src/entt/core)
+include_directories(entt/src/entt/container)
+include_directories(entt/src/entt/entity)
+include_directories(entt/src/entt/graph)
+include_directories(entt/src/entt/locator)
+include_directories(entt/src/entt/meta)
+include_directories(entt/src/entt/poly)
+include_directories(entt/src/entt/process)
+include_directories(entt/src/entt/resource)
+include_directories(entt/src/entt/signal)
+include_directories(SDK/../entt/src)
 
 link_directories(minhook)
 
@@ -587,6 +605,11 @@ add_library(Xorion SHARED
         Xorion/Module/Modules/Impersonator.h
         Xorion/Command/Commands/ImpersonateCommand.cpp
         Xorion/Command/Commands/ImpersonateCommand.h
+)
+
+target_include_directories(Xorion PRIVATE
+    ${CMAKE_SOURCE_DIR}/entt/src
+    ${CMAKE_SOURCE_DIR}/SDK/../entt/src
 )
 
 # Link required libraries

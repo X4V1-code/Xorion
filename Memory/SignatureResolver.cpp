@@ -1,6 +1,7 @@
 // Memory/SignatureResolver.cpp
 #include "SignatureGlobals.h"
 #include "../Xorion/Render/Signatures.h"
+#include "../SDK/EntitySignatures.h"
 #include "SlimMem.h"   // signature scanning utility
 #include "../Utils/Logger.h"    // logF or similar
 #include "../Utils/Utils.h"     // for FindSignature macro
@@ -44,6 +45,15 @@ bool ResolveAllSignatures() {
     RESOLVE("SSESetup",             Signatures::PATTERN_SSESetup,             &g_SSESetup,            k130_SSESetup);
 
     RESOLVE("WrapperEarlyCallAlt",  Signatures::PATTERN_WrapperEarlyCallAlt,  &g_WrapperEarlyCallAlt, k130_WrapperEarlyCallAlt);
+
+    // Entity/Actor signatures (new for 1.21.130)
+    RESOLVE("Actor::getRotation",   EntitySignatures::PATTERN_Actor_getRotation,   &g_Actor_getRotation,   0);
+    RESOLVE("Actor::setRotation",   EntitySignatures::PATTERN_Actor_setRotation,   &g_Actor_setRotation,   0);
+    RESOLVE("Actor::isOnGround",    EntitySignatures::PATTERN_Actor_isOnGround,    &g_Actor_isOnGround,    0);
+    RESOLVE("RuntimeId_Generic",    EntitySignatures::PATTERN_RuntimeId_Generic,   &g_RuntimeId_Generic,   0);
+    RESOLVE("ActorUniqueID",        EntitySignatures::PATTERN_ActorUniqueID,       &g_ActorUniqueID,       0);
+    RESOLVE("ActorRuntimeID",       EntitySignatures::PATTERN_ActorRuntimeID,      &g_ActorRuntimeID,      0);
+    RESOLVE("RuntimeId_Member",     EntitySignatures::PATTERN_RuntimeId_Member,    &g_RuntimeId_Member,    0);
 
     logF("[Sig] Resolve complete: %d OK, %d FAIL", ok, fail);
     return fail == 0;

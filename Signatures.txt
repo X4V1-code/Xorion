@@ -1,0 +1,172 @@
+MINECRAFT 1.21.130 SIGNATURE COLLECTION TEMPLATE
+================================================
+
+INSTRUCTIONS:
+1. Search for METHOD NAMES in IDA Pro (Shift+F12) - NOT property names!
+2. Press X on the string to see xrefs
+3. Try DIFFERENT xrefs if they all go to the same function
+4. Look for actual getter/setter functions (Actor::, Entity::, LocalPlayer::)
+5. Copy 12-20 bytes from function start
+
+BETTER SEARCH TERMS:
+- getRotation, setRotation, Actor::getRotation
+- isOnGround, getOnGround, Actor::isOnGround  
+- getRuntimeId, getUniqueID, Actor::getRuntimeId
+- getVelocity, setVelocity, Actor::getVelocity
+
+
+====================================
+PRIORITY 1: VIEWANGLES (ROTATION)
+====================================
+
+Search Term: "getRotation"
+----------------------------------------
+Function Name (from IDA): sub_1440A0890
+Hex Bytes (12-20 bytes): 48 8D 05 F9 2D 00 00 C6  41 10 00 48 89 01 48 8D
+
+
+Search Term: "setRotation"
+----------------------------------------
+Function Name (from IDA): sub_1440A06A0
+Hex Bytes (12-20 bytes): 48 8D 05 F9 2D 00 00 C6  41 10 00 48 89 01 48 8D
+
+
+Search Term: "Actor::getRotation" or "Entity::getRotation"
+----------------------------------------
+Function Name (from IDA): Couldnt find
+Hex Bytes (12-20 bytes): Couldnt find
+
+
+
+====================================
+PRIORITY 2: ONGROUND FLAG
+====================================
+
+Search Term: "isOnGround"
+----------------------------------------
+Function Name (from IDA): sub_144098120
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 74  24 18 48 89 7C 24 20 48
+
+
+Search Term: "getOnGround"
+----------------------------------------
+Function Name (from IDA): N/A
+Hex Bytes (12-20 bytes): N/A
+
+
+Search Term: "setOnGround"
+----------------------------------------
+Function Name (from IDA): N/A
+Hex Bytes (12-20 bytes): N/A
+
+
+
+====================================
+PRIORITY 3: ENTITY RUNTIME ID
+====================================
+
+Search Term: "runtime" (try DIFFERENT xrefs from schema function)
+----------------------------------------
+Function Name (from IDA): sub_142EA5980
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 74  24 18 55 57 41 56 48 8D
+
+
+Search Term: "ActorUniqueID" or "EntityId"
+----------------------------------------
+Function Name (from IDA): sub_14335D120
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 6C  24 18 48 89 74 24 20 57
+
+
+Search Term: "getId" or "getEntityId"
+----------------------------------------
+Function Name (from IDA): N/A
+Hex Bytes (12-20 bytes): N/A
+
+
+Search Term: "ActorRuntimeID" (alternative naming)
+----------------------------------------
+Function Name (from IDA): sub_142DDEE60
+Hex Bytes (12-20 bytes): 48 8B C4 48 89 58 10 48  89 78 18 55 48 8D A8 58
+
+
+Search Term: "mRuntimeID" or "_runtimeId" (member variable access)
+----------------------------------------
+Function Name (from IDA): sub_142DDBBF0
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 74  24 18 48 89 7C 24 20 55
+
+
+
+====================================
+OPTIONAL: VELOCITY (DIRECT ACCESS)
+====================================
+
+Search Term: "getVelocity"
+----------------------------------------
+Function Name (from IDA): sub_144098120
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 74  24 18 48 89 7C 24 20 48
+
+
+Search Term: "setVelocity"
+----------------------------------------
+Function Name (from IDA): sub_144098120
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 74  24 18 48 89 7C 24 20 48
+
+
+
+====================================
+OPTIONAL: MODULE CALLBACKS
+====================================
+
+Search Term: "module"
+----------------------------------------
+Function Name (from IDA): sub_146BCCC80
+Hex Bytes (12-20 bytes): 48 89 5C 24 18 55 56 57  41 54 41 55 41 56 41 57
+
+
+Search Term: "callback"
+----------------------------------------
+Function Name (from IDA): off_1483A90B8
+Hex Bytes (12-20 bytes): (idk what happended here. it was listed in xrefs, but not on the actual list)
+
+
+Search Term: "listener"
+----------------------------------------
+Function Name (from IDA): sub_1434FD520
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 48 89 7C  24 18 55 48 8D AC 24 00
+
+
+Search Term: "onMove"
+----------------------------------------
+Function Name (from IDA): N/A
+Hex Bytes (12-20 bytes): N/A
+
+
+
+====================================
+OPTIONAL: SETTINGS SYSTEM
+====================================
+
+Search Term: "setting"
+----------------------------------------
+Function Name (from IDA): sub_1478B16B0
+Hex Bytes (12-20 bytes): 48 89 5C 24 10 55 56 57  41 54 41 55 41 56 41 57
+
+
+Search Term: "slider"
+----------------------------------------
+Function Name (from IDA): off_149389C50
+Hex Bytes (12-20 bytes): (idk what happended here. it was listed in xrefs, but not on the actual list)
+
+
+Search Term: "enum"
+----------------------------------------
+Function Name (from IDA): sub_140F55000
+Hex Bytes (12-20 bytes): 40 53 48 83 EC 20 65 48  8B 04 25 58 00 00 00 BB
+
+
+
+====================================
+NOTES / ADDITIONAL FINDINGS
+====================================
+
+A Strange Function Name starting with off_
