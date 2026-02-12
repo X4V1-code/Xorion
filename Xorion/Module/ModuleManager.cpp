@@ -64,6 +64,7 @@ void ModuleManager::initModules() {
         moduleList.emplace_back(std::make_shared<CrystalAura>());
         moduleList.emplace_back(std::make_shared<Derp>());
         moduleList.emplace_back(std::make_shared<Dicker>());      // custom
+        moduleList.emplace_back(std::make_shared<DoorClose>());
         moduleList.emplace_back(std::make_shared<DVDLogo>());
         moduleList.emplace_back(std::make_shared<EditionFaker>());
         moduleList.emplace_back(std::make_shared<ESP>());

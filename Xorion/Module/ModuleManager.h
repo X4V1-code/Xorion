@@ -22,6 +22,7 @@
 #include "Modules/Breadcrumbs.h"
 #include "Modules/Dicker.h"
 #include "Modules/DVDLogo.h"
+#include "Modules/DoorClose.h"
 #include "Modules/FeetPlace.h"
 #include "Modules/Fucker.h"
 //#include "Modules/HudEditor.h"  // TEMP: Disabled due to vec2_t parsing issues
